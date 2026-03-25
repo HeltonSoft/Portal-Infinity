@@ -384,7 +384,7 @@ body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text);min-
   <div class="nav-item" onclick="showSection('nfsenacional')"><span class="icon">📄</span>NFS-e Nacional</div>
 
   <div class="nav-section">Suporte</div>
-  <div class="nav-item" onclick="showSection('baseconhecimento')"><span class="icon">🧠</span>Base de Conhecimento<span class="nav-badge">3</span></div>
+  <div class="nav-item" onclick="showSection('baseconhecimento')"><span class="icon">🧠</span>Base de Conhecimento<span class="nav-badge">5</span></div>
 
   <div class="nav-section">Ferramentas</div>
   <div class="nav-item" onclick="showSection('checklist')"><span class="icon">✅</span>Checklist Implantação</div>
@@ -2349,13 +2349,13 @@ const BC_MODULO_CORES = {
   "Estoque":"pill-estoque","Fiscal":"pill-cont","Configuração":"pill-estoque"
 };
 const BC_TIPO_CORES = {
-  "Configuração":"rgba(245,158,11,.1)","Erro":"rgba(239,68,68,.1)","Dica":"rgba(0,196,232,.1)"
+  "Configuração":"rgba(245,158,11,.1)","Erro":"rgba(239,68,68,.1)","Dica":"rgba(0,196,232,.1)","Melhoria":"rgba(0,229,180,.1)"
 };
 const BC_TIPO_BORDA = {
-  "Configuração":"rgba(245,158,11,.35)","Erro":"rgba(239,68,68,.35)","Dica":"rgba(0,196,232,.35)"
+  "Configuração":"rgba(245,158,11,.35)","Erro":"rgba(239,68,68,.35)","Dica":"rgba(0,196,232,.35)","Melhoria":"rgba(0,229,180,.35)"
 };
 const BC_TIPO_COR_TEXTO = {
-  "Configuração":"#fbbf24","Erro":"#f87171","Dica":"var(--cyan)"
+  "Configuração":"#fbbf24","Erro":"#f87171","Dica":"var(--cyan)","Melhoria":"var(--accent)"
 };
 
 const BASE_CONHECIMENTO = [
@@ -2410,6 +2410,39 @@ const BASE_CONHECIMENTO = [
       "Se marcada: o cheque vai para Manutenção de Cheques com status Depositado automaticamente, disponível para uso no Contas a Pagar.",
       "Se desmarcada: o cheque fica em Manutenção com status Lançado e sem data de depósito — o cliente precisará preencher manualmente.",
       "Garantir que a conta onde o cheque é registrado seja do tipo Caixa."
+    ],
+    sql: false,
+    data: "Mar/2026"
+  },
+  {
+    id: 4,
+    titulo: "Entrada de Compras — Filtro de Fornecedor na Importação de Pedido de Compras",
+    modulo: "Compras",
+    tipo: "Melhoria",
+    tags: ["entrada de nota","pedido de compras","vincular itens","fornecedor","importação","fabricante","representante"],
+    situacao: "Ao realizar uma entrada de nota fiscal e utilizar a opção Vincular Itens > Importar Pedido de Compras, o sistema exigia que o fornecedor da nota e o do pedido fossem obrigatoriamente o mesmo, impedindo a importação quando os fornecedores eram diferentes.",
+    causa: "Ausência de flexibilidade no filtro de fornecedor na tela de importação de pedidos, não permitindo vínculos entre fornecedores distintos.",
+    obs: "Cenário comum: pedido de compra emitido diretamente para o fabricante, porém a nota fiscal de entrada é emitida pelo representante regional. O filtro garante agilidade no caso padrão e flexibilidade nos casos excepcionais.",
+    correcao: [
+      "O sistema passa a buscar automaticamente os pedidos do mesmo fornecedor da nota ao abrir a tela de importação.",
+      "Quando necessário, o usuário pode utilizar o filtro de fornecedor disponível na própria tela para localizar pedidos de outros fornecedores.",
+      "Após filtrar, basta selecionar o pedido desejado e realizar a importação normalmente, independentemente do fornecedor."
+    ],
+    sql: false,
+    data: "Mar/2026"
+  },
+  {
+    id: 5,
+    titulo: "Diferença entre as duas telas de Baixa do Receber",
+    modulo: "Financeiro",
+    tipo: "Dica",
+    tags: ["baixa","contas a receber","caixa","faturamento","financeiro","fechamento de caixa","ajuste"],
+    situacao: "O sistema possui dois caminhos para realizar a baixa de títulos em Contas a Receber. Durante a implantação ou suporte, surge a dúvida sobre qual utilizar e qual a diferença entre eles.",
+    causa: "Os dois caminhos existem por finalidades distintas: um está ligado ao fluxo operacional do caixa, o outro é exclusivo para ajustes financeiros sem impacto no caixa.",
+    obs: "O acesso a cada tela é controlado por permissão de usuário, conforme parametrização do sistema.",
+    correcao: [
+      "Faturamento › Caixa › Baixa do Receber — requer caixa aberto. Realiza a baixa do título e gera movimentação no caixa, entrando no fechamento. Indicada para recebimentos do dia a dia no balcão ou caixa.",
+      "Financeiro › Contas a Receber › Baixa do Receber — não requer caixa aberto. Realiza apenas a baixa do título sem gerar movimentação no caixa. Indicada para ajustes manuais, acertos contábeis ou títulos recebidos fora do sistema."
     ],
     sql: false,
     data: "Mar/2026"
