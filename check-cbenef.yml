@@ -1,0 +1,68 @@
+name: Verificar atualização tabela cBenef SP
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Todo dia às 01:00 horário de Brasília (04:00 UTC)
+  workflow_dispatch:      # Permite rodar manualmente também
+
+jobs:
+  check-cbenef:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v3
+
+      - name: Verificar versão da tabela cBenef SP na SEFAZ
+        id: check
+        run: |
+          python3 << 'EOF'
+          import urllib.request
+          import re
+          import json
+          from datetime import date
+
+          VERSAO_ATUAL = "20260226"
+          URL_SEFAZ = "https://portal.fazenda.sp.gov.br/servicos/nfe/Paginas/cBenef.aspx"
+
+          try:
+              req = urllib.request.Request(URL_SEFAZ, headers={"User-Agent": "Mozilla/5.0"})
+              with urllib.request.urlopen(req, timeout=15) as r:
+                  html = r.read().decode("utf-8", errors="ignore")
+
+              # Procura por links com padrão Tabela-cBenef-SP-vDATADATA
+              versoes = re.findall(r'Tabela-cBenef-SP-v(\d{8})', html)
+
+              if versoes:
+                  versao_sefaz = max(versoes)
+              else:
+                  versao_sefaz = VERSAO_ATUAL
+
+          except Exception as e:
+              print(f"Erro ao acessar SEFAZ: {e}")
+              versao_sefaz = VERSAO_ATUAL
+
+          atualizado = versao_sefaz <= VERSAO_ATUAL
+
+          status = {
+              "versao_atual": VERSAO_ATUAL,
+              "versao_sefaz": versao_sefaz,
+              "atualizado": atualizado,
+              "ultima_verificacao": str(date.today())
+          }
+
+          with open("status.json", "w") as f:
+              json.dump(status, f, indent=2)
+
+          print(f"Versão atual: {VERSAO_ATUAL}")
+          print(f"Versão SEFAZ: {versao_sefaz}")
+          print(f"Atualizado: {atualizado}")
+          EOF
+
+      - name: Commit status.json atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          git diff --staged --quiet || git commit -m "chore: atualizar status cBenef SP [$(date '+%Y-%m-%d')]"
+          git push
