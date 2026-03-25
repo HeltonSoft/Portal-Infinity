@@ -2681,6 +2681,7 @@ function cmpDrawArrows() {
 document.addEventListener('DOMContentLoaded', () => {
   renderBC(BASE_CONHECIMENTO);
   document.getElementById('total-codigos').textContent = CBENEF_SP.length;
+  renderTabelaCBenef(CBENEF_SP);
   renderProcessos('proc-compras', COMPRAS);
   renderProcessos('proc-faturamento', FATURAMENTO);
   renderProcessos('proc-estoque', ESTOQUE);
