@@ -2397,19 +2397,19 @@ const BASE_CONHECIMENTO = [
   },
   {
     id: 3,
-    titulo: "Cheque recebido — como configurar depósito automático",
-    modulo: "Configuração",
+    titulo: "Regras para utilização de cheque — configuração e comportamento no sistema",
+    modulo: "Financeiro",
     tipo: "Configuração",
-    tags: ["cheque","manutenção de cheque","contas a pagar","parâmetros financeiros","forma de pagamento","deposito"],
-    situacao: "O sistema oferece duas formas de controle para cheques recebidos. Na primeira, o cheque é registrado automaticamente como 'Depositado' no momento do recebimento, ficando disponível para uso no Contas a Pagar sem necessidade de intervenção manual. Na segunda, o cheque fica registrado com status 'Lançado' na tela de Manutenção de Cheques, exigindo que o operador acesse a tela e registre o depósito manualmente. O comportamento depende da parametrização realizada no sistema.",
-    causa: "O comportamento depende de duas configurações combinadas: a flag 'Digita dados do cheque' na Forma de Pagamento e a flag 'Não controla manutenção de cheques' nos Parâmetros Financeiros. Com as duas marcadas, o cheque é registrado automaticamente como Depositado, ficando disponível no Contas a Pagar. Caso a flag de parâmetros não esteja marcada, o cheque fica como Lançado sem data de depósito, exigindo preenchimento manual. Para que o fluxo funcione corretamente, o cheque deve ser registrado em uma conta do tipo Caixa.",
-    obs: "Para que o fluxo funcione corretamente, o cheque precisa ser registrado na conta caixa do cliente, e essa conta deve ser do tipo Caixa.",
+    tags: ["cheque","manutenção de cheque","contas a pagar","parâmetros financeiros","forma de pagamento","deposito","cheque a vista","cheque a prazo"],
+    situacao: "O sistema oferece duas formas de trabalhar com cheque. Na primeira, o cheque é registrado apenas como forma de pagamento na venda, sem nenhum controle dos dados. Na segunda, com a flag Digita dados do Cheque ativada na Forma de Pagamento, é possível informar os dados do cheque — e caso seja à vista, o sistema gera o título financeiro já como baixado automaticamente.",
+    causa: "O comportamento na tela de Manutenção de Cheques depende do parâmetro 'Não controla manutenção de Cheque' em Configurações › Sistema › Parâmetros Financeiros. Desmarcado: além de gerar o título baixado, registra o cheque na Manutenção de Cheques como Depositado, com data de depósito preenchida automaticamente. Marcado: gera o título baixado, porém na Manutenção de Cheques o cheque fica como Lançado, sem data de depósito — exigindo preenchimento manual pelo operador.",
+    obs: "Para que o fluxo funcione corretamente, o cheque deve ser registrado em uma conta do tipo Caixa. Para cheque a prazo: o sistema registra normalmente os dados do cheque, porém o depósito não é automático — independentemente da configuração do parâmetro. O operador deverá acessar a tela de Manutenção de Cheques e registrar o depósito manualmente quando chegar a data de vencimento.",
     correcao: [
-      "Verificar a flag 'Digita dados do cheque' em: Cadastros › Vendas › Forma de Pagamento — deve estar marcada para que o sistema registre os dados do cheque no momento do recebimento.",
-      "Verificar a flag 'Não controla manutenção de cheques' em: Configurações › Sistema › Parâmetros Financeiros.",
-      "Se marcada: o cheque vai para Manutenção de Cheques com status Depositado automaticamente, disponível para uso no Contas a Pagar.",
-      "Se desmarcada: o cheque fica em Manutenção com status Lançado e sem data de depósito — o cliente precisará preencher manualmente.",
-      "Garantir que a conta onde o cheque é registrado seja do tipo Caixa."
+      "Verificar a flag 'Digita dados do Cheque' em: Cadastros › Vendas › Forma de Pagamento.",
+      "Verificar o parâmetro 'Não controla manutenção de Cheque' em: Configurações › Sistema › Parâmetros Financeiros.",
+      "Parâmetro desmarcado: cheque registrado na Manutenção como Depositado com data de depósito automática.",
+      "Parâmetro marcado: cheque registrado na Manutenção como Lançado, sem data de depósito — cliente preenche manualmente.",
+      "Para cheque a prazo: depósito sempre manual, independentemente do parâmetro — acessar Manutenção de Cheques na data do vencimento."
     ],
     sql: false,
     data: "Mar/2026"
