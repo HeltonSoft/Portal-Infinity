@@ -159,6 +159,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
   <div class="nav-item" onclick="showSection('nfenfce')"><span class="icon">📋</span>Regras NF-e x NFC-e</div>
   <div class="nav-item" onclick="showSection('ibscbs')"><span class="icon">🌎</span>Reforma Tributária IBS/CBS</div>
   <div class="nav-item" onclick="showSection('nfsenacional')"><span class="icon">📄</span>NFS-e Nacional</div>
+  <div class="nav-item" onclick="showSection('exclusaost')"><span class="icon">⚠️</span>Exclusão ST — SP 2026</div>
   <div class="nav-section">Suporte</div>
   <div class="nav-item" onclick="showSection('baseconhecimento')"><span class="icon">🧠</span>Base de Conhecimento<span class="nav-badge">5</span></div>
   <div class="nav-section">Ferramentas</div>
@@ -213,6 +214,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div class="card" onclick="showSection('nfenfce')"><div class="card-icon">📋</div><h3>Regras NF-e x NFC-e</h3><p>CSTs que bloqueiam a emissão de NFC-e. Evite rejeições SEFAZ por documento incorreto.</p><div class="card-arrow" style="color:#f59e0b">↗</div></div>
       <div class="card" onclick="showSection('ibscbs')"><div class="card-icon">🌎</div><h3>Reforma Tributária IBS/CBS</h3><p>O que muda com a reforma tributária e o impacto na emissão de notas fiscais.</p><div class="card-arrow" style="color:#34d399">↗</div></div>
       <div class="card" onclick="showSection('nfsenacional')"><div class="card-icon">📄</div><h3>NFS-e Nacional</h3><p>Configurações para emissão de NFS-e no padrão nacional. NBS, cClassTrib e IBS/CBS.</p><div class="card-arrow" style="color:#a78bfa">↗</div></div>
+      <div class="card" onclick="showSection('exclusaost')"><div class="card-icon">⚠️</div><h3>Exclusão ST — SP 2026</h3><p>Produtos excluídos da Substituição Tributária em SP e o que ajustar no Infinity.</p><div class="card-arrow" style="color:#f87171">↗</div></div>
       <div class="card" onclick="showSection('baseconhecimento')"><div class="card-icon">🧠</div><h3>Base de Conhecimento</h3><p>Casos reais de suporte documentados com causa, diagnóstico e solução.</p><div class="card-arrow" style="color:#a78bfa">↗</div></div>
       <div class="card" onclick="showSection('checklist')"><div class="card-icon">✅</div><h3>Checklist de Implantação</h3><p>Lista de verificação por módulo para garantir implantação correta.</p><div class="card-arrow">↗</div></div>
       <div class="card" onclick="showSection('glossario')"><div class="card-icon">📖</div><h3>Glossário Técnico</h3><p>Termos fiscais, financeiros e técnicos do sistema com definições claras.</p><div class="card-arrow">↗</div></div>
@@ -369,9 +371,43 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
         </div>
       </div></div>
     </div>
+    <div class="flowchart-container">
+      <h3>💰 Módulo Financeiro — Ciclo de Recebimento</h3>
+      <div style="overflow-x:auto"><div style="min-width:500px">
+        <div class="flow-row" style="justify-content:center"><div class="flow-node key" style="min-width:200px">Venda (Faturamento)</div></div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center"><div class="flow-node" style="min-width:200px;border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.08)">Título em Contas a Receber</div></div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center;gap:8px;flex-wrap:wrap">
+          <div class="flow-node optional" style="min-width:130px">Emissão de Boleto</div>
+          <div class="flow-node optional" style="min-width:130px">Remessa Bancária</div>
+          <div class="flow-node optional" style="min-width:130px">Baixa Manual</div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center"><div class="flow-node end" style="min-width:200px">Baixa do Receber</div></div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center;gap:8px;flex-wrap:wrap">
+          <div class="flow-node" style="min-width:140px;border-color:#34d399;color:#34d399;background:rgba(52,211,153,.08)">Movimento Bancário</div>
+          <div class="flow-node" style="min-width:140px;border-color:#34d399;color:#34d399;background:rgba(52,211,153,.08)">Relatórios Financeiros</div>
+        </div>
+      </div></div>
+    </div>
+    <div class="flowchart-container">
+      <h3>💰 Módulo Financeiro — Ciclo de Pagamento</h3>
+      <div style="overflow-x:auto"><div style="min-width:500px">
+        <div class="flow-row" style="justify-content:center;gap:8px;flex-wrap:wrap">
+          <div class="flow-node optional" style="min-width:180px">Entrada de NF (Compras)</div>
+          <div class="flow-node optional" style="min-width:180px">Lançamento de Despesa</div>
+        </div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center"><div class="flow-node" style="min-width:200px;border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.08)">Título em Contas a Pagar</div></div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center"><div class="flow-node end" style="min-width:200px">Baixa do Pagamento</div></div>
+        <div class="flow-arrow-down">↓</div>
+        <div class="flow-row" style="justify-content:center"><div class="flow-node" style="min-width:200px;border-color:#34d399;color:#34d399;background:rgba(52,211,153,.08)">Relatórios Financeiros</div></div>
+      </div></div>
+    </div>
   </div>
-
-  <!-- INTEGRAÇÕES -->
   <div class="section" id="sec-integracoes">
     <div class="section-title">Mapa de Integrações</div>
     <div class="section-sub">Como os módulos do Sistema Infinity se comunicam e integram entre si.</div>
@@ -755,6 +791,116 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
     <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">3</div><div style="flex:1"><h4>Classificação Tributária (cClassTrib)</h4><span class="menu-tag">Cadastros › Produtos › Classificação Tributária</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">Estrutura do código</div><div class="detail-text">6 dígitos: os 3 primeiros = CST, os 3 últimos = código complementar. Informar apenas os números inteiros, sem zeros à esquerda.</div></div></div></div>
     <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">4</div><div style="flex:1"><h4>Configuração da Tributação IBS/CBS</h4><span class="menu-tag">Cadastros › Produtos › Tributação</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">O que configurar</div><ul class="detail-list"><li><strong>CST:</strong> código de situação tributária do serviço.</li><li><strong>cClassTrib:</strong> carregada automaticamente conforme o CST.</li><li><strong>CIndOp:</strong> indicador de operação no XML.</li></ul></div></div></div>
   </div>
+  <!-- EXCLUSÃO ST SP 2026 -->
+  <div class="section" id="sec-exclusaost">
+    <div class="module-header">
+      <div class="module-icon" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3)">⚠️</div>
+      <div>
+        <h2>Exclusão de Produtos da ST — SP 2026 <span class="module-update-tag">↻ Mar/2026</span></h2>
+        <p>Orientação fiscal sobre a saída de produtos do regime de Substituição Tributária do ICMS em São Paulo e os ajustes necessários no Sistema Infinity.</p>
+      </div>
+    </div>
+
+    <!-- ALERTA -->
+    <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:20px 24px;margin-bottom:28px">
+      <div style="font-size:13px;font-weight:700;color:#f87171;margin-bottom:8px">⚠️ Atenção — Impacto direto no cadastro do cliente</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7">Produtos que saem da ST precisam ter <strong style="color:var(--text)">CST, CEST e CFOP revisados</strong> no Infinity. Se não forem ajustados, a nota continuará sendo emitida com tributação incorreta, podendo gerar autuação fiscal.</div>
+    </div>
+
+    <!-- 1ª ONDA -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">📅 1ª Onda — vigência a partir de 01/01/2026</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Base legal: Portaria SRE nº 64/2025</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Segmento</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Tipo</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Referência</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Medicamentos e produtos farmacêuticos</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo IX</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Bebidas alcoólicas (exceto cerveja e chope)</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo X</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Lâmpadas, reatores e starters</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XV</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Artefatos de uso doméstico</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XX</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Autopeças — vidros com aplicação automotiva</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XIV, item 15</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Produtos alimentícios industrializados</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XVI, itens específicos</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Materiais de construção e congêneres</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XVII, itens específicos</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2ª ONDA -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">📅 2ª Onda — vigência a partir de 01/07/2026</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Base legal: Portaria SRE nº 09/2026 — publicada em 18/03/2026</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Segmento</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Tipo</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Referência</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Água mineral e potável (embalagens diversas)</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo III, itens 3, 3.1, 5–8, 20, 21</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Refrigerantes e energéticos</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo III</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Sorvetes e preparados para sorvete em máquina</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XVI</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Cimento</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo IV — NCM 2523</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border)">Telhas e produtos cerâmicos</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Parcial</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XVII, item 27 — NCM 6905</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border)">Produtos de papelaria e papel</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">Total</span></td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Anexo XIX — revogação integral</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- O QUE AJUSTAR NO INFINITY -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">🛠️ O que ajustar no Infinity quando o produto sair da ST</div>
+      <div class="process-card" style="margin-top:12px">
+        <div class="process-header" onclick="toggleProcess(this)">
+          <div class="process-num">1</div>
+          <div style="flex:1"><h4>Alterar o CST do produto</h4><span class="menu-tag">Cadastros › Produtos › NCM ou Cadastros › Produtos › Produtos</span></div>
+          <span class="process-chevron">▾</span>
+        </div>
+        <div class="process-body">
+          <div class="detail-text">O CST deve ser alterado de <strong>10, 30, 70, 200, 201, 202 ou 203</strong> para o CST correto sem ST — normalmente <strong>00</strong> (tributado), <strong>40</strong> (isento) ou <strong>41</strong> (não tributado), conforme a tributação do produto. O ajuste pode ser feito pelo <strong>NCM do produto</strong> (onde a tributação está vinculada) ou diretamente na <strong>tela do Produto</strong>, vinculando outra tributação.</div>
+        </div>
+      </div>
+      <div class="process-card">
+        <div class="process-header" onclick="toggleProcess(this)">
+          <div class="process-num">2</div>
+          <div style="flex:1"><h4>Remover ou ajustar o CEST</h4><span class="menu-tag">Cadastros › Produtos › Produtos</span></div>
+          <span class="process-chevron">▾</span>
+        </div>
+        <div class="process-body">
+          <div class="detail-text">O campo CEST está localizado diretamente no <strong>Cadastro do Produto</strong>. Após a saída da ST, o CEST deve ser removido ou ajustado conforme a nova classificação.</div>
+        </div>
+      </div>
+      <div class="process-card">
+        <div class="process-header" onclick="toggleProcess(this)">
+          <div class="process-num">3</div>
+          <div style="flex:1"><h4>Revisar o CFOP</h4><span class="menu-tag">Cadastros › Fiscal › Operação</span></div>
+          <span class="process-chevron">▾</span>
+        </div>
+        <div class="process-body">
+          <div class="detail-text">Na tela de <strong>Operação</strong> estão configurados o CFOP utilizado nas saídas e a tributação vinculada. Ambos precisam ser revisados para refletir a nova situação tributária sem ST.</div>
+        </div>
+      </div>
+      <div class="process-card">
+        <div class="process-header" onclick="toggleProcess(this)">
+          <div class="process-num">4</div>
+          <div style="flex:1"><h4>Verificar o cBenef</h4><span class="menu-tag">Cadastros › Produtos › Produtos ou Tributação</span></div>
+          <span class="process-chevron">▾</span>
+        </div>
+        <div class="process-body">
+          <div class="detail-text">Após a saída da ST, verificar se o produto passa a ter benefício fiscal de ICMS (isenção, redução de BC, etc.) que exija o preenchimento do <strong>cBenef</strong>. Se sim, cadastrar o código correspondente no produto ou na tributação.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTOQUE -->
+    <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:20px 24px">
+      <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:8px">💡 Crédito do ICMS-ST sobre estoque</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7">O ICMS-ST retido sobre os estoques existentes na data de vigência pode ser aproveitado como crédito. Para a 2ª onda (julho/2026), o crédito será apropriado em <strong>12 parcelas mensais iguais</strong> a partir de julho/2026 (Portaria SRE nº 7/2026). O cliente deve fazer o inventário dos produtos afetados antes da data de vigência e seguir os procedimentos da <strong>Portaria CAT 28/2020</strong>. Orientar o cliente a acionar o contador para conduzir esse processo.</div>
+    </div>
+  </div>
 </main>
 
 <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
@@ -953,7 +1099,7 @@ function showSection(id) {
     home:'Visão Geral', compras:'Módulo de Compras', faturamento:'Módulo de Faturamento',
     estoque:'Módulo de Estoque', financeiro:'Módulo Financeiro', contabil:'Integração Contábil',
     cbenef:'Tag cBenef', validador:'Validador cBenef SP', nfenfce:'NF-e x NFC-e',
-    ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional',
+    ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional', exclusaost:'Exclusão ST — SP 2026',
     baseconhecimento:'Base de Conhecimento', checklist:'Checklist de Implantação',
     glossario:'Glossário Técnico', fluxogramas:'Fluxogramas', integracoes:'Mapa de Integrações'
   };
@@ -1144,13 +1290,23 @@ function renderTabelaCBenef(data) {
   if (!tbody) return;
   tbody.innerHTML = data.map(r => `
     <tr>
-      <td><code style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--cyan)">${r.cod}</code></td>
+      <td><code onclick="clicarCodigo('${r.cod}')" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--cyan);cursor:pointer;text-decoration:underline dotted;transition:opacity .15s" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">${r.cod}</code></td>
       <td><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;${tipoStyle(r.tipo)}">${r.tipo}</span></td>
       <td style="font-size:13px">${r.desc}</td>
       <td style="font-size:11px;color:var(--text2)">${r.disp}</td>
       <td style="text-align:center;font-size:13px">${r.simples==='S'?'<span style="color:var(--accent);font-weight:600">SIM</span>':'<span style="color:var(--text2)">Não</span>'}</td>
     </tr>`).join('');
   if (cnt) cnt.textContent = `Exibindo ${data.length} de ${CBENEF_SP.length} códigos`;
+}
+
+function clicarCodigo(cod) {
+  const input = document.getElementById('cbenef-input');
+  if (input) {
+    input.value = cod;
+    input.focus();
+    buscarCbenef(cod);
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 }
 
 function tipoStyle(tipo) {
