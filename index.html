@@ -191,7 +191,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
     <div class="hero">
       <div class="hero-tag">⚡ Central de Conhecimento</div>
       <h1>Sistema <span>Infinity</span><br>Documentação Técnica Operacional</h1>
-      <p>Base centralizada de conhecimento para equipes de suporte e implantação. Fluxos operacionais, guias fiscais, base de casos e ferramentas de referência técnica.</p>
+      <p>Documentação técnica centralizada para equipes de suporte do Sistema Infinity. Consulte fluxos operacionais, guias fiscais, casos resolvidos e ferramentas de referência — tudo em um só lugar.</p>
       <div class="hero-modules">
         <div class="hero-module" onclick="showSection('compras')">🛒 Compras</div>
         <div class="hero-module" onclick="showSection('faturamento')">🧾 Faturamento</div>
@@ -579,7 +579,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
     <div class="module-header">
       <div class="module-icon" style="background:rgba(0,196,232,.15);border:1px solid rgba(0,196,232,.3)">🔍</div>
       <div>
-        <h2>Validador cBenef SP <span class="module-update-tag">↻ Fev/2026</span></h2>
+        <h2>Validador cBenef SP <span class="module-update-tag">↻ Mar/2026</span></h2>
         <p>Consulta e validação de códigos cBenef contra a tabela oficial SEFAZ-SP. Base: Tabela cBenef SP v20260313.</p>
       </div>
     </div>
@@ -655,22 +655,62 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div class="module-icon" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)">📋</div>
       <div><h2>Regras NF-e x NFC-e</h2><p>Definição do documento fiscal correto com base no CST do produto. Emitir NFC-e com CSTs incompatíveis gera rejeição automática pela SEFAZ.</p></div>
     </div>
+
+    <!-- ALERTA PRINCIPAL -->
     <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:20px 24px;margin-bottom:28px">
       <div style="font-size:13px;font-weight:700;color:#f87171;margin-bottom:8px">⚠️ Atenção — Rejeição SEFAZ</div>
       <div style="font-size:13px;color:var(--text3);line-height:1.7">Se o produto estiver com <strong style="color:#f87171">CST 200, 201, 202 ou 203</strong>, a emissão de NFC-e será <strong style="color:#f87171">rejeitada automaticamente pela SEFAZ</strong>. Nesses casos, a nota correta é a <strong style="color:var(--text)">NF-e</strong>.</div>
     </div>
+
+    <!-- TABELA COMPLETA DE CSTs -->
     <div class="detail-block" style="margin-bottom:24px">
-      <div class="detail-label">📄 Quando emitir NF-e</div>
+      <div class="detail-label">📊 Tabela completa de CSTs por documento</div>
       <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:var(--navy3)"><th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">CST</th><th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Descrição</th><th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Documento</th></tr></thead>
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">CST</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Descrição</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">NF-e</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">NFC-e</th>
+        </tr></thead>
         <tbody>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">200</td><td style="padding:9px 14px;border:1px solid var(--border)">Tributação integralmente por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">NF-e</span></td></tr>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">201</td><td style="padding:9px 14px;border:1px solid var(--border)">ST com cobrança do ICMS por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">NF-e</span></td></tr>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">202</td><td style="padding:9px 14px;border:1px solid var(--border)">ST sem cobrança do ICMS por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">NF-e</span></td></tr>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">203</td><td style="padding:9px 14px;border:1px solid var(--border)">ST com cobrança e redução de BC</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600">NF-e</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">00</td><td style="padding:9px 14px;border:1px solid var(--border)">Tributação normal (tributado integralmente)</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">10</td><td style="padding:9px 14px;border:1px solid var(--border)">Tributado e com cobrança de ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">20</td><td style="padding:9px 14px;border:1px solid var(--border)">Com redução de base de cálculo</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">30</td><td style="padding:9px 14px;border:1px solid var(--border)">Isento ou não tributado e com ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">40</td><td style="padding:9px 14px;border:1px solid var(--border)">Isento</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">41</td><td style="padding:9px 14px;border:1px solid var(--border)">Não tributado</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">50</td><td style="padding:9px 14px;border:1px solid var(--border)">Suspensão</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">51</td><td style="padding:9px 14px;border:1px solid var(--border)">Diferimento</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">60</td><td style="padding:9px 14px;border:1px solid var(--border)">ICMS cobrado anteriormente por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">70</td><td style="padding:9px 14px;border:1px solid var(--border)">Com redução de BC e cobrança de ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--cyan)">90</td><td style="padding:9px 14px;border:1px solid var(--border)">Outros</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td></tr>
+          <tr style="background:rgba(239,68,68,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:#f87171">200</td><td style="padding:9px 14px;border:1px solid var(--border)">Tributação integralmente por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#f87171;font-weight:700">✗</span></td></tr>
+          <tr style="background:rgba(239,68,68,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:#f87171">201</td><td style="padding:9px 14px;border:1px solid var(--border)">ST com cobrança do ICMS por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#f87171;font-weight:700">✗</span></td></tr>
+          <tr style="background:rgba(239,68,68,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:#f87171">202</td><td style="padding:9px 14px;border:1px solid var(--border)">ST sem cobrança do ICMS por ST</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#f87171;font-weight:700">✗</span></td></tr>
+          <tr style="background:rgba(239,68,68,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:600;color:#f87171">203</td><td style="padding:9px 14px;border:1px solid var(--border)">ST com cobrança e redução de BC</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#34d399;font-weight:700">✓</span></td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="color:#f87171;font-weight:700">✗</span></td></tr>
         </tbody>
       </table>
     </div>
+
+    <!-- OUTRAS CAUSAS DE REJEIÇÃO -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">🚫 Outras causas de rejeição da NFC-e</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Causa</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Detalhe</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Rejeição</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 10.000 sem destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e acima desse valor exige CPF ou CNPJ do destinatário obrigatoriamente. Valor pode variar por estado.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">750</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 200.000 com destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">Mesmo com CPF/CNPJ informado, NFC-e não pode ultrapassar R$ 200.000 por nota. Nesses casos emitir NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">780</span></td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Operação interestadual</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e é exclusiva para venda presencial ao consumidor final dentro do mesmo estado. Operações interestaduais exigem NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-size:11px;color:var(--text2)">Operação interestadual não permitida</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Destinatário contribuinte do ICMS</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e não deve ser emitida para empresas que revendem mercadorias (contribuintes do ICMS). Nesses casos usar NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-size:11px;color:var(--text2)">Regra de negócio</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- COMO VERIFICAR -->
     <div class="detail-block">
       <div class="detail-label">🔍 Como verificar no Infinity</div>
       <ul class="detail-list">
@@ -837,68 +877,68 @@ const BASE_CONHECIMENTO=[
 
 // ============ CBENEF SP — tabela completa ============
 const CBENEF_SP=[
-  {cod:"SP010060",tipo:"Isenção",desc:"Remessas internas de mercadorias para armazéns gerais e depósitos fechados do próprio remetente",disp:"Art. 1°, I, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010070",tipo:"Isenção",desc:"Saídas internas de medicamentos para uso humano e veterinário destinados a órgãos da administração pública",disp:"Art. 1°, II, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010100",tipo:"Isenção",desc:"Saídas de hortifrutigranjeiros em estado natural",disp:"Art. 1°, V, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010110",tipo:"Isenção",desc:"Saídas de carnes frescas, resfriadas ou congeladas de animais",disp:"Art. 1°, VI, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010150",tipo:"Isenção",desc:"Saídas de livros, jornais e periódicos e papel destinado à impressão desses",disp:"Art. 1°, XI, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010160",tipo:"Isenção",desc:"Saídas de energia elétrica fornecida por distribuidora à subclasse residencial de baixa renda",disp:"Art. 1°, XII, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010200",tipo:"Isenção",desc:"Saídas internas de produtos alimentícios doados a entidades assistenciais",disp:"Art. 1°, XVII, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010220",tipo:"Isenção",desc:"Saídas de veículos destinados a portadores de deficiência física",disp:"Art. 1°, XIX, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010230",tipo:"Isenção",desc:"Saídas de equipamentos e acessórios para portadores de deficiência",disp:"Art. 1°, XX, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010250",tipo:"Isenção",desc:"Saídas de medicamentos para uso humano indicados para tratamento de AIDS",disp:"Art. 1°, XXII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010270",tipo:"Isenção",desc:"Saídas de produtos de informática promovidas por estabelecimentos varejistas",disp:"Art. 1°, XXIV, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010280",tipo:"Isenção",desc:"Saídas internas de pneus recauchutados de origem nacional",disp:"Art. 1°, XXV, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010310",tipo:"Isenção",desc:"Saídas de produtos da cesta básica",disp:"Art. 1°, XXVIII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010340",tipo:"Isenção",desc:"Prestações internas de serviço de transporte de carga quando destinatário é não contribuinte",disp:"Art. 1°, XXXI, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010360",tipo:"Isenção",desc:"Saídas de implementos e tratores agrícolas destinados a produtor rural",disp:"Art. 1°, XXXIII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010400",tipo:"Isenção",desc:"Saídas de preservativos",disp:"Art. 1°, XXXVII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010420",tipo:"Isenção",desc:"Saídas internas de produtos de artesanato realizadas pelo artesão",disp:"Art. 1°, XXXIX, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010450",tipo:"Isenção",desc:"Saídas de embarcações construídas no país",disp:"Art. 1°, XLII, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010490",tipo:"Isenção",desc:"Saídas internas de equipamentos destinados ao aproveitamento de energia solar ou eólica",disp:"Art. 1°, XLVI, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010500",tipo:"Isenção",desc:"Saídas de produtos destinados a pesquisa agropecuária",disp:"Art. 1°, XLVII, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010520",tipo:"Isenção",desc:"Remessas de amostras de produtos para análise laboratorial",disp:"Art. 1°, XLIX, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010560",tipo:"Isenção",desc:"Saídas de produtos farmacêuticos realizadas por farmácias populares ou programas governamentais",disp:"Art. 1°, LIII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010600",tipo:"Isenção",desc:"Saídas de leite em pó, leite esterilizado e creme de leite",disp:"Art. 1°, LVII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP010620",tipo:"Isenção",desc:"Saídas internas de materiais para construção de habitações para famílias de baixa renda",disp:"Art. 1°, LIX, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP010650",tipo:"Isenção",desc:"Saídas de vacinas destinadas ao uso humano",disp:"Art. 1°, LXII, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP020060",tipo:"Isenção",desc:"Saídas de mercadorias destinadas a exposições ou feiras para fins de exposição ao público",disp:"Art. 2°, II, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP030010",tipo:"Isenção",desc:"Saídas de mercadorias em decorrência de doação a entidades governamentais em caso de calamidade pública",disp:"Art. 3°, I, do Anexo I do RICMS/2000",simples:"N"},
-  {cod:"SP040060",tipo:"Isenção",desc:"Saídas de produtos destinados à merenda escolar",disp:"Art. 4°, II, do Anexo I do RICMS/2000",simples:"S"},
-  {cod:"SP070010",tipo:"Redução",desc:"Redução de base de cálculo em operações com máquinas e implementos agrícolas — 45,36% (carga de 6,6%)",disp:"Art. 12, I, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070020",tipo:"Redução",desc:"Redução de base de cálculo em saídas de veículos — 18% de redução sobre BC",disp:"Art. 12, II, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070030",tipo:"Redução",desc:"Redução de base de cálculo para ferros e aços não planos — 50% da BC",disp:"Art. 12, III, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070040",tipo:"Redução",desc:"Redução de base de cálculo nas operações com óleo diesel",disp:"Art. 12, IV, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070050",tipo:"Redução",desc:"Redução de base de cálculo nas operações com GLP",disp:"Art. 12, V, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070060",tipo:"Redução",desc:"Redução de base de cálculo em operações com produtos de informática e automação",disp:"Art. 13, do Anexo II do RICMS/2000",simples:"S"},
-  {cod:"SP070070",tipo:"Redução",desc:"Redução de base de cálculo em operações com aeronaves e peças",disp:"Art. 17, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070080",tipo:"Redução",desc:"Redução de base de cálculo para equipamentos de processamento de dados",disp:"Art. 13-A, do Anexo II do RICMS/2000",simples:"S"},
-  {cod:"SP070090",tipo:"Redução",desc:"Redução de base de cálculo em operações com ração animal",disp:"Art. 14, do Anexo II do RICMS/2000",simples:"S"},
-  {cod:"SP070100",tipo:"Redução",desc:"Redução de base de cálculo em operações com insumos agropecuários",disp:"Art. 14-A, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070110",tipo:"Redução",desc:"Redução de base de cálculo para aparelhos e equipamentos de comunicação",disp:"Art. 15, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP070120",tipo:"Redução",desc:"Redução de base de cálculo em operações com material escolar",disp:"Art. 12, VI, do Anexo II do RICMS/2000",simples:"S"},
-  {cod:"SP070130",tipo:"Redução",desc:"Redução de base de cálculo em operações com cal e calcário",disp:"Art. 14-B, do Anexo II do RICMS/2000",simples:"N"},
-  {cod:"SP050010",tipo:"Diferimento",desc:"Diferimento do lançamento do imposto na saída de resíduos de papel, papelão, plástico e sucatas",disp:"Art. 2°, I, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050020",tipo:"Diferimento",desc:"Diferimento do lançamento do imposto nas saídas de algodão em caroço e outros produtos da lavoura",disp:"Art. 2°, II, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050030",tipo:"Diferimento",desc:"Diferimento nas saídas de gado bovino",disp:"Art. 2°, III, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050040",tipo:"Diferimento",desc:"Diferimento do ICMS na saída de café beneficiado de estabelecimento produtor",disp:"Art. 2°, IV, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050050",tipo:"Diferimento",desc:"Diferimento nas saídas de leite destinadas ao industrializador do mesmo estado",disp:"Art. 2°, V, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050060",tipo:"Diferimento",desc:"Diferimento nas saídas de borracha natural",disp:"Art. 2°, VI, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP050070",tipo:"Diferimento",desc:"Diferimento nas saídas de materiais e equipamentos usados para plataformas de petróleo",disp:"Art. 2°, VII, do Anexo III do RICMS/2000",simples:"N"},
-  {cod:"SP060010",tipo:"Suspensão",desc:"Suspensão do ICMS na saída de bens do ativo permanente para terceiros para industrialização",disp:"Art. 29, I, do RICMS/2000",simples:"N"},
-  {cod:"SP060020",tipo:"Suspensão",desc:"Suspensão do ICMS nas saídas de mercadorias para demonstração",disp:"Art. 29, II, do RICMS/2000",simples:"N"},
-  {cod:"SP060030",tipo:"Suspensão",desc:"Suspensão do ICMS nas remessas para conserto, reparo ou industrialização",disp:"Art. 29, III, do RICMS/2000",simples:"N"},
-  {cod:"SP060040",tipo:"Suspensão",desc:"Suspensão nas saídas de amostras grátis sem valor comercial",disp:"Art. 29, IV, do RICMS/2000",simples:"N"},
-  {cod:"SP060050",tipo:"Suspensão",desc:"Suspensão nas remessas de produtos para armazém geral",disp:"Art. 29, V, do RICMS/2000",simples:"N"},
-  {cod:"SP060060",tipo:"Suspensão",desc:"Suspensão nas saídas para consignação mercantil",disp:"Art. 29, VI, do RICMS/2000",simples:"N"},
-  {cod:"SP080010",tipo:"Não incidência",desc:"Operações interestaduais com petróleo destinado à industrialização ou comercialização",disp:"Art. 7°, X, do RICMS/2000",simples:"N"},
-  {cod:"SP080020",tipo:"Não incidência",desc:"Saídas de mercadorias destinadas ao exterior",disp:"Art. 7°, I, do RICMS/2000",simples:"N"},
-  {cod:"SP080030",tipo:"Não incidência",desc:"Saídas de bens do ativo imobilizado",disp:"Art. 7°, XIV, do RICMS/2000",simples:"N"},
-  {cod:"SP080040",tipo:"Não incidência",desc:"Transferências de estabelecimento para estabelecimento do mesmo contribuinte",disp:"Art. 7°, XV, do RICMS/2000",simples:"N"},
-  {cod:"SP099000",tipo:"Especial",desc:"Operações com alíquota zero de ICMS sem benefício fiscal identificado",disp:"Legislação específica",simples:"N"},
-  {cod:"SP099009",tipo:"Especial",desc:"Operações com emissão de documento realizada por meio do Regime Especial da NFF — Nota Fiscal Fácil",disp:"Regime Especial NFF — Ajuste SINIEF 37/2019 e Portaria SRE 97/22",simples:"N"},
-  {cod:"SP099090",tipo:"Especial",desc:"Decisão judicial — liminar ou tutela antecipada concedida na esfera judicial",disp:"Decisão judicial — informar número do processo nas inf. complementares",simples:"N"},
-  {cod:"SP099100",tipo:"Especial",desc:"Operação sem tributação por isenção específica de outro Convênio ICMS não listado",disp:"Convênio ICMS específico",simples:"N"}
+  {cod:"SP010060",tipo:"Isenção",desc:"Remessas internas de mercadorias para armazéns gerais e depósitos fechados do próprio remetente",disp:"Art. 1°, I, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010070",tipo:"Isenção",desc:"Saídas internas de medicamentos para uso humano e veterinário destinados a órgãos da administração pública",disp:"Art. 1°, II, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010100",tipo:"Isenção",desc:"Saídas de hortifrutigranjeiros em estado natural",disp:"Art. 1°, V, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010110",tipo:"Isenção",desc:"Saídas de carnes frescas, resfriadas ou congeladas de animais",disp:"Art. 1°, VI, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010150",tipo:"Isenção",desc:"Saídas de livros, jornais e periódicos e papel destinado à impressão desses",disp:"Art. 1°, XI, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010160",tipo:"Isenção",desc:"Saídas de energia elétrica fornecida por distribuidora à subclasse residencial de baixa renda",disp:"Art. 1°, XII, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010200",tipo:"Isenção",desc:"Saídas internas de produtos alimentícios doados a entidades assistenciais",disp:"Art. 1°, XVII, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010220",tipo:"Isenção",desc:"Saídas de veículos destinados a portadores de deficiência física",disp:"Art. 1°, XIX, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010230",tipo:"Isenção",desc:"Saídas de equipamentos e acessórios para portadores de deficiência",disp:"Art. 1°, XX, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010250",tipo:"Isenção",desc:"Saídas de medicamentos para uso humano indicados para tratamento de AIDS",disp:"Art. 1°, XXII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010270",tipo:"Isenção",desc:"Saídas de produtos de informática promovidas por estabelecimentos varejistas",disp:"Art. 1°, XXIV, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010280",tipo:"Isenção",desc:"Saídas internas de pneus recauchutados de origem nacional",disp:"Art. 1°, XXV, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010310",tipo:"Isenção",desc:"Saídas de produtos da cesta básica",disp:"Art. 1°, XXVIII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010340",tipo:"Isenção",desc:"Prestações internas de serviço de transporte de carga quando destinatário é não contribuinte",disp:"Art. 1°, XXXI, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010360",tipo:"Isenção",desc:"Saídas de implementos e tratores agrícolas destinados a produtor rural",disp:"Art. 1°, XXXIII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010400",tipo:"Isenção",desc:"Saídas de preservativos",disp:"Art. 1°, XXXVII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010420",tipo:"Isenção",desc:"Saídas internas de produtos de artesanato realizadas pelo artesão",disp:"Art. 1°, XXXIX, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010450",tipo:"Isenção",desc:"Saídas de embarcações construídas no país",disp:"Art. 1°, XLII, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010490",tipo:"Isenção",desc:"Saídas internas de equipamentos destinados ao aproveitamento de energia solar ou eólica",disp:"Art. 1°, XLVI, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010500",tipo:"Isenção",desc:"Saídas de produtos destinados a pesquisa agropecuária",disp:"Art. 1°, XLVII, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010520",tipo:"Isenção",desc:"Remessas de amostras de produtos para análise laboratorial",disp:"Art. 1°, XLIX, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010560",tipo:"Isenção",desc:"Saídas de produtos farmacêuticos realizadas por farmácias populares ou programas governamentais",disp:"Art. 1°, LIII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010600",tipo:"Isenção",desc:"Saídas de leite em pó, leite esterilizado e creme de leite",disp:"Art. 1°, LVII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP010620",tipo:"Isenção",desc:"Saídas internas de materiais para construção de habitações para famílias de baixa renda",disp:"Art. 1°, LIX, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP010650",tipo:"Isenção",desc:"Saídas de vacinas destinadas ao uso humano",disp:"Art. 1°, LXII, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP020060",tipo:"Isenção",desc:"Saídas de mercadorias destinadas a exposições ou feiras para fins de exposição ao público",disp:"Art. 2°, II, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP030010",tipo:"Isenção",desc:"Saídas de mercadorias em decorrência de doação a entidades governamentais em caso de calamidade pública",disp:"Art. 3°, I, do Anexo I do RICMS/2000",simples:"N",csts:["40","41","50"]},
+  {cod:"SP040060",tipo:"Isenção",desc:"Saídas de produtos destinados à merenda escolar",disp:"Art. 4°, II, do Anexo I do RICMS/2000",simples:"S",csts:["40","41","50"]},
+  {cod:"SP070010",tipo:"Redução",desc:"Redução de base de cálculo em operações com máquinas e implementos agrícolas — 45,36% (carga de 6,6%)",disp:"Art. 12, I, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070020",tipo:"Redução",desc:"Redução de base de cálculo em saídas de veículos — 18% de redução sobre BC",disp:"Art. 12, II, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070030",tipo:"Redução",desc:"Redução de base de cálculo para ferros e aços não planos — 50% da BC",disp:"Art. 12, III, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070040",tipo:"Redução",desc:"Redução de base de cálculo nas operações com óleo diesel",disp:"Art. 12, IV, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070050",tipo:"Redução",desc:"Redução de base de cálculo nas operações com GLP",disp:"Art. 12, V, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070060",tipo:"Redução",desc:"Redução de base de cálculo em operações com produtos de informática e automação",disp:"Art. 13, do Anexo II do RICMS/2000",simples:"S",csts:["20","70"]},
+  {cod:"SP070070",tipo:"Redução",desc:"Redução de base de cálculo em operações com aeronaves e peças",disp:"Art. 17, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070080",tipo:"Redução",desc:"Redução de base de cálculo para equipamentos de processamento de dados",disp:"Art. 13-A, do Anexo II do RICMS/2000",simples:"S",csts:["20","70"]},
+  {cod:"SP070090",tipo:"Redução",desc:"Redução de base de cálculo em operações com ração animal",disp:"Art. 14, do Anexo II do RICMS/2000",simples:"S",csts:["20","70"]},
+  {cod:"SP070100",tipo:"Redução",desc:"Redução de base de cálculo em operações com insumos agropecuários",disp:"Art. 14-A, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070110",tipo:"Redução",desc:"Redução de base de cálculo para aparelhos e equipamentos de comunicação",disp:"Art. 15, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP070120",tipo:"Redução",desc:"Redução de base de cálculo em operações com material escolar",disp:"Art. 12, VI, do Anexo II do RICMS/2000",simples:"S",csts:["20","70"]},
+  {cod:"SP070130",tipo:"Redução",desc:"Redução de base de cálculo em operações com cal e calcário",disp:"Art. 14-B, do Anexo II do RICMS/2000",simples:"N",csts:["20","70"]},
+  {cod:"SP050010",tipo:"Diferimento",desc:"Diferimento do lançamento do imposto na saída de resíduos de papel, papelão, plástico e sucatas",disp:"Art. 2°, I, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050020",tipo:"Diferimento",desc:"Diferimento do lançamento do imposto nas saídas de algodão em caroço e outros produtos da lavoura",disp:"Art. 2°, II, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050030",tipo:"Diferimento",desc:"Diferimento nas saídas de gado bovino",disp:"Art. 2°, III, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050040",tipo:"Diferimento",desc:"Diferimento do ICMS na saída de café beneficiado de estabelecimento produtor",disp:"Art. 2°, IV, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050050",tipo:"Diferimento",desc:"Diferimento nas saídas de leite destinadas ao industrializador do mesmo estado",disp:"Art. 2°, V, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050060",tipo:"Diferimento",desc:"Diferimento nas saídas de borracha natural",disp:"Art. 2°, VI, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP050070",tipo:"Diferimento",desc:"Diferimento nas saídas de materiais e equipamentos usados para plataformas de petróleo",disp:"Art. 2°, VII, do Anexo III do RICMS/2000",simples:"N",csts:["51"]},
+  {cod:"SP060010",tipo:"Suspensão",desc:"Suspensão do ICMS na saída de bens do ativo permanente para terceiros para industrialização",disp:"Art. 29, I, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP060020",tipo:"Suspensão",desc:"Suspensão do ICMS nas saídas de mercadorias para demonstração",disp:"Art. 29, II, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP060030",tipo:"Suspensão",desc:"Suspensão do ICMS nas remessas para conserto, reparo ou industrialização",disp:"Art. 29, III, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP060040",tipo:"Suspensão",desc:"Suspensão nas saídas de amostras grátis sem valor comercial",disp:"Art. 29, IV, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP060050",tipo:"Suspensão",desc:"Suspensão nas remessas de produtos para armazém geral",disp:"Art. 29, V, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP060060",tipo:"Suspensão",desc:"Suspensão nas saídas para consignação mercantil",disp:"Art. 29, VI, do RICMS/2000",simples:"N",csts:["50"]},
+  {cod:"SP080010",tipo:"Não incidência",desc:"Operações interestaduais com petróleo destinado à industrialização ou comercialização",disp:"Art. 7°, X, do RICMS/2000",simples:"N",csts:["50","51"]},
+  {cod:"SP080020",tipo:"Não incidência",desc:"Saídas de mercadorias destinadas ao exterior",disp:"Art. 7°, I, do RICMS/2000",simples:"N",csts:["50","51"]},
+  {cod:"SP080030",tipo:"Não incidência",desc:"Saídas de bens do ativo imobilizado",disp:"Art. 7°, XIV, do RICMS/2000",simples:"N",csts:["50","51"]},
+  {cod:"SP080040",tipo:"Não incidência",desc:"Transferências de estabelecimento para estabelecimento do mesmo contribuinte",disp:"Art. 7°, XV, do RICMS/2000",simples:"N",csts:["50","51"]},
+  {cod:"SP099000",tipo:"Especial",desc:"Operações com alíquota zero de ICMS sem benefício fiscal identificado",disp:"Legislação específica",simples:"N",csts:["50","51"]},
+  {cod:"SP099009",tipo:"Especial",desc:"Operações com emissão de documento realizada por meio do Regime Especial da NFF — Nota Fiscal Fácil",disp:"Regime Especial NFF — Ajuste SINIEF 37/2019 e Portaria SRE 97/22",simples:"N",csts:["00","10","20","30","40","41","50","51","60","90"]},
+  {cod:"SP099090",tipo:"Especial",desc:"Decisão judicial — liminar ou tutela antecipada concedida na esfera judicial",disp:"Decisão judicial — informar número do processo nas inf. complementares",simples:"N",csts:["00","10","20","30","40","41","50","51","60","90"]},
+  {cod:"SP099100",tipo:"Especial",desc:"Operação sem tributação por isenção específica de outro Convênio ICMS não listado",disp:"Convênio ICMS específico",simples:"N",csts:["40","41","50"]}
 ];
 
 // ============ FUNÇÕES DE RENDERIZAÇÃO ============
@@ -1160,11 +1200,18 @@ function buscarCbenef(val) {
         </div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">${r.desc}</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
             <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:8px;${tipoStyle(r.tipo)}">${r.tipo}</span>
             ${r.simples==='S'?'<span style="font-size:11px;background:rgba(0,229,180,.1);border:1px solid rgba(0,229,180,.3);color:var(--accent);padding:3px 10px;border-radius:8px;font-weight:600">✓ Simples Nacional</span>':''}
           </div>
-          <div style="font-size:11px;color:var(--text2);margin-top:10px">📌 Base legal: ${r.disp}</div>
+          ${r.csts && r.csts.length ? `
+          <div style="margin-bottom:10px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:6px">CSTs aplicáveis</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              ${r.csts.map(c=>`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:rgba(0,196,232,.12);border:1px solid rgba(0,196,232,.3);color:var(--cyan)">CST ${c}</span>`).join('')}
+            </div>
+          </div>` : ''}
+          <div style="font-size:11px;color:var(--text2)">📌 Base legal: ${r.disp}</div>
         </div>
       </div>
     </div>`).join('');
@@ -1334,21 +1381,24 @@ function showSearchResults(term, results, q) {
   el.innerHTML = html;
 }
 
-// ============ STATUS cBENEF — CHANGE 3 (sem status.json) ============
+// ============ STATUS cBENEF — verificação automática via proxy ============
+const VERSAO_ATUAL = '20260313';
+const VERSAO_LABEL = 'v' + VERSAO_ATUAL;
+const DATA_LABEL   = '13/03/2026';
+
+// ============ STATUS cBENEF — estático com link SEFAZ ============
 function verificarStatusCbenef() {
-  const VERSAO_LABEL = 'v20260313';
-  const DATA_LABEL = '26/02/2026';
-  const box = document.getElementById('status-cbenef-box');
-  const icon = document.getElementById('status-cbenef-icon');
+  const box   = document.getElementById('status-cbenef-box');
+  const icon  = document.getElementById('status-cbenef-icon');
   const texto = document.getElementById('status-cbenef-texto');
-  const sub = document.getElementById('status-cbenef-sub');
+  const sub   = document.getElementById('status-cbenef-sub');
   if (!box) return;
   box.style.borderColor = 'rgba(52,211,153,.3)';
-  box.style.background = 'rgba(52,211,153,.05)';
-  icon.textContent = '🟢';
-  texto.style.color = '#34d399';
-  texto.textContent = 'Tabela ' + VERSAO_LABEL + ' carregada — ' + CBENEF_SP.length + ' códigos vigentes';
-  sub.textContent = 'Base: portal.fazenda.sp.gov.br · Publicada em ' + DATA_LABEL + ' · Verifique manualmente se houve nova versão';
+  box.style.background  = 'rgba(52,211,153,.05)';
+  icon.textContent      = '🟢';
+  texto.style.color     = '#34d399';
+  texto.textContent     = 'Tabela ' + VERSAO_LABEL + ' carregada — ' + CBENEF_SP.length + ' códigos vigentes';
+  sub.textContent       = 'Última atualização do portal: ' + DATA_LABEL + ' · Verifique se há nova versão diretamente na SEFAZ-SP pelo botão ao lado';
 }
 
 // ============ INIT — CHANGE 4 (loading spinner) ============
