@@ -54,7 +54,7 @@ body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text);min-
 .process-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
 .process-header{padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .15s}
 .process-header:hover{background:rgba(255,255,255,.03)}
-.process-num{width:32px;height:32px;border-radius:8px;background:rgba(26,107,204,.3);border:1px solid rgba(26,107,204,.4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--cyan);flex-shrink:0}
+.process-num{width:44px;height:44px;min-width:44px;border-radius:8px;background:rgba(26,107,204,.3);border:1px solid rgba(26,107,204,.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cyan);flex-shrink:0;white-space:nowrap;letter-spacing:-.3px}
 .process-header h4{font-size:14px;font-weight:600;flex:1}
 .process-header .menu-tag{font-size:10px;font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);padding:3px 8px;border-radius:4px}
 .process-body{padding:0 20px 20px 20px;display:none}.process-body.open{display:block}
@@ -195,6 +195,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
   <div class="nav-item" onclick="showSection('validador')"><span class="icon">🔍</span>Validador cBenef</div>
   <div class="nav-item" onclick="showSection('nfenfce')"><span class="icon">📋</span>Regras NF-e x NFC-e</div>
   <div class="nav-item" onclick="showSection('ibscbs')"><span class="icon">🌎</span>Reforma Tributária IBS/CBS</div>
+  <div class="nav-item" onclick="showSection('cclasstrib')"><span class="icon">🧩</span>cClassTrib IBS/CBS</div>
   <div class="nav-item" onclick="showSection('nfsenacional')"><span class="icon">📄</span>NFS-e Nacional</div>
   <div class="nav-item" onclick="showSection('exclusaost')"><span class="icon">⚠️</span>Exclusão ST — SP 2026</div>
   <div class="nav-section">Suporte</div>
@@ -251,6 +252,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div class="card" onclick="showSection('validador')"><div class="card-icon">🔍</div><h3>Validador cBenef SP</h3><p>Consulte e valide códigos cBenef contra a tabela oficial SEFAZ-SP v20260313.</p><div class="card-arrow" style="color:#00c4e8">↗</div></div>
       <div class="card" onclick="showSection('nfenfce')"><div class="card-icon">📋</div><h3>Regras NF-e x NFC-e</h3><p>CSTs que bloqueiam a emissão de NFC-e. Evite rejeições SEFAZ por documento incorreto.</p><div class="card-arrow" style="color:#f59e0b">↗</div></div>
       <div class="card" onclick="showSection('ibscbs')"><div class="card-icon">🌎</div><h3>Reforma Tributária IBS/CBS</h3><p>O que muda com a reforma tributária e o impacto na emissão de notas fiscais.</p><div class="card-arrow" style="color:#34d399">↗</div></div>
+      <div class="card" onclick="showSection('cclasstrib')"><div class="card-icon">🧩</div><h3>cClassTrib IBS/CBS</h3><p>Tabela completa de Classificação Tributária do IBS e CBS. Todos os 140+ códigos consultáveis.</p><div class="card-arrow" style="color:#c084fc">↗</div></div>
       <div class="card" onclick="showSection('nfsenacional')"><div class="card-icon">📄</div><h3>NFS-e Nacional</h3><p>Configurações para emissão de NFS-e no padrão nacional. NBS, cClassTrib e IBS/CBS.</p><div class="card-arrow" style="color:#a78bfa">↗</div></div>
       <div class="card" onclick="showSection('exclusaost')"><div class="card-icon">⚠️</div><h3>Exclusão ST — SP 2026</h3><p>Produtos excluídos da Substituição Tributária em SP e o que ajustar no Infinity.</p><div class="card-arrow" style="color:#f87171">↗</div></div>
       <div class="card" onclick="showSection('baseconhecimento')"><div class="card-icon">🧠</div><h3>Base de Conhecimento</h3><p>Casos reais de suporte documentados com causa, diagnóstico e solução.</p><div class="card-arrow" style="color:#a78bfa">↗</div></div>
@@ -469,6 +471,177 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
           <tr><td><span class="module-pill pill-fat">Venda – Pedidos</span></td><td><span style="color:var(--accent)">→</span></td><td><span class="module-pill pill-estoque">Expedição</span></td><td>Pedidos disponíveis para separação</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+
+  <!-- CCLASSTRIB -->
+  <div class="section" id="sec-cclasstrib">
+    <div class="module-header">
+      <div class="module-icon" style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3)">🧩</div>
+      <div>
+        <h2>cClassTrib — Classificação Tributária IBS/CBS <span class="module-update-tag">↻ Mar/2026</span></h2>
+        <p>Código de Classificação Tributária do IBS e da CBS. Obrigatório nos documentos fiscais eletrônicos a partir de 2026, conforme LC 214/2025 e Informe Técnico RT 2025.002.</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;padding:12px 16px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px"><span style="font-size:13px;color:var(--text2)">Quer entender a Reforma Tributária e o contexto do IBS/CBS?</span><button onclick="showSection('ibscbs')" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:#6ee7b7;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🌎 Ver Reforma Tributária →</button></div>
+
+    <!-- STATUS VERSÃO TABELA -->
+    <div style="margin-bottom:20px;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="cct-status-dot" style="width:10px;height:10px;border-radius:50%;background:#34d399;flex-shrink:0"></div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Tabela embutida neste portal</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Versão <strong id="cct-versao-local" style="color:var(--cyan)">IT RT 2025.002 v1.31 — 154 códigos</strong> · Fonte: Portal SVRS / NF-e</div>
+        </div>
+      </div>
+      <a href="https://dfe-portal.svrs.rs.gov.br/Cff/ClassificacaoTributaria" target="_blank" style="background:rgba(0,196,232,.08);border:1px solid rgba(0,196,232,.25);color:var(--cyan);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap">🔗 Verificar tabela oficial →</a>
+    </div>
+    <!-- ALERTA -->
+    <div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.3);border-radius:12px;padding:20px 24px;margin-bottom:28px">
+      <div style="font-size:13px;font-weight:700;color:#c084fc;margin-bottom:8px">🧩 O que é o cClassTrib?</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7">
+        O <strong style="color:var(--text)">cClassTrib</strong> é o Código de Classificação Tributária do IBS e da CBS, introduzido pela <strong style="color:var(--text)">LC 214/2025</strong>. 
+        É preenchido a nível de item na NF-e, NFC-e, NFS-e, CT-e e demais DF-e, identificando o tratamento tributário de cada produto ou serviço dentro do novo regime da Reforma Tributária.<br><br>
+        <strong style="color:var(--text)">Composição:</strong> 6 dígitos — os 3 primeiros são idênticos ao CST-IBS/CBS, e os 3 últimos detalham a subclassificação da operação.<br>
+        <strong style="color:var(--text)">Exemplo:</strong> <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:2px 8px;border-radius:6px">200003</span> = CST 200 (Alíquota Reduzida) + detalhamento 003 (Alimentação humana — Anexo I)
+      </div>
+    </div>
+
+    <!-- CST TABLE -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">📋 CST-IBS/CBS — Grupos de Situação Tributária</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Os 3 primeiros dígitos do cClassTrib correspondem ao CST-IBS/CBS</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">CST</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Descrição</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Tipo</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">000</td><td style="padding:8px 14px;border:1px solid var(--border)">Tributação Integral</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Tributado</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">010/011</td><td style="padding:8px 14px;border:1px solid var(--border)">Tributação com Alíquotas Uniformes</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(239,68,68,.12);color:#f87171;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Tributado</span></td></tr>
+          <tr><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">200</td><td style="padding:8px 14px;border:1px solid var(--border)">Alíquota Reduzida</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Reduzido</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">220/221/222</td><td style="padding:8px 14px;border:1px solid var(--border)">Alíquota Fixa / Redução de BC</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(245,158,11,.12);color:#fbbf24;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Reduzido</span></td></tr>
+          <tr><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">400/410</td><td style="padding:8px 14px;border:1px solid var(--border)">Isenção / Imunidade e Não Incidência</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(52,211,153,.12);color:#6ee7b7;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Isento/Imune</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">510/515</td><td style="padding:8px 14px;border:1px solid var(--border)">Diferimento</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(96,165,250,.12);color:#93c5fd;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Diferido</span></td></tr>
+          <tr><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">550</td><td style="padding:8px 14px;border:1px solid var(--border)">Suspensão</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(96,165,250,.12);color:#93c5fd;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Suspenso</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">620</td><td style="padding:8px 14px;border:1px solid var(--border)">Tributação Monofásica</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(251,146,60,.12);color:#fb923c;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Monofásico</span></td></tr>
+          <tr><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">800/810/811</td><td style="padding:8px 14px;border:1px solid var(--border)">Transferência de Crédito / Ajustes</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(148,163,184,.12);color:#94a3b8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Ajuste</span></td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px">820/830</td><td style="padding:8px 14px;border:1px solid var(--border)">Tributação em Documento Específico / Exclusão da BC</td><td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="background:rgba(148,163,184,.12);color:#94a3b8;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">Especial</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- GUIA CONFIGURAÇÃO INFINITY -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">⚙️ Como configurar no Infinity</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-top:10px;margin-bottom:14px">
+        O cClassTrib é configurado dentro do cadastro de <strong style="color:var(--text)">Tributação</strong>, na seção de IBS/CBS. Siga os passos:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div style="display:flex;gap:12px;align-items:flex-start;background:rgba(0,196,232,.05);border:1px solid rgba(0,196,232,.15);border-radius:10px;padding:14px 16px">
+          <span style="background:rgba(0,196,232,.15);color:var(--cyan);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">1</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Acessar o cadastro de Tributação</div>
+            <div style="font-size:12px;color:var(--text2);font-family:monospace;margin-bottom:6px">Cadastros › Produto › Tributação</div>
+            <div style="font-size:13px;color:var(--text3)">Localizar a tributação já existente ou criar uma nova específica para as operações com IBS/CBS.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;background:rgba(0,196,232,.05);border:1px solid rgba(0,196,232,.15);border-radius:10px;padding:14px 16px">
+          <span style="background:rgba(0,196,232,.15);color:var(--cyan);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">2</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Preencher o CST-IBS/CBS</div>
+            <div style="font-size:13px;color:var(--text3)">Selecionar o Código de Situação Tributária conforme a natureza da operação — ex: <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">000</span> tributado integral, <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">200</span> alíquota reduzida, <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">410</span> imunidade/não incidência. O CST determina quais cClassTrib estarão disponíveis.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-start;background:rgba(0,196,232,.05);border:1px solid rgba(0,196,232,.15);border-radius:10px;padding:14px 16px">
+          <span style="background:rgba(0,196,232,.15);color:var(--cyan);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">3</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Selecionar o cClassTrib</div>
+            <div style="font-size:13px;color:var(--text3)">Após informar o CST, o campo cClassTrib é filtrado automaticamente mostrando apenas os códigos compatíveis com aquele CST. Selecionar o código que corresponde à situação específica do produto ou serviço — ex: para venda normal tributada usar <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">000001</span>.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:14px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text3);line-height:1.6">
+        💡 <strong style="color:#fbbf24">Dica:</strong> Para a maioria das operações tributadas normalmente use <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">CST 000 + cClassTrib 000001</span>. O sistema busca a tributação na ordem <strong style="color:var(--text)">Operação → Produto → NCM</strong> — o primeiro nível configurado prevalece. Para situações com benefícios fiscais, isenções ou regimes especiais, orientar o cliente a consultar o contador responsável.
+      </div>
+      <div style="margin-top:10px;padding:12px 16px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <span style="font-size:12px;color:var(--text2)">📄 Emite <strong style="color:var(--text)">NFS-e</strong>? Há um campo adicional obrigatório — o <strong style="color:#c084fc">cIndOp</strong> (Indicador de Operação).</span>
+        <button onclick="showSection('nfsenacional')" style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:#c084fc;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">📄 Ver configuração NFS-e →</button>
+      </div>
+    </div>
+
+    <!-- VALIDADOR -->
+    <div class="detail-block" style="margin-bottom:24px">
+      <div class="detail-label">🔍 Consultar cClassTrib</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <input type="text" id="cct-search" placeholder="Digite o código (ex: 200003) ou palavra-chave..." 
+          style="flex:1;min-width:220px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);font-family:inherit"
+          oninput="filterCClassTrib(this.value)">
+        <select id="cct-cst-filter" onchange="filterCClassTrib(document.getElementById('cct-search').value)"
+          style="background:var(--navy2,#1e293b);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);font-family:inherit;color-scheme:dark">
+          <option value="">Todos os CST</option>
+          <option value="000">000 - Tributação Integral</option>
+          <option value="010">010/011 - Alíquotas Uniformes</option>
+          <option value="200">200 - Alíquota Reduzida</option>
+          <option value="220">220/221/222 - Alíquota Fixa</option>
+          <option value="400">400/410 - Isenção/Imunidade</option>
+          <option value="510">510/515 - Diferimento</option>
+          <option value="550">550 - Suspensão</option>
+          <option value="620">620 - Monofásico</option>
+          <option value="800">800/810/811 - Ajustes</option>
+          <option value="820">820/830 - Especial</option>
+        </select>
+        <span id="cct-count" style="font-size:12px;color:var(--text2);white-space:nowrap"></span>
+      </div>
+      <div id="cct-results" style="max-height:420px;overflow-y:auto;border:1px solid var(--border);border-radius:10px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead style="position:sticky;top:0;z-index:1">
+            <tr style="background:var(--navy3)">
+              <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600;width:100px">Código</th>
+              <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600;width:60px">CST</th>
+              <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Descrição</th>
+              <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600;width:100px">Tipo</th>
+            </tr>
+          </thead>
+          <tbody id="cct-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="detail-block">
+      <div class="detail-label">❓ Dúvidas frequentes</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">
+        <div style="background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:6px">Qual a diferença entre CST-IBS/CBS e cClassTrib?</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">O CST é o código de 3 dígitos que define o regime de tributação (tributado, isento, diferido, etc.). O cClassTrib é o detalhamento — seus 3 primeiros dígitos são iguais ao CST, e os 3 finais identificam a situação específica dentro daquele regime. Todo cClassTrib está vinculado a um CST.</div>
+        </div>
+        <div style="background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:6px">Onde é configurado no Infinity?</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">O campo cClassTrib é configurado no cadastro de Tributação do produto, dentro das configurações de IBS/CBS. Seguindo a mesma hierarquia de busca do sistema — Operação → Produto → NCM.</div>
+        </div>
+        <div style="background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:6px">Simples Nacional precisa preencher o cClassTrib?</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">Para empresas do Simples Nacional e MEI, a obrigatoriedade está prevista para 2027, não 2026. No entanto, se a empresa receber notas de regime normal que precisem ser devolvidas, o campo já precisará estar implementado no sistema.</div>
+        </div>
+        <div style="background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:6px">A tabela muda com frequência?</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">Sim. A tabela é publicada via Informe Técnico RT 2025.002 e já passou por diversas versões (1.00, 1.10, 1.21, 1.30, 1.31). Novos códigos podem ser adicionados e existentes podem ser alterados. O portal da NF-e e o Portal SVRS são as fontes oficiais.</div>
+        </div>
+        <div style="background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:6px">Qual cClassTrib usar para venda de mercadoria tributada normalmente?</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">Para operações tributadas integralmente pelo IBS e CBS sem nenhum benefício específico, o código é <span style="font-family:monospace;background:rgba(168,85,247,.1);padding:1px 6px;border-radius:4px">000001</span> — Situações tributadas integralmente pelo IBS e CBS.</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -997,21 +1170,128 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div class="module-icon" style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3)">🌎</div>
       <div><h2>Reforma Tributária — IBS e CBS <span class="module-update-tag">↻ Mar/2026</span></h2><p>Entenda o que muda com a Reforma Tributária e como isso impacta a emissão de documentos fiscais no dia a dia.</p></div>
     </div>
-    <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:20px 24px;margin-bottom:28px">
-      <div style="font-size:13px;font-weight:700;color:#34d399;margin-bottom:8px">💡 Em linguagem simples</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.7">A Reforma Tributária está substituindo vários impostos antigos por dois novos impostos unificados: o <strong style="color:var(--text)">IBS</strong> e o <strong style="color:var(--text)">CBS</strong>.</div>
+
+    <!-- ALERTA SITUAÇÃO ATUAL -->
+    <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:18px 22px;margin-bottom:24px">
+      <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:8px">⚡ Situação atual — 2026 é o ano de testes</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7">
+        A partir de <strong style="color:var(--text)">1º de janeiro de 2026</strong>, os campos de IBS e CBS passaram a ser <strong style="color:var(--text)">obrigatórios nas NF-e e NFC-e</strong> para empresas do Lucro Real e Presumido. Porém, a validação de rejeição automática foi suspensa sem prazo definido (Nota Técnica 1.33) — na prática, notas sem o preenchimento ainda são autorizadas, mas a <strong style="color:var(--text)">obrigação legal permanece</strong>. Empresas que não preenchi­erem podem perder a dispensa de recolhimento e ficar sujeitas a penalidades futuras.
+      </div>
     </div>
+
+    <!-- O QUE É -->
     <div class="detail-block" style="margin-bottom:20px">
-      <div class="detail-label">🔄 O que está sendo substituído</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
-        <thead><tr style="background:var(--navy3)"><th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Imposto Antigo</th><th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Substituto</th><th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Quem administra</th></tr></thead>
+      <div class="detail-label">💡 O que é a Reforma Tributária do Consumo</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-top:10px">
+        A <strong style="color:var(--text)">Emenda Constitucional 132/2023</strong> e a <strong style="color:var(--text)">Lei Complementar 214/2025</strong> criaram dois novos tributos sobre o consumo que vão substituir progressivamente ICMS, ISS, PIS e COFINS:
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:12px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Novo Tributo</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Substitui</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Quem administra</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Sigla</th>
+        </tr></thead>
         <tbody>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">ICMS / ISS</td><td style="padding:9px 14px;border:1px solid var(--border)"><span style="color:#34d399;font-weight:600">IBS</span></td><td style="padding:9px 14px;border:1px solid var(--border)">Estados e Municípios</td></tr>
-          <tr><td style="padding:9px 14px;border:1px solid var(--border)">PIS / COFINS</td><td style="padding:9px 14px;border:1px solid var(--border)"><span style="color:#00c4e8;font-weight:600">CBS</span></td><td style="padding:9px 14px;border:1px solid var(--border)">União Federal</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:#34d399">IBS</td><td style="padding:9px 14px;border:1px solid var(--border)">ICMS + ISS</td><td style="padding:9px 14px;border:1px solid var(--border)">Estados e Municípios (Comitê Gestor)</td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Imposto sobre Bens e Serviços</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:#00c4e8">CBS</td><td style="padding:9px 14px;border:1px solid var(--border)">PIS + COFINS</td><td style="padding:9px 14px;border:1px solid var(--border)">União Federal (Receita Federal)</td><td style="padding:9px 14px;border:1px solid var(--border);font-size:12px;color:var(--text2)">Contribuição sobre Bens e Serviços</td></tr>
         </tbody>
       </table>
     </div>
-    <div class="detail-block"><div class="detail-label">📅 Cronograma</div><ul class="detail-list"><li><strong>2026:</strong> Fase de testes. Alíquotas simbólicas de IBS e CBS.</li><li><strong>2027:</strong> CBS plena. PIS/COFINS extintos.</li><li><strong>2029–2032:</strong> Transição progressiva do ICMS e ISS para IBS.</li><li><strong>2033:</strong> Conclusão — IBS e CBS em pleno funcionamento.</li></ul></div>
+
+    <!-- CRONOGRAMA -->
+    <div class="detail-block" style="margin-bottom:20px">
+      <div class="detail-label">📅 Cronograma da transição</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="background:rgba(245,158,11,.15);color:#fbbf24;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap;min-width:44px;text-align:center">2026</span>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6"><strong style="color:var(--text)">Fase piloto.</strong> IBS e CBS obrigatórios nos documentos fiscais com alíquotas simbólicas (IBS 0,1% + CBS 0,9%). Sem recolhimento efetivo — valores compensados com PIS/COFINS. Simples Nacional e MEI dispensados neste ano.</div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="background:rgba(96,165,250,.15);color:#93c5fd;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap;min-width:44px;text-align:center">2027</span>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6"><strong style="color:var(--text)">CBS plena. PIS e COFINS extintos.</strong> Simples Nacional passa a destacar IBS e CBS. Alíquotas de transição do ICMS/ISS iniciam progressivamente.</div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="background:rgba(168,85,247,.15);color:#c084fc;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap;min-width:44px;text-align:center">2029–32</span>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6"><strong style="color:var(--text)">Transição progressiva.</strong> ICMS e ISS são gradualmente reduzidos enquanto o IBS aumenta proporcionalmente.</div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <span style="background:rgba(52,211,153,.15);color:#34d399;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;white-space:nowrap;min-width:44px;text-align:center">2033</span>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6"><strong style="color:var(--text)">Conclusão.</strong> IBS e CBS em pleno funcionamento. ICMS e ISS extintos.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOVOS CAMPOS NF-e -->
+    <div class="detail-block" style="margin-bottom:20px">
+      <div class="detail-label">📄 Novos campos obrigatórios nos documentos fiscais</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7;margin-top:10px;margin-bottom:12px">Os campos são informados a nível de item (por produto/serviço) no Grupo UB da NF-e, NFC-e, CT-e, NFS-e e demais DF-e:</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy3)">
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Campo</th>
+          <th style="padding:10px 14px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Descrição</th>
+          <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600;width:80px">Dígitos</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:monospace;font-weight:600;color:#00c4e8">CST-IBS/CBS</td><td style="padding:9px 14px;border:1px solid var(--border)">Código de Situação Tributária — identifica o regime de tributação (tributado, isento, diferido, monofásico, etc.)</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center;font-weight:600">3</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:monospace;font-weight:600;color:#c084fc">cClassTrib</td><td style="padding:9px 14px;border:1px solid var(--border)">Código de Classificação Tributária — detalhamento do CST, vinculado a um dispositivo específico da LC 214/2025</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center;font-weight:600">6</td></tr>
+          <tr><td style="padding:9px 14px;border:1px solid var(--border);font-family:monospace;font-weight:600;color:#fbbf24">pRedIBS / pRedCBS</td><td style="padding:9px 14px;border:1px solid var(--border)">Percentuais de redução de alíquota do IBS e da CBS quando aplicáveis</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center;font-weight:600">—</td></tr>
+          <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-family:monospace;font-weight:600;color:#6ee7b7">vIBS / vCBS</td><td style="padding:9px 14px;border:1px solid var(--border)">Valores calculados do IBS e da CBS por item</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center;font-weight:600">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- QUEM É OBRIGADO -->
+    <div class="detail-block" style="margin-bottom:20px">
+      <div class="detail-label">👥 Quem é obrigado e quando</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 16px">
+          <div style="font-size:12px;font-weight:700;color:#f87171;margin-bottom:8px">📌 A partir de jan/2026</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">Lucro Real e Lucro Presumido obrigados a informar IBS e CBS nas NF-e, NFC-e e demais DF-e.</div>
+        </div>
+        <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:14px 16px">
+          <div style="font-size:12px;font-weight:700;color:#34d399;margin-bottom:8px">📌 A partir de 2027</div>
+          <div style="font-size:13px;color:var(--text3);line-height:1.6">Simples Nacional e MEI passam a destacar IBS e CBS. Em 2026 estão dispensados do destaque.</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">⚠️ Atenção — dispensa de penalidades</div>
+        <div style="font-size:13px;color:var(--text3);line-height:1.6">Não haverá aplicação de penalidades até o primeiro dia do quarto mês subsequente à publicação da parte comum dos regulamentos do IBS e da CBS. Contudo, a <strong style="color:var(--text)">obrigação legal de preencher os campos permanece vigente</strong> — empresas que não preencherem podem perder a dispensa do recolhimento.</div>
+      </div>
+    </div>
+
+    <!-- IMPACTO PRÁTICO -->
+    <div class="detail-block" style="margin-bottom:20px">
+      <div class="detail-label">🔧 Impacto prático no Infinity</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);line-height:1.6">
+          <span style="color:#34d399;font-size:15px;flex-shrink:0">✔</span>
+          <span>Novos campos no cadastro de <strong style="color:var(--text)">Tributação</strong>: CST-IBS/CBS e cClassTrib por produto/serviço.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);line-height:1.6">
+          <span style="color:#34d399;font-size:15px;flex-shrink:0">✔</span>
+          <span>O campo <strong style="color:var(--text)">cClassTrib</strong> é filtrado automaticamente conforme o CST selecionado.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);line-height:1.6">
+          <span style="color:#34d399;font-size:15px;flex-shrink:0">✔</span>
+          <span>O sistema calcula e preenche automaticamente os valores de IBS e CBS nos itens da nota.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);line-height:1.6">
+          <span style="color:#fbbf24;font-size:15px;flex-shrink:0">⚠</span>
+          <span>É necessário que a <strong style="color:var(--text)">tributação de cada produto esteja configurada corretamente</strong> com CST e cClassTrib antes da emissão.</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text3);line-height:1.6">
+          <span style="color:#fbbf24;font-size:15px;flex-shrink:0">⚠</span>
+          <span>Clientes do <strong style="color:var(--text)">Simples Nacional</strong> devem aguardar 2027 — não é necessário configurar agora.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINK CRUZADO -->
+    <div style="margin-top:20px;padding:14px 18px;background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.25);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span style="font-size:13px;color:var(--text2)">Precisa consultar os códigos cClassTrib?</span>
+      <button onclick="showSection('cclasstrib')" style="background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#c084fc;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🧩 Ir para cClassTrib →</button>
+    </div>
   </div>
 
   <!-- NFS-e NACIONAL -->
@@ -1024,8 +1304,9 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
     <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">2</div><div style="flex:1"><h4>Cadastro de Empresas</h4><span class="menu-tag">Cadastros › Pessoas › Empresas</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">Tipo Regime Especial</div><div class="detail-text">Na maioria dos casos o valor será <strong>Nenhum</strong>. Preencher apenas se a empresa se enquadrar em: Ato Cooperado, Estimativa, Microempresa Municipal, Notário ou Registrador, Profissional Autônomo ou Sociedade de Profissionais.</div></div></div></div>
     <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">3</div><div style="flex:1"><h4>Cadastro de NBS</h4><span class="menu-tag">Cadastros › Produtos › NBS</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">O que é a NBS</div><div class="detail-text">A <strong>Nomenclatura Brasileira de Serviços (NBS)</strong> é a classificação padronizada que identifica os serviços prestados. Campo obrigatório na NFS-e Nacional. O cadastro já vem pré-carregado com dados oficiais do governo.</div></div></div></div>
     <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">4</div><div style="flex:1"><h4>Classificação Tributária (cClassTrib)</h4><span class="menu-tag">Cadastros › Produtos › Classificação Tributária</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">Estrutura do código</div><div class="detail-text">6 dígitos: os 3 primeiros = CST, os 3 últimos = código complementar. Informar apenas os números inteiros, sem zeros à esquerda. O cadastro já vem pré-carregado. As opções são filtradas automaticamente conforme a CST selecionada na tributação.</div></div></div></div>
-    <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">5</div><div style="flex:1"><h4>Configuração da Tributação IBS/CBS</h4><span class="menu-tag">Cadastros › Produtos › Tributação</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">O que configurar</div><ul class="detail-list"><li><strong>CST:</strong> código de situação tributária do serviço.</li><li><strong>cClassTrib:</strong> carregada automaticamente conforme a CST selecionada.</li><li><strong>CIndOp:</strong> indica onde o serviço foi prestado. Selecionar conforme o local de execução — serviços executados na sede do prestador (ex: cromagem, manutenção): estabelecimento do fornecedor. Serviços executados no endereço do tomador (ex: instalação de painel solar): endereço do adquirente.</li></ul></div></div></div>
-    <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">6</div><div style="flex:1"><h4>Configuração do Produto</h4><span class="menu-tag">Cadastros › Produtos › Produtos</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">Dados Fiscais</div><div class="detail-text">Informar o código <strong>NBS</strong> correspondente ao serviço.</div></div><div class="detail-block" style="margin-top:12px"><div class="detail-label">Tributações</div><ul class="detail-list"><li><strong>UF:</strong> estado de incidência.</li><li><strong>Consumo:</strong> Sim para pessoa física consumidor final / Não para empresa ou profissional que utiliza o serviço na sua atividade.</li><li><strong>Tributação:</strong> selecionar a tributação configurada.</li></ul><div class="detail-text" style="margin-top:8px">A tributação é selecionada pelo sistema seguindo esta ordem de prioridade: primeiro verifica a operação da venda, depois se o produto possui tributação informada diretamente, e por último se o NCM do produto possui tributação vinculada.</div></div></div></div>
+    <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">5</div><div style="flex:1"><h4>Configuração da Tributação IBS/CBS</h4><span class="menu-tag">Cadastros › Produto › Tributação</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">O que configurar</div><ul class="detail-list"><li><strong>CST:</strong> código de situação tributária do serviço.</li><li><strong>cClassTrib:</strong> carregada automaticamente conforme a CST selecionada.</li><li><strong>cIndOp:</strong> Indicador de Operação — define onde o serviço foi prestado para fins de incidência do IBS e CBS. Campo obrigatório na NFS-e a partir de 2026. Ver detalhes no passo 6.</li></ul></div></div></div>
+    <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">6</div><div style="flex:1"><h4>cIndOp — Indicador de Operação</h4><span class="menu-tag">Cadastros › Produto › Tributação</span><span style="background:rgba(167,139,250,.15);color:#c084fc;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;margin-left:8px">Exclusivo NFS-e</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">O que é</div><div class="detail-text">O <strong>cIndOp</strong> (Indicador de Operação) define o local onde o serviço foi prestado, determinando qual município tem competência para receber o IBS. É obrigatório exclusivamente na <strong>NFS-e</strong> — não se aplica a NF-e ou NFC-e de produtos.</div></div><div class="detail-block" style="margin-top:12px"><div class="detail-label">Como preencher</div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px"><thead><tr style="background:var(--navy3)"><th style="padding:8px 12px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Situação</th><th style="padding:8px 12px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Indicador</th><th style="padding:8px 12px;text-align:left;border:1px solid var(--border);color:var(--text2);font-weight:600">Exemplo</th></tr></thead><tbody><tr><td style="padding:8px 12px;border:1px solid var(--border)">Serviço executado na sede do prestador</td><td style="padding:8px 12px;border:1px solid var(--border);color:#34d399;font-weight:600">Estabelecimento do fornecedor</td><td style="padding:8px 12px;border:1px solid var(--border);font-size:11px;color:var(--text2)">Manutenção em oficina, cromagem</td></tr><tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 12px;border:1px solid var(--border)">Serviço executado no endereço do cliente</td><td style="padding:8px 12px;border:1px solid var(--border);color:#34d399;font-weight:600">Endereço do adquirente</td><td style="padding:8px 12px;border:1px solid var(--border);font-size:11px;color:var(--text2)">Instalação de painel solar, pintura no imóvel</td></tr><tr><td style="padding:8px 12px;border:1px solid var(--border)">Serviço prestado sobre bem imóvel</td><td style="padding:8px 12px;border:1px solid var(--border);color:#34d399;font-weight:600">Relacionada a bem imóvel</td><td style="padding:8px 12px;border:1px solid var(--border);font-size:11px;color:var(--text2)">Locação, incorporação, administração imobiliária</td></tr><tr style="background:rgba(255,255,255,.02)"><td style="padding:8px 12px;border:1px solid var(--border)">Serviço prestado fisicamente sobre pessoa</td><td style="padding:8px 12px;border:1px solid var(--border);color:#34d399;font-weight:600">Endereço do destinatário</td><td style="padding:8px 12px;border:1px solid var(--border);font-size:11px;color:var(--text2)">Consulta médica, serviço de beleza</td></tr></tbody></table></div><div style="margin-top:12px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text3);line-height:1.5">💡 O cIndOp determina para qual município o IBS é recolhido. Uma empresa de SP prestando serviço fisicamente em Araçatuba recolhe o IBS para Araçatuba, não para SP.</div></div></div>
+    <div class="process-card"><div class="process-header" onclick="toggleProcess(this)"><div class="process-num">7</div><div style="flex:1"><h4>Configuração do Produto</h4><span class="menu-tag">Cadastros › Produtos › Produtos</span></div><span class="process-chevron">▾</span></div><div class="process-body"><div class="detail-block"><div class="detail-label">Dados Fiscais</div><div class="detail-text">Informar o código <strong>NBS</strong> correspondente ao serviço.</div></div><div class="detail-block" style="margin-top:12px"><div class="detail-label">Tributações</div><ul class="detail-list"><li><strong>UF:</strong> estado de incidência da tributação. É possível cadastrar mais de uma linha — uma para Consumo <strong>Não</strong> (pessoa jurídica) e outra para Consumo <strong>Sim</strong> (pessoa física consumidor final), cada uma com sua tributação específica.</li><li><strong>Tributação:</strong> selecionar a tributação configurada.</li></ul><div class="detail-text" style="margin-top:8px">A tributação é selecionada pelo sistema seguindo esta ordem de prioridade: primeiro verifica a operação da venda, depois se o produto possui tributação informada diretamente, e por último se o NCM do produto possui tributação vinculada.</div></div></div></div>
   </div>
   <!-- EXCLUSÃO ST SP 2026 -->
   <div class="section" id="sec-exclusaost">
@@ -1351,7 +1632,7 @@ function showSection(id) {
     home:'Visão Geral', compras:'Módulo de Compras', faturamento:'Módulo de Faturamento',
     estoque:'Módulo de Estoque', financeiro:'Módulo Financeiro', contabil:'Integração Contábil',
     cbenef:'Tag cBenef', validador:'Validador cBenef SP', nfenfce:'NF-e x NFC-e',
-    ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional', exclusaost:'Exclusão ST — SP 2026',
+    ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional', exclusaost:'Exclusão ST — SP 2026', cclasstrib:'cClassTrib IBS/CBS',
     baseconhecimento:'Base de Conhecimento', checklist:'Checklist de Implantação',
     glossario:'Glossário Técnico', fluxogramas:'Fluxogramas', integracoes:'Mapa de Integrações'
   };
@@ -1747,6 +2028,7 @@ function globalSearch(val) {
   searchArray(CBENEF_SP,'validador','🔍','Validador cBenef',r=>[r.cod,r.desc,r.tipo,r.disp]);
   searchArray(CBENEF_REJEICOES,'cbenef','🏷️','Tag cBenef',r=>[r.title,r.causa,r.solucao,r.num]);
   searchArray(CBENEF_FAQ,'cbenef','🏷️','Tag cBenef — FAQ',r=>[r.title,r.solucao]);
+  searchArray(CCLASSTRIB_DATA,'cclasstrib','🧩','cClassTrib IBS/CBS',r=>[r.cod,r.desc,r.tipo,r.cst]);
   showSearchResults(val.trim(), results, q);
 }
 
@@ -1825,11 +2107,228 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCBenef('proc-cbenef-rejeicoes', CBENEF_REJEICOES);
     renderCBenef('proc-cbenef-faq', CBENEF_FAQ);
     renderChecklist(CHECKLIST_DATA);
+    renderCClassTrib();
     renderGlossary('');
     verificarStatusCbenef();
     initTermoAceite();
   }, 60);
 });
+
+// ===================== CCLASSTRIB =====================
+const CCLASSTRIB_DATA = [
+  {cod:"000001",cst:"000",desc:"Situações tributadas integralmente pelo IBS e CBS",tipo:"Tributado"},
+  {cod:"000002",cst:"000",desc:"Exploração de via",tipo:"Tributado"},
+  {cod:"000003",cst:"000",desc:"Regime automotivo - projetos incentivados (art. 311)",tipo:"Tributado"},
+  {cod:"000004",cst:"000",desc:"Regime automotivo - projetos incentivados (art. 312)",tipo:"Tributado"},
+  {cod:"010001",cst:"010",desc:"Operações do FGTS não realizadas pela Caixa Econômica Federal",tipo:"Uniforme"},
+  {cod:"010002",cst:"010",desc:"Operações do serviço financeiro",tipo:"Uniforme"},
+  {cod:"011001",cst:"011",desc:"Planos de assistência funerária",tipo:"Uniforme Red."},
+  {cod:"011002",cst:"011",desc:"Planos de assistência à saúde",tipo:"Uniforme Red."},
+  {cod:"011003",cst:"011",desc:"Intermediação de planos de assistência à saúde",tipo:"Uniforme Red."},
+  {cod:"011004",cst:"011",desc:"Concursos e prognósticos",tipo:"Uniforme Red."},
+  {cod:"011005",cst:"011",desc:"Planos de assistência à saúde de animais domésticos",tipo:"Uniforme Red."},
+  {cod:"200001",cst:"200",desc:"Serviços de transporte de bens até as zonas de processamento de exportação",tipo:"Reduzido"},
+  {cod:"200002",cst:"200",desc:"Fornecimento ou importação para produtor rural não contribuinte ou TAC",tipo:"Reduzido"},
+  {cod:"200003",cst:"200",desc:"Vendas de produtos destinados à alimentação humana (Anexo I)",tipo:"Reduzido"},
+  {cod:"200004",cst:"200",desc:"Fornecimento de dispositivos médicos (Anexo XII)",tipo:"Reduzido"},
+  {cod:"200005",cst:"200",desc:"Fornecimento de dispositivos médicos para órgãos da administração pública e entidades de saúde imunes",tipo:"Reduzido"},
+  {cod:"200006",cst:"200",desc:"Situação de emergência de saúde pública reconhecida pelo Poder público (Anexo XII)",tipo:"Reduzido"},
+  {cod:"200007",cst:"200",desc:"Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência (Anexo XIII)",tipo:"Reduzido"},
+  {cod:"200008",cst:"200",desc:"Fornecimento dos dispositivos de acessibilidade para pessoas com deficiência adquiridos por órgãos da administração pública",tipo:"Reduzido"},
+  {cod:"200009",cst:"200",desc:"Fornecimento dos medicamentos registrados na Anvisa",tipo:"Reduzido"},
+  {cod:"200010",cst:"200",desc:"Fornecimento dos medicamentos registrados na Anvisa, adquiridos por órgãos da administração pública",tipo:"Reduzido"},
+  {cod:"200011",cst:"200",desc:"Fornecimento das composições para nutrição enteral e parenteral quando adquiridas por órgãos da administração pública",tipo:"Reduzido"},
+  {cod:"200012",cst:"200",desc:"Situação de emergência de saúde pública reconhecida pelo Poder público",tipo:"Reduzido"},
+  {cod:"200013",cst:"200",desc:"Fornecimento de tampões higiênicos, absorventes higiênicos internos ou externos",tipo:"Reduzido"},
+  {cod:"200014",cst:"200",desc:"Fornecimento dos produtos hortícolas, frutas e ovos (Anexo XV)",tipo:"Reduzido"},
+  {cod:"200015",cst:"200",desc:"Venda de automóveis adquiridos por motoristas profissionais ou pessoas com deficiência",tipo:"Reduzido"},
+  {cod:"200016",cst:"200",desc:"Prestação de serviços de pesquisa e desenvolvimento por Instituição Científica, Tecnológica e de Inovação",tipo:"Reduzido"},
+  {cod:"200017",cst:"200",desc:"Operações relacionadas ao FGTS",tipo:"Reduzido"},
+  {cod:"200018",cst:"200",desc:"Operações de resseguro e retrocessão",tipo:"Reduzido"},
+  {cod:"200019",cst:"200",desc:"Importador dos serviços financeiros contribuinte",tipo:"Reduzido"},
+  {cod:"200020",cst:"200",desc:"Operação praticada por sociedades cooperativas optantes por regime específico do IBS e CBS",tipo:"Reduzido"},
+  {cod:"200021",cst:"200",desc:"Serviços de transporte público coletivo de passageiros ferroviário e hidroviário",tipo:"Reduzido"},
+  {cod:"200022",cst:"200",desc:"Operação originada fora da ZFM que destine bem material industrializado a contribuinte estabelecido na ZFM",tipo:"Reduzido"},
+  {cod:"200023",cst:"200",desc:"Operação realizada por indústria incentivada que destine bem material intermediário para outra indústria incentivada na ZFM",tipo:"Reduzido"},
+  {cod:"200024",cst:"200",desc:"Operação originada fora das Áreas de Livre Comércio destinadas a contribuinte estabelecido nas Áreas de Livre Comércio",tipo:"Reduzido"},
+  {cod:"200025",cst:"200",desc:"Fornecimento dos serviços de educação relacionados ao Programa Universidade para Todos (Prouni)",tipo:"Reduzido"},
+  {cod:"200026",cst:"200",desc:"Locação de imóveis localizados nas zonas reabilitadas",tipo:"Reduzido"},
+  {cod:"200027",cst:"200",desc:"Operações de locação, cessão onerosa e arrendamento de bens imóveis",tipo:"Reduzido"},
+  {cod:"200028",cst:"200",desc:"Fornecimento dos serviços de educação (Anexo II)",tipo:"Reduzido"},
+  {cod:"200029",cst:"200",desc:"Fornecimento dos serviços de saúde humana (Anexo III)",tipo:"Reduzido"},
+  {cod:"200030",cst:"200",desc:"Venda dos dispositivos médicos (Anexo IV)",tipo:"Reduzido"},
+  {cod:"200031",cst:"200",desc:"Fornecimento dos dispositivos de acessibilidade próprios para pessoas com deficiência (Anexo V)",tipo:"Reduzido"},
+  {cod:"200032",cst:"200",desc:"Fornecimento dos medicamentos registrados na Anvisa ou produzidos por farmácias de manipulação",tipo:"Reduzido"},
+  {cod:"200033",cst:"200",desc:"Fornecimento das composições para nutrição enteral e parenteral (Anexo VI)",tipo:"Reduzido"},
+  {cod:"200034",cst:"200",desc:"Fornecimento dos alimentos destinados ao consumo humano (Anexo VII)",tipo:"Reduzido"},
+  {cod:"200035",cst:"200",desc:"Fornecimento dos produtos de higiene pessoal e limpeza (Anexo VIII)",tipo:"Reduzido"},
+  {cod:"200036",cst:"200",desc:"Fornecimento de produtos agropecuários, aquícolas, pesqueiros, florestais e extrativistas vegetais in natura",tipo:"Reduzido"},
+  {cod:"200037",cst:"200",desc:"Fornecimento de serviços ambientais de conservação ou recuperação da vegetação nativa",tipo:"Reduzido"},
+  {cod:"200038",cst:"200",desc:"Fornecimento dos insumos agropecuários e aquícolas (Anexo IX)",tipo:"Reduzido"},
+  {cod:"200039",cst:"200",desc:"Fornecimento dos bens e serviços relacionados com produções nacionais artísticas, culturais, de eventos, jornalísticas e audiovisuais (Anexo X)",tipo:"Reduzido"},
+  {cod:"200040",cst:"200",desc:"Fornecimento de serviços de comunicação institucional à administração pública",tipo:"Reduzido"},
+  {cod:"200041",cst:"200",desc:"Fornecimento de serviço de educação desportiva",tipo:"Reduzido"},
+  {cod:"200042",cst:"200",desc:"Fornecimento de serviço de gestão e exploração do desporto",tipo:"Reduzido"},
+  {cod:"200043",cst:"200",desc:"Fornecimento à administração pública dos serviços e dos bens relativos à soberania (Anexo XI)",tipo:"Reduzido"},
+  {cod:"200044",cst:"200",desc:"Operações e prestações de serviços de segurança da informação e segurança cibernética",tipo:"Reduzido"},
+  {cod:"200045",cst:"200",desc:"Operações relacionadas a projetos de reabilitação urbana de zonas históricas",tipo:"Reduzido"},
+  {cod:"200046",cst:"200",desc:"Operações com bens imóveis",tipo:"Reduzido"},
+  {cod:"200047",cst:"200",desc:"Bares e Restaurantes",tipo:"Reduzido"},
+  {cod:"200048",cst:"200",desc:"Hotelaria, Parques de Diversão e Parques Temáticos",tipo:"Reduzido"},
+  {cod:"200049",cst:"200",desc:"Transporte coletivo de passageiros rodoviário, ferroviário e hidroviário",tipo:"Reduzido"},
+  {cod:"200050",cst:"200",desc:"Serviços de transporte aéreo regional coletivo de passageiros ou de carga",tipo:"Reduzido"},
+  {cod:"200051",cst:"200",desc:"Agências de Turismo",tipo:"Reduzido"},
+  {cod:"200052",cst:"200",desc:"Prestação de serviços de profissões intelectuais",tipo:"Reduzido"},
+  {cod:"200053",cst:"200",desc:"Fornecimento de medicamentos registrados na Anvisa, quando classificados como soros ou vacinas",tipo:"Reduzido"},
+  {cod:"220001",cst:"220",desc:"Incorporação imobiliária submetida ao regime especial de tributação",tipo:"Al. Fixa"},
+  {cod:"220002",cst:"220",desc:"Incorporação imobiliária submetida ao regime especial de tributação",tipo:"Al. Fixa"},
+  {cod:"220003",cst:"220",desc:"Alienação de imóvel decorrente de parcelamento do solo",tipo:"Al. Fixa"},
+  {cod:"221001",cst:"221",desc:"Locação, cessão onerosa ou arrendamento de bem imóvel com alíquota sobre a receita bruta",tipo:"Al. Fixa Prop."},
+  {cod:"222001",cst:"222",desc:"Transporte internacional de passageiros, caso os trechos de ida e volta sejam vendidos em conjunto",tipo:"Red. BC"},
+  {cod:"400001",cst:"400",desc:"Fornecimento de serviços de transporte público coletivo de passageiros rodoviário e metroviário",tipo:"Isento"},
+  {cod:"400002",cst:"400",desc:"Fornecimento de serviços de transporte público coletivo com medição por quilômetro rodado",tipo:"Isento"},
+  {cod:"410001",cst:"410",desc:"Fornecimento de bonificações quando constem no documento fiscal e que não dependam de evento posterior",tipo:"Imune/N.Inc."},
+  {cod:"410002",cst:"410",desc:"Transferências entre estabelecimentos pertencentes ao mesmo contribuinte",tipo:"Imune/N.Inc."},
+  {cod:"410003",cst:"410",desc:"Doações sem contraprestação em benefício do doador",tipo:"Imune/N.Inc."},
+  {cod:"410004",cst:"410",desc:"Exportações de bens e serviços",tipo:"Imune/N.Inc."},
+  {cod:"410005",cst:"410",desc:"Fornecimentos realizados pela União, pelos Estados, pelo DF e pelos Municípios",tipo:"Imune/N.Inc."},
+  {cod:"410006",cst:"410",desc:"Fornecimentos realizados por entidades religiosas e templos de qualquer culto",tipo:"Imune/N.Inc."},
+  {cod:"410007",cst:"410",desc:"Fornecimentos realizados por partidos políticos, entidades sindicais e instituições de educação e assistência social",tipo:"Imune/N.Inc."},
+  {cod:"410008",cst:"410",desc:"Fornecimentos de livros, jornais, periódicos e do papel destinado a sua impressão",tipo:"Imune/N.Inc."},
+  {cod:"410009",cst:"410",desc:"Fornecimentos de fonogramas e videofonogramas musicais produzidos no Brasil",tipo:"Imune/N.Inc."},
+  {cod:"410010",cst:"410",desc:"Fornecimentos de serviço de comunicação nas modalidades de radiodifusão sonora e de sons e imagens de recepção livre e gratuita",tipo:"Imune/N.Inc."},
+  {cod:"410011",cst:"410",desc:"Fornecimentos de ouro, quando definido em lei como ativo financeiro ou instrumento cambial",tipo:"Imune/N.Inc."},
+  {cod:"410012",cst:"410",desc:"Fornecimento de condomínio edilício não optante pelo regime regular",tipo:"Imune/N.Inc."},
+  {cod:"410013",cst:"410",desc:"Exportações de combustíveis",tipo:"Imune/N.Inc."},
+  {cod:"410014",cst:"410",desc:"Fornecimento de produtor rural não contribuinte",tipo:"Imune/N.Inc."},
+  {cod:"410015",cst:"410",desc:"Fornecimento por transportador autônomo não contribuinte",tipo:"Imune/N.Inc."},
+  {cod:"410016",cst:"410",desc:"Fornecimento ou aquisição de resíduos sólidos",tipo:"Imune/N.Inc."},
+  {cod:"410017",cst:"410",desc:"Aquisição de bem móvel com crédito presumido sob condição de revenda realizada",tipo:"Imune/N.Inc."},
+  {cod:"410018",cst:"410",desc:"Operações relacionadas aos fundos garantidores e executores de políticas públicas",tipo:"Imune/N.Inc."},
+  {cod:"410019",cst:"410",desc:"Exclusão da gorjeta na base de cálculo no fornecimento de alimentação",tipo:"Imune/N.Inc."},
+  {cod:"410020",cst:"410",desc:"Exclusão do valor de intermediação na base de cálculo no fornecimento de alimentação",tipo:"Imune/N.Inc."},
+  {cod:"410021",cst:"410",desc:"Contribuição de que trata o art. 149-A da Constituição Federal",tipo:"Imune/N.Inc."},
+  {cod:"410022",cst:"410",desc:"Consolidação da propriedade do bem pelo credor",tipo:"Imune/N.Inc."},
+  {cod:"410023",cst:"410",desc:"Alienação de bens móveis ou imóveis objeto de garantia em que o prestador não seja contribuinte",tipo:"Imune/N.Inc."},
+  {cod:"410024",cst:"410",desc:"Consolidação da propriedade do bem pelo grupo de consórcio",tipo:"Imune/N.Inc."},
+  {cod:"410025",cst:"410",desc:"Alienação de bem objeto de garantia em que o prestador não seja contribuinte",tipo:"Imune/N.Inc."},
+  {cod:"410026",cst:"410",desc:"Doação com anulação de crédito",tipo:"Imune/N.Inc."},
+  {cod:"410027",cst:"410",desc:"Exportação de serviço ou de bem imaterial",tipo:"Imune/N.Inc."},
+  {cod:"410028",cst:"410",desc:"Operações com bens imóveis realizadas por pessoas físicas não consideradas contribuintes",tipo:"Imune/N.Inc."},
+  {cod:"410029",cst:"410",desc:"Operações acobertadas somente pelo ICMS",tipo:"Imune/N.Inc."},
+  {cod:"410030",cst:"410",desc:"Estorno de crédito por perecimento, deterioração, roubo, furto ou extravio",tipo:"Imune/N.Inc."},
+  {cod:"410031",cst:"410",desc:"Fornecimento em período anterior ao início de vigência de incidências de CBS e IBS",tipo:"Imune/N.Inc."},
+  {cod:"410032",cst:"410",desc:"Tributos incidentes na operação que não integram a base de cálculo do IBS e da CBS",tipo:"Imune/N.Inc."},
+  {cod:"410033",cst:"410",desc:"Operações de Fundos de Investimento Imobiliário (FII) e Fundos de Investimento nas Cadeias Produtivas do Agronegócio (Fiagro)",tipo:"Imune/N.Inc."},
+  {cod:"410034",cst:"410",desc:"Operações de fundos de investimento",tipo:"Imune/N.Inc."},
+  {cod:"410035",cst:"410",desc:"Fornecimento realizado por nanoempreendedor",tipo:"Imune/N.Inc."},
+  {cod:"410999",cst:"410",desc:"Operações não onerosas sem previsão de tributação, não especificadas anteriormente",tipo:"Imune/N.Inc."},
+  {cod:"510001",cst:"510",desc:"Operações, sujeitas a diferimento, com energia elétrica, relativas à importação, geração, comercialização, distribuição e transmissão",tipo:"Diferido"},
+  {cod:"515001",cst:"515",desc:"Operações, sujeitas a diferimento, com insumos agropecuários e aquícolas (Anexo IX)",tipo:"Diferido Red."},
+  {cod:"550001",cst:"550",desc:"Exportações de bens materiais",tipo:"Suspenso"},
+  {cod:"550002",cst:"550",desc:"Regime de Trânsito",tipo:"Suspenso"},
+  {cod:"550003",cst:"550",desc:"Regimes de Depósito (art. 85)",tipo:"Suspenso"},
+  {cod:"550004",cst:"550",desc:"Regimes de Depósito (art. 87)",tipo:"Suspenso"},
+  {cod:"550005",cst:"550",desc:"Regimes de Depósito (art. 87, Parágrafo único)",tipo:"Suspenso"},
+  {cod:"550006",cst:"550",desc:"Regimes de Permanência Temporária",tipo:"Suspenso"},
+  {cod:"550007",cst:"550",desc:"Regimes de Aperfeiçoamento",tipo:"Suspenso"},
+  {cod:"550008",cst:"550",desc:"Importação de bens para o Regime de Repetro-Temporário",tipo:"Suspenso"},
+  {cod:"550009",cst:"550",desc:"GNL-Temporário",tipo:"Suspenso"},
+  {cod:"550010",cst:"550",desc:"Repetro-Permanente",tipo:"Suspenso"},
+  {cod:"550011",cst:"550",desc:"Repetro-Industrialização",tipo:"Suspenso"},
+  {cod:"550012",cst:"550",desc:"Repetro-Nacional",tipo:"Suspenso"},
+  {cod:"550013",cst:"550",desc:"Repetro-Entreposto",tipo:"Suspenso"},
+  {cod:"550014",cst:"550",desc:"Zona de Processamento de Exportação",tipo:"Suspenso"},
+  {cod:"550015",cst:"550",desc:"Regime Tributário para Incentivo à Modernização e à Ampliação da Estrutura Portuária",tipo:"Suspenso"},
+  {cod:"550016",cst:"550",desc:"Regime Especial de Incentivos para o Desenvolvimento da Infraestrutura",tipo:"Suspenso"},
+  {cod:"550017",cst:"550",desc:"Regime Tributário para Incentivo à Atividade Econômica Naval",tipo:"Suspenso"},
+  {cod:"550018",cst:"550",desc:"Desoneração da aquisição de bens de capital",tipo:"Suspenso"},
+  {cod:"550019",cst:"550",desc:"Importação de bem material por indústria incentivada para utilização na ZFM",tipo:"Suspenso"},
+  {cod:"550020",cst:"550",desc:"Áreas de livre comércio",tipo:"Suspenso"},
+  {cod:"550021",cst:"550",desc:"Industrialização destinada a exportações",tipo:"Suspenso"},
+  {cod:"550022",cst:"550",desc:"Regime Especial de Incentivos para a Produção de Hidrogênio de Baixa Emissão de Carbono (Rehidro)",tipo:"Suspenso"},
+  {cod:"550023",cst:"550",desc:"Operações com hidrocarbonetos líquidos derivados de petróleo não combustíveis ou de gás natural",tipo:"Suspenso"},
+  {cod:"620001",cst:"620",desc:"Tributação monofásica sobre combustíveis",tipo:"Monofásico"},
+  {cod:"620002",cst:"620",desc:"Tributação monofásica com responsabilidade pela retenção sobre combustíveis",tipo:"Monofásico"},
+  {cod:"620003",cst:"620",desc:"Tributação monofásica com tributos retidos por responsabilidade sobre combustíveis",tipo:"Monofásico"},
+  {cod:"620004",cst:"620",desc:"Tributação monofásica sobre mistura de EAC com gasolina A em percentual superior ao obrigatório",tipo:"Monofásico"},
+  {cod:"620005",cst:"620",desc:"Tributação monofásica sobre mistura de EAC com gasolina A em percentual inferior ao obrigatório",tipo:"Monofásico"},
+  {cod:"620006",cst:"620",desc:"Tributação monofásica sobre combustíveis cobrada anteriormente",tipo:"Monofásico"},
+  {cod:"800001",cst:"800",desc:"Fusão, cisão ou incorporação",tipo:"Transf. Crédito"},
+  {cod:"800002",cst:"800",desc:"Transferência de crédito do associado, inclusive as cooperativas singulares",tipo:"Transf. Crédito"},
+  {cod:"810001",cst:"810",desc:"Crédito presumido sobre o valor apurado nos fornecimentos a partir da ZFM",tipo:"Ajuste ZFM"},
+  {cod:"811001",cst:"811",desc:"Anulação de Crédito por Saídas Imunes/Isentas",tipo:"Ajuste"},
+  {cod:"811002",cst:"811",desc:"Débitos de notas fiscais não processadas na apuração",tipo:"Ajuste"},
+  {cod:"811003",cst:"811",desc:"Desenquadramento do Simples Nacional",tipo:"Ajuste"},
+  {cod:"820001",cst:"820",desc:"Documento com informações de fornecimento de serviços de planos de assistência à saúde",tipo:"Doc. Específico"},
+  {cod:"820002",cst:"820",desc:"Documento com informações de fornecimento de serviços de planos de assistência funerária",tipo:"Doc. Específico"},
+  {cod:"820003",cst:"820",desc:"Documento com informações de fornecimento de serviços de planos de assistência à saúde de animais domésticos",tipo:"Doc. Específico"},
+  {cod:"820004",cst:"820",desc:"Documento com informações de prestação de serviços de concursos de prognósticos",tipo:"Doc. Específico"},
+  {cod:"820005",cst:"820",desc:"Documento com informações de alienação de bens imóveis",tipo:"Doc. Específico"},
+  {cod:"820006",cst:"820",desc:"Documento com informações de fornecimento de serviços de exploração de via",tipo:"Doc. Específico"},
+  {cod:"820007",cst:"820",desc:"Documento com informações de fornecimento de serviços financeiros",tipo:"Doc. Específico"},
+  {cod:"820008",cst:"820",desc:"Documento com informações de fornecimento, mas com tributação realizada em fatura anterior",tipo:"Doc. Específico"},
+  {cod:"820009",cst:"820",desc:"Cobrança relativa a fornecimentos declarados em outro documento",tipo:"Doc. Específico"},
+  {cod:"830001",cst:"830",desc:"Documento com exclusão da BC da CBS e do IBS de energia elétrica fornecida pela distribuidora à UC",tipo:"Excl. BC"},
+];
+
+const CCT_TIPO_COLORS = {
+  "Tributado":"background:rgba(239,68,68,.12);color:#f87171",
+  "Uniforme":"background:rgba(239,68,68,.12);color:#f87171",
+  "Uniforme Red.":"background:rgba(245,158,11,.12);color:#fbbf24",
+  "Reduzido":"background:rgba(245,158,11,.12);color:#fbbf24",
+  "Al. Fixa":"background:rgba(245,158,11,.12);color:#fbbf24",
+  "Al. Fixa Prop.":"background:rgba(245,158,11,.12);color:#fbbf24",
+  "Red. BC":"background:rgba(245,158,11,.12);color:#fbbf24",
+  "Isento":"background:rgba(52,211,153,.12);color:#6ee7b7",
+  "Imune/N.Inc.":"background:rgba(52,211,153,.12);color:#6ee7b7",
+  "Diferido":"background:rgba(96,165,250,.12);color:#93c5fd",
+  "Diferido Red.":"background:rgba(96,165,250,.12);color:#93c5fd",
+  "Suspenso":"background:rgba(96,165,250,.12);color:#93c5fd",
+  "Monofásico":"background:rgba(251,146,60,.12);color:#fb923c",
+  "Transf. Crédito":"background:rgba(148,163,184,.12);color:#94a3b8",
+  "Ajuste ZFM":"background:rgba(148,163,184,.12);color:#94a3b8",
+  "Ajuste":"background:rgba(148,163,184,.12);color:#94a3b8",
+  "Doc. Específico":"background:rgba(168,85,247,.12);color:#c084fc",
+  "Excl. BC":"background:rgba(168,85,247,.12);color:#c084fc",
+};
+
+const CCT_CST_MAP = {
+  "000":"000","010":"010","011":"010","200":"200","220":"220","221":"220","222":"220",
+  "400":"400","410":"400","510":"510","515":"510","550":"550","620":"620",
+  "800":"800","810":"800","811":"800","820":"820","830":"820"
+};
+
+function renderCClassTrib() {
+  filterCClassTrib('');
+}
+
+function filterCClassTrib(q) {
+  q = (q||'').toLowerCase().trim();
+  const cstFilter = document.getElementById('cct-cst-filter') ? document.getElementById('cct-cst-filter').value : '';
+  const tbody = document.getElementById('cct-tbody');
+  const countEl = document.getElementById('cct-count');
+  if(!tbody) return;
+  
+  let filtered = CCLASSTRIB_DATA.filter(function(r) {
+    const matchQ = !q || r.cod.includes(q) || r.desc.toLowerCase().includes(q) || r.tipo.toLowerCase().includes(q) || r.cst.includes(q);
+    const matchCST = !cstFilter || CCT_CST_MAP[r.cst] === cstFilter || r.cst.startsWith(cstFilter);
+    return matchQ && matchCST;
+  });
+  
+  tbody.innerHTML = filtered.map(function(r, i) {
+    const cor = CCT_TIPO_COLORS[r.tipo] || 'background:rgba(148,163,184,.12);color:#94a3b8';
+    return '<tr style="'+(i%2===1?'background:rgba(255,255,255,.02)':'')+'">'+
+      '<td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px;font-weight:600;color:var(--cyan)">'+r.cod+'</td>'+
+      '<td style="padding:8px 14px;border:1px solid var(--border);font-family:monospace;font-size:12px;text-align:center">'+r.cst+'</td>'+
+      '<td style="padding:8px 14px;border:1px solid var(--border);font-size:12px;line-height:1.5">'+r.desc+'</td>'+
+      '<td style="padding:8px 14px;border:1px solid var(--border);text-align:center"><span style="'+cor+';padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600;white-space:nowrap">'+r.tipo+'</span></td>'+
+      '</tr>';
+  }).join('');
+  
+  if(countEl) countEl.textContent = filtered.length + ' de ' + CCLASSTRIB_DATA.length + ' códigos';
+}
+// ===================== FIM CCLASSTRIB =====================
 
 // ===================== TERMO DE ACEITE =====================
 const TA_STEPS = ['Dados das Partes','Módulos','Treinamento','Checklist Técnico','Ambiente e Integrações','Demandas e Pendências'];
