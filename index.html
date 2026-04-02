@@ -200,6 +200,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
   <div class="nav-item" onclick="showSection('exclusaost')"><span class="icon">⚠️</span>Exclusão ST — SP 2026</div>
   <div class="nav-section">Suporte</div>
   <div class="nav-item" onclick="showSection('baseconhecimento')"><span class="icon">🧠</span>Base de Conhecimento<span class="nav-badge">10</span></div>
+  <div class="nav-item" onclick="showSection('xmlvalidador')"><span class="icon">🗂️</span>Validador de XML NF-e</div>
   <div class="nav-section">Ferramentas</div>
   <div class="nav-item" onclick="showSection('termoaceite')"><span class="icon">📝</span>Termo de Aceite</div>
   <div class="nav-item" onclick="showSection('glossario')"><span class="icon">📖</span>Glossário</div>
@@ -647,6 +648,137 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
 
   <!-- CHECKLIST -->
   <!-- TERMO DE ACEITE -->
+  <!-- VALIDADOR XML NF-e -->
+  <div class="section" id="sec-xmlvalidador">
+    <div class="module-header">
+      <div class="module-icon" style="background:rgba(0,196,232,.12);border:1px solid rgba(0,196,232,.25)">🗂️</div>
+      <div>
+        <h2>Validador de XML NF-e <span class="module-update-tag">↻ Abr/2026</span></h2>
+        <p style="font-size:13px;color:var(--text2);margin:0">Cole ou importe o XML da NF-e para visualizar os campos fiscais e verificar informações relevantes.</p>
+      </div>
+    </div>
+
+    <style>
+      .xml-drop-area{border:2px dashed var(--border);border-radius:14px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;background:var(--card)}
+      .xml-drop-area:hover,.xml-drop-area.dragover{border-color:var(--cyan);background:rgba(0,196,232,.06)}
+      .xml-drop-area p{margin:8px 0 0;font-size:13px;color:var(--text2)}
+      .xml-textarea{width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;margin-bottom:12px}
+      .xml-btn{background:var(--cyan);color:#0a0f1e;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+      .xml-btn:hover{opacity:.85}
+      .xml-btn-sec{background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+      .xml-btn-sec:hover{border-color:var(--cyan);color:var(--cyan)}
+      .xml-result{display:none;margin-top:24px}
+      .xml-result.show{display:block}
+      .xml-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+      .xml-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+      .xml-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+      .xml-field{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+      .xml-field-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+      .xml-field-value{font-size:13px;color:var(--text);font-weight:500;word-break:break-all}
+      .xml-field-value.mono{font-family:monospace;font-size:11px}
+      .xml-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;margin:2px}
+      .xml-tag.ok{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.25)}
+      .xml-tag.warn{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.25)}
+      .xml-tag.info{background:rgba(0,196,232,.1);color:var(--cyan);border:1px solid rgba(0,196,232,.2)}
+      .xml-tag.danger{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+      .xml-alert{border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px}
+      .xml-alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fbbf24}
+      .xml-alert.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:#34d399}
+      .xml-alert.info{background:rgba(0,196,232,.08);border:1px solid rgba(0,196,232,.2);color:var(--cyan)}
+      .xml-itens-table{width:100%;border-collapse:collapse;font-size:12px}
+      .xml-itens-table th{text-align:left;padding:8px 10px;background:var(--bg);color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+      .xml-itens-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text2);vertical-align:top}
+      .xml-itens-table tr:last-child td{border-bottom:none}
+      .xml-error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:16px;color:#f87171;font-size:13px;margin-top:16px}
+    </style>
+
+    <!-- Área de entrada -->
+    <div class="xml-drop-area" id="xmlDropArea" onclick="document.getElementById('xmlFileInput').click()" ondragover="xmlDragOver(event)" ondragleave="xmlDragLeave(event)" ondrop="xmlDrop(event)">
+      <div style="font-size:32px;margin-bottom:8px">📂</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text)">Clique para selecionar o arquivo XML</div>
+      <p>ou arraste e solte aqui &nbsp;·&nbsp; NF-e, NFC-e, CT-e</p>
+      <input type="file" id="xmlFileInput" accept=".xml" style="display:none" onchange="xmlLoadFile(this)">
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:var(--text3);margin-bottom:12px">— ou cole o conteúdo do XML abaixo —</div>
+
+    <textarea class="xml-textarea" id="xmlPasteArea" placeholder="Cole o conteúdo do XML aqui..."></textarea>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="xml-btn" onclick="xmlValidar()">🔍 Analisar XML</button>
+      <button class="xml-btn-sec" onclick="xmlLimpar()">✕ Limpar</button>
+    </div>
+
+    <div class="xml-error" id="xmlError" style="display:none"></div>
+
+    <!-- Resultado -->
+    <div class="xml-result" id="xmlResult">
+
+      <!-- Alertas fiscais -->
+      <div id="xmlAlertas" style="margin-top:24px"></div>
+
+      <!-- Identificação da nota -->
+      <div class="xml-block">
+        <div class="xml-block-title">📄 Identificação da Nota</div>
+        <div class="xml-grid" id="xmlIdentGrid"></div>
+      </div>
+
+      <!-- Emitente -->
+      <div class="xml-block">
+        <div class="xml-block-title">🏢 Emitente</div>
+        <div class="xml-grid" id="xmlEmitGrid"></div>
+      </div>
+
+      <!-- Destinatário -->
+      <div class="xml-block">
+        <div class="xml-block-title">👤 Destinatário</div>
+        <div class="xml-grid" id="xmlDestGrid"></div>
+      </div>
+
+      <!-- Totais -->
+      <div class="xml-block">
+        <div class="xml-block-title">💰 Totais da Nota</div>
+        <div class="xml-grid" id="xmlTotGrid"></div>
+      </div>
+
+      <!-- Informações fiscais -->
+      <div class="xml-block">
+        <div class="xml-block-title">🏛️ Informações Fiscais</div>
+        <div class="xml-grid" id="xmlFiscGrid"></div>
+      </div>
+
+      <!-- Itens -->
+      <div class="xml-block">
+        <div class="xml-block-title">📦 Itens da Nota</div>
+        <div style="overflow-x:auto">
+          <table class="xml-itens-table" id="xmlItensTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Descrição</th>
+                <th>NCM</th>
+                <th>CFOP</th>
+                <th>CST PIS</th>
+                <th>CST COFINS</th>
+                <th>cBenef</th>
+                <th>Qtd</th>
+                <th>Vl Unit</th>
+                <th>Vl Total</th>
+              </tr>
+            </thead>
+            <tbody id="xmlItensBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Rejeições SEFAZ -->
+      <div class="xml-block" id="xmlRejeicoesBl" style="display:none">
+        <div class="xml-block-title">🚫 Possíveis Rejeições SEFAZ</div>
+        <div id="xmlRejeicoes"></div>
+      </div>
+
+    </div>
+  </div>
   <div class="section" id="sec-termoaceite">
     <h2 style="margin-bottom:4px">Termo de Aceite — Gerador de Documento <span class="module-update-tag">↻ Mar/2026</span></h2>
     <p style="font-size:13px;color:var(--text2);margin-bottom:24px">Preencha os campos abaixo e gere o Termo de Aceite de Finalização de Implantação em PDF ou Word.</p>
@@ -1883,7 +2015,8 @@ function showSection(id) {
     cbenef:'Tag cBenef', validador:'Validador cBenef SP', nfenfce:'NF-e x NFC-e',
     ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional', exclusaost:'Exclusão ST — SP 2026', cclasstrib:'cClassTrib IBS/CBS',
     baseconhecimento:'Base de Conhecimento', checklist:'Checklist de Implantação',
-    glossario:'Glossário Técnico', fluxogramas:'Fluxogramas', integracoes:'Mapa de Integrações'
+    glossario:'Glossário Técnico', fluxogramas:'Fluxogramas', integracoes:'Mapa de Integrações',
+    xmlvalidador:'Validador de XML NF-e'
   };
   document.getElementById('topbar-title').textContent = titles[id] || id;
   document.getElementById('topbar-breadcrumb').textContent = 'Sistema Infinity › ' + (titles[id] || id);
@@ -3139,6 +3272,591 @@ function taGerarWordExec(d) {
   });
 }
 // ===================== FIM TERMO DE ACEITE =====================
+
+// ===================== VALIDADOR XML NF-e =====================
+function xmlDragOver(e){e.preventDefault();document.getElementById('xmlDropArea').classList.add('dragover')}
+function xmlDragLeave(e){document.getElementById('xmlDropArea').classList.remove('dragover')}
+function xmlDrop(e){
+  e.preventDefault();
+  document.getElementById('xmlDropArea').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if(file) xmlReadFile(file);
+}
+function xmlLoadFile(input){
+  if(input.files[0]) xmlReadFile(input.files[0]);
+}
+function xmlReadFile(file){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById('xmlPasteArea').value = e.target.result;
+    xmlValidar();
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function xmlLimpar(){
+  document.getElementById('xmlPasteArea').value='';
+  document.getElementById('xmlResult').classList.remove('show');
+  document.getElementById('xmlError').style.display='none';
+  document.getElementById('xmlFileInput').value='';
+}
+function xmlGet(doc,tag){
+  const el = doc.querySelector(tag);
+  return el ? el.textContent.trim() : '';
+}
+function xmlFmt(v){return v||'—'}
+function xmlFmtCNPJ(v){
+  if(!v||v.length<14) return v||'—';
+  return v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5');
+}
+function xmlFmtCPF(v){
+  if(!v||v.length<11) return v||'—';
+  return v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/,'$1.$2.$3-$4');
+}
+function xmlFmtMoeda(v){
+  const n = parseFloat(v);
+  if(isNaN(n)) return '—';
+  return 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function xmlFmtData(v){
+  if(!v) return '—';
+  const d = v.split('T')[0];
+  if(d.length===10) return d.split('-').reverse().join('/');
+  return v;
+}
+function xmlField(label,value,mono=false,alert=null){
+  const borderColor = alert==='danger'?'rgba(239,68,68,.5)':alert==='warn'?'rgba(245,158,11,.5)':alert==='ok'?'rgba(52,211,153,.35)':'var(--border)';
+  const bg = alert==='danger'?'rgba(239,68,68,.06)':alert==='warn'?'rgba(245,158,11,.06)':'var(--bg)';
+  const icon = alert==='danger'?'<span style="color:#f87171;font-size:11px;margin-left:4px">⚠ obrigatório</span>':alert==='warn'?'<span style="color:#fbbf24;font-size:11px;margin-left:4px">⚠ verificar</span>':'';
+  return `<div class="xml-field" style="border-color:${borderColor};background:${bg}"><div class="xml-field-label">${label}${icon}</div><div class="xml-field-value${mono?' mono':''}">${value}</div></div>`;
+}
+function xmlValidar(){
+  let rawInput = document.getElementById('xmlPasteArea').value.trim();
+  const errEl = document.getElementById('xmlError');
+  const resEl = document.getElementById('xmlResult');
+  errEl.style.display='none';
+  resEl.classList.remove('show');
+  if(!rawInput){errEl.innerHTML='⚠️ Nenhum conteúdo encontrado. Cole o XML ou importe um arquivo.';errEl.style.display='block';return;}
+
+  // Detecção e decodificação automática de base64
+  let raw = rawInput;
+  let decodedFromBase64 = false;
+  if(!rawInput.trim().startsWith('<')){
+    try{
+      const decoded = atob(rawInput.replace(/\s/g,''));
+      if(decoded.includes('<?xml')||decoded.includes('<NFe')||decoded.includes('<nfeProc')){
+        raw = decoded;
+        decodedFromBase64 = true;
+      }
+    }catch(e){}
+  }
+
+  let doc;
+  try{
+    const parser = new DOMParser();
+    doc = parser.parseFromString(raw,'text/xml');
+    const parseErr = doc.querySelector('parsererror');
+    if(parseErr){throw new Error('XML malformado: '+parseErr.textContent.substring(0,200));}
+  }catch(e){
+    errEl.innerHTML='❌ Erro ao processar o XML:<br><span style="font-family:monospace;font-size:11px">'+e.message+'</span>'
+      +(decodedFromBase64?'<br><span style="font-size:11px;color:var(--text3)">O conteúdo foi identificado como base64 e decodificado automaticamente.</span>':'')
+      +'<br><br><span style="font-size:12px;color:var(--text2)">💡 Dica: verifique se o XML está completo e bem formado. Se copiou de um sistema, tente exportar o arquivo .xml diretamente.</span>';
+    errEl.style.display='block';return;
+  }
+  if(decodedFromBase64){
+    errEl.innerHTML='ℹ️ Conteúdo base64 detectado e decodificado automaticamente.';
+    errEl.style.display='block';
+    errEl.style.background='rgba(0,196,232,.08)';
+    errEl.style.border='1px solid rgba(0,196,232,.2)';
+    errEl.style.color='var(--cyan)';
+    setTimeout(()=>{errEl.style.display='none';errEl.style.background='';errEl.style.border='';errEl.style.color='';},3000);
+  }
+
+  // Identificação
+  const tpNF = xmlGet(doc,'tpNF');
+  const tpDoc = tpNF==='0'?'Entrada':'Saída';
+  const mod = xmlGet(doc,'mod');
+  const modDesc = mod==='55'?'NF-e (55)':mod==='65'?'NFC-e (65)':mod==='57'?'CT-e (57)':`Modelo ${mod}`;
+  const finNFe = xmlGet(doc,'finNFe');
+  const finDesc = finNFe==='1'?'Normal':finNFe==='2'?'Complementar':finNFe==='3'?'Ajuste':finNFe==='4'?'Devolução/Retorno':finNFe;
+  const chNFe = xmlGet(doc,'chNFe')||xmlGet(doc,'Id').replace('NFe','');
+  const dhSaiEnt = xmlGet(doc,'dhSaiEnt');
+  const dhEmi = xmlGet(doc,'dhEmi');
+  const natOp = xmlGet(doc,'natOp');
+
+  document.getElementById('xmlIdentGrid').innerHTML =
+    xmlField('Modelo',xmlFmt(modDesc))+
+    xmlField('Série',xmlFmt(xmlGet(doc,'serie')))+
+    xmlField('Número',xmlFmt(xmlGet(doc,'nNF')))+
+    xmlField('Tipo',tpDoc)+
+    xmlField('Finalidade',xmlFmt(finDesc))+
+    xmlField('Data Emissão',xmlFmtData(dhEmi),false,!dhEmi?'danger':null)+
+    xmlField('Data Saída/Entrada',dhSaiEnt?xmlFmtData(dhSaiEnt):'—',false,(!dhSaiEnt&&mod==='55')?'warn':null)+
+    xmlField('Natureza da Operação',xmlFmt(natOp),false,!natOp?'danger':null)+
+    xmlField('Chave de Acesso',xmlFmt(chNFe),true,!chNFe?'danger':null);
+
+  // Emitente
+  const emit = doc.querySelector('emit');
+  const emitCNPJ = emit?xmlGet(emit,'CNPJ'):'';
+  const emitIE = emit?xmlGet(emit,'IE'):'';
+  const emitCRT = emit?xmlGet(emit,'CRT'):'';
+  const emitUF = emit?xmlGet(doc,'emit enderEmit UF'):'';
+  const emitMun = emit?xmlGet(doc,'emit enderEmit xMun'):'';
+  const emitIEAlert = (!emitIE&&(emitCRT==='1'||emitCRT==='2'||emitCRT==='3'))?'warn':null;
+
+  document.getElementById('xmlEmitGrid').innerHTML =
+    xmlField('Razão Social',xmlFmt(emit?xmlGet(emit,'xNome'):''),false,!emit||!xmlGet(emit,'xNome')?'danger':null)+
+    xmlField('CNPJ',xmlFmtCNPJ(emitCNPJ),false,!emitCNPJ?'danger':null)+
+    xmlField('IE',xmlFmt(emitIE),false,emitIEAlert)+
+    xmlField('CRT',xmlFmt(emitCRT),false,!emitCRT?'danger':null)+
+    xmlField('UF',xmlFmt(emitUF),false,!emitUF?'warn':null)+
+    xmlField('Município',xmlFmt(emitMun),false,!emitMun?'warn':null);
+
+  // Destinatário
+  const dest = doc.querySelector('dest');
+  const destCNPJ = dest?xmlGet(dest,'CNPJ'):'';
+  const destCPF = dest?xmlGet(dest,'CPF'):'';
+  const destIE = dest?xmlGet(dest,'IE'):'';
+  const destUF = dest?xmlGet(doc,'dest enderDest UF'):'';
+  const destMun = dest?xmlGet(doc,'dest enderDest xMun'):'';
+  const destNome = dest?xmlGet(dest,'xNome'):'';
+  const interestadual = emitUF && destUF && emitUF !== destUF;
+  const destIEAlert = (destCNPJ && !destIE)?'warn':null;
+
+  document.getElementById('xmlDestGrid').innerHTML =
+    xmlField('Razão Social/Nome',xmlFmt(destNome),false,!destNome?'danger':null)+
+    xmlField('CNPJ/CPF',destCNPJ?xmlFmtCNPJ(destCNPJ):destCPF?xmlFmtCPF(destCPF):'—',false,(!destCNPJ&&!destCPF)?'danger':null)+
+    xmlField('IE',xmlFmt(destIE),false,destIEAlert)+
+    xmlField('UF',xmlFmt(destUF),false,!destUF?'warn':null)+
+    xmlField('Município',xmlFmt(destMun),false,!destMun?'warn':null);
+
+  // Totais
+  const ICMSTot = doc.querySelector('ICMSTot');
+  document.getElementById('xmlTotGrid').innerHTML =
+    xmlField('Valor Total NF',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vNF'):''),false,!ICMSTot?'danger':null)+
+    xmlField('Valor Produtos',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vProd'):''))+
+    xmlField('Valor ICMS',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vICMS'):''))+
+    xmlField('Valor IPI',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vIPI'):''))+
+    xmlField('Valor PIS',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vPIS'):''))+
+    xmlField('Valor COFINS',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vCOFINS'):''))+
+    xmlField('Valor ST',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vST'):''))+
+    xmlField('Valor Frete',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vFrete'):''))+
+    xmlField('Valor Desconto',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vDesc'):''));
+
+  // Informações fiscais
+  const infAdic = doc.querySelector('infAdic');
+  const infAdFisco = infAdic?xmlGet(infAdic,'infAdFisco'):'';
+  const infCpl = infAdic?xmlGet(infAdic,'infCpl'):'';
+  const dets = doc.querySelectorAll('det');
+  const temCst0607 = Array.from(dets).some(det=>{
+    const imp = det.querySelector('imposto');
+    if(!imp) return false;
+    const cst = xmlGet(imp,'PISAliq CST')||xmlGet(imp,'PISNT CST')||xmlGet(imp,'PISQtde CST')||xmlGet(imp,'PISOutr CST');
+    return cst==='06'||cst==='07';
+  });
+  const infAdFiscoAlert = (temCst0607&&!infAdFisco)?'warn':null;
+  document.getElementById('xmlFiscGrid').innerHTML =
+    xmlField('infAdFisco',infAdFisco||'— (não informado)',false,infAdFiscoAlert)+
+    xmlField('infCpl',xmlFmt(infCpl));
+
+  // Itens
+  const tbody = document.getElementById('xmlItensBody');
+  tbody.innerHTML='';
+  const emitDt = dhEmi?new Date(dhEmi):null;
+  const dtLimiteCbenef = new Date('2026-04-06');
+  const spEmitente = emitUF==='SP';
+
+  dets.forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const imposto = det.querySelector('imposto');
+    const pisCst = imposto?xmlGet(imposto,'PISAliq CST')||xmlGet(imposto,'PISQtde CST')||xmlGet(imposto,'PISNT CST')||xmlGet(imposto,'PISOutr CST'):'';
+    const cofinsCst = imposto?xmlGet(imposto,'COFINSAliq CST')||xmlGet(imposto,'COFINSQtde CST')||xmlGet(imposto,'COFINSNT CST')||xmlGet(imposto,'COFINSOutr CST'):'';
+    const cBenef = prod?xmlGet(prod,'cBenef'):'';
+    const qtd = prod?xmlGet(prod,'qCom'):'';
+    const vUnCom = prod?xmlGet(prod,'vUnCom'):'';
+    const vProd = prod?xmlGet(prod,'vProd'):'';
+    const ncm = prod?xmlGet(prod,'NCM'):'';
+    const cfop = prod?xmlGet(prod,'CFOP'):'';
+    const xProd = prod?xmlGet(prod,'xProd'):'';
+    // Validação NCM: deve ter exatamente 8 dígitos numéricos
+    const ncmValido = /^\d{8}$/.test(ncm);
+    const ncmAlert = (!ncm||!ncmValido)?'border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.06)':'';
+    const cfopAlert = !cfop?'border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.06)':'';
+    const cBenefAlert = (!cBenef&&spEmitente&&emitDt&&emitDt>=dtLimiteCbenef)?'border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.06)':'';
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-item', i);
+    tr.innerHTML = `
+      <td style="color:var(--text3)">${i+1}</td>
+      <td style="max-width:220px;white-space:normal">${xProd||'—'}</td>
+      <td id="xmlNcmCell_${i}" style="${ncmAlert};padding:6px 10px;border-radius:6px">${ncm?(!ncmValido?`<span style="color:#f87171">⚠ inválido (${ncm})</span>`:ncm+(mod==='55'?` <span style="font-size:10px;color:var(--text3)" title="Verificando NCM na tabela TIPI...">🔄</span>`:'')):( mod==='55'?'<span style="color:#f87171">⚠ vazio</span>':'—')}</td>
+      <td style="${cfopAlert};padding:6px 10px;border-radius:6px">${cfop||'<span style="color:#f87171">⚠ vazio</span>'}</td>
+      <td>${pisCst?`<span class="xml-tag info">${pisCst}</span>`:'—'}</td>
+      <td>${cofinsCst?`<span class="xml-tag info">${cofinsCst}</span>`:'—'}</td>
+      <td style="${cBenefAlert};padding:6px 10px;border-radius:6px">${cBenef?`<span class="xml-tag ok">${cBenef}</span>`:spEmitente&&emitDt&&emitDt>=dtLimiteCbenef?'<span style="color:#fbbf24">⚠ verificar</span>':'—'}</td>
+      <td>${qtd||'—'}</td>
+      <td>${xmlFmtMoeda(vUnCom)}</td>
+      <td>${xmlFmtMoeda(vProd)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Validação assíncrona de NCM via BrasilAPI
+  if(mod==='55'||mod==='65'){
+    const ncmsParaValidar = [];
+    dets.forEach((det,i)=>{
+      const prod = det.querySelector('prod');
+      if(!prod) return;
+      const ncmItem = xmlGet(prod,'NCM');
+      if(ncmItem && /^\d{8}$/.test(ncmItem)){
+        ncmsParaValidar.push({idx:i, ncm:ncmItem, xProd:xmlGet(prod,'xProd')||`Item ${i+1}`});
+      }
+    });
+    if(ncmsParaValidar.length>0) xmlValidarNcmsAsync(ncmsParaValidar);
+  }
+
+  // Alertas fiscais gerais
+  const alertas = [];
+  if(!chNFe) alertas.push({tipo:'danger',icone:'❌',msg:'<strong>Chave de acesso ausente.</strong> A nota pode estar sem autorização SEFAZ ou o XML está incompleto.'});
+  if(infAdFiscoAlert) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>infAdFisco não preenchido:</strong> esta nota possui itens com CST PIS/COFINS 06 ou 07. Verifique se há obrigatoriedade de preenchimento conforme legislação vigente (ex: LC 224/2025).'});
+  if(infAdFisco && infAdFisco.toLowerCase().includes('224')) alertas.push({tipo:'info',icone:'ℹ️',msg:'<strong>LC 224/2025 detectada:</strong> infAdFisco contém referência à Lei Complementar nº 224/2025.'});
+  if(destCNPJ && !destIE) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>IE do destinatário não informada.</strong> O destinatário possui CNPJ mas não tem Inscrição Estadual informada no XML. Verifique se é contribuinte de ICMS.'});
+  // Alerta CRT x CSOSN/CST
+  const crtCstIncompat = Array.from(dets).some(det=>{
+    const imp = det.querySelector('imposto');
+    if(!imp) return false;
+    const csosn = xmlGet(imp,'ICMS CSOSN');
+    const cst = xmlGet(imp,'ICMS CST');
+    return ((emitCRT==='2'||emitCRT==='3') && csosn && !cst) || (emitCRT==='1' && cst && !csosn);
+  });
+  if(crtCstIncompat){
+    alertas.push({tipo:'danger',icone:'❌',msg:`<strong>Inconsistência CRT x Tributação ICMS:</strong> o emitente está configurado como CRT ${emitCRT} (${emitCRT==='1'?'Simples Nacional':emitCRT==='2'?'Lucro Presumido':'Lucro Real'}) mas os itens utilizam ${emitCRT==='1'?'CST de regime normal (deve ser CSOSN)':'CSOSN do Simples Nacional (deve ser CST)'}. Isso causará rejeição pela SEFAZ.`});
+  }
+  if(emitIEAlert) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>IE do emitente não informada.</strong> Para CRT 1, 2 ou 3 a Inscrição Estadual é obrigatória.'});
+  if(spEmitente && emitDt && emitDt>=dtLimiteCbenef){
+    const itensSemCbenef = Array.from(dets).filter(det=>{const p=det.querySelector('prod');return p&&!xmlGet(p,'cBenef');}).length;
+    if(itensSemCbenef>0) alertas.push({tipo:'warn',icone:'⚠️',msg:`<strong>cBenef:</strong> ${itensSemCbenef} item(ns) sem cBenef em nota de SP após 06/04/2026. Verifique se os itens estão dispensados ou se o campo precisa ser preenchido.`});
+  }
+  const alertasEl = document.getElementById('xmlAlertas');
+  alertasEl.innerHTML = alertas.length
+    ? alertas.map(a=>`<div class="xml-alert ${a.tipo}">${a.icone} <span>${a.msg}</span></div>`).join('')
+    : '<div class="xml-alert ok">✅ <span><strong>Nenhum alerta encontrado.</strong> Os campos obrigatórios analisados estão preenchidos.</span></div>';
+
+  // Rejeições SEFAZ preventivas
+  const rejeicoes = [];
+
+  // CSTs que EXIGEM cBenef (benefício fiscal obrigatório)
+  const CST_CBENEF_OBRIG = ['20','30','40','41','50','51','70'];
+  // CSTs que NÃO devem ter cBenef
+  const CST_CBENEF_PROIB = ['00','10','90'];
+  // CSTs que bloqueiam NFC-e
+  const CST_BLOQ_NFCE = ['200','201','202','203'];
+
+  // Rej 930 / 928 / 931 / 946 / 929 — validação cBenef por item cruzando CBENEF_SP
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const imp = det.querySelector('imposto');
+    if(!prod||!imp) return;
+    const cBenefItem = xmlGet(prod,'cBenef');
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    const cstIcms = xmlGet(imp,'ICMS CST')||xmlGet(imp,'ICMS CSOSN')||'';
+
+    // Rej 930: CST exige cBenef mas não foi informado
+    if(CST_CBENEF_OBRIG.includes(cstIcms) && !cBenefItem){
+      rejeicoes.push({cod:'930',msg:`<strong>${xProdItem}</strong>: CST ICMS ${cstIcms} indica benefício fiscal mas o campo cBenef não foi informado.`});
+    }
+    // Rej 928: cBenef informado mas CST não admite benefício
+    if(CST_CBENEF_PROIB.includes(cstIcms) && cBenefItem){
+      rejeicoes.push({cod:'928',msg:`<strong>${xProdItem}</strong>: cBenef "${cBenefItem}" informado mas CST ${cstIcms} não admite benefício fiscal.`});
+    }
+    // Rej 946: cBenef não existe na tabela SP (se emitente SP)
+    if(cBenefItem && spEmitente && typeof CBENEF_SP !== 'undefined'){
+      const encontrado = CBENEF_SP.find(c => c.cod === cBenefItem);
+      if(!encontrado){
+        rejeicoes.push({cod:'946',msg:`<strong>${xProdItem}</strong>: cBenef "${cBenefItem}" não encontrado na tabela oficial SEFAZ-SP. Verifique se o código está correto e vigente.`});
+      } else {
+        // Rej 931: cBenef existe mas CST incompatível
+        if(cstIcms && encontrado.csts && encontrado.csts.length>0 && !encontrado.csts.includes(cstIcms)){
+          rejeicoes.push({cod:'931',msg:`<strong>${xProdItem}</strong>: cBenef "${cBenefItem}" (${encontrado.desc.substring(0,60)}...) é incompatível com o CST ${cstIcms} informado. CSTs aceitos: ${encontrado.csts.join(', ')}.`});
+        }
+      }
+    }
+    // Rej 929: CST 51 sem campos de diferimento
+    if(cstIcms==='51'){
+      const vBC = xmlGet(imp,'ICMS vBC');
+      const pICMS = xmlGet(imp,'ICMS pICMS');
+      if(!vBC&&!pICMS){
+        rejeicoes.push({cod:'929',msg:`<strong>${xProdItem}</strong>: CST 51 (Diferimento) sem os campos obrigatórios de diferimento (vBC/pICMS). Verifique a tributação.`});
+      }
+    }
+    // Rej 780: CST ICMS inválido em NFC-e
+    if(mod==='65' && CST_BLOQ_NFCE.includes(cstIcms)){
+      rejeicoes.push({cod:'780',msg:`<strong>${xProdItem}</strong>: CST ICMS ${cstIcms} não é permitido em NFC-e.`});
+    }
+  });
+
+  // Rej 382: CFOP incompatível com CST ICMS
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const imp = det.querySelector('imposto');
+    if(!prod||!imp) return;
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    const cfopItem = xmlGet(prod,'CFOP');
+    const cstIcms = xmlGet(imp,'ICMS CST')||'';
+    if(!cfopItem||!cstIcms) return;
+
+    // CST 60 (ST já recolhida) — exige CFOP 5403, 5405, 6403, 6404
+    if(cstIcms==='60'){
+      const cfopsValidos60 = ['5403','5405','6403','6404'];
+      if(!cfopsValidos60.includes(cfopItem)){
+        rejeicoes.push({cod:'382',msg:`<strong>${xProdItem}</strong>: CST 60 (ST já recolhida) é incompatível com CFOP ${cfopItem}. Use CFOP 5403 ou 5405 para saídas internas, 6403 ou 6404 para interestaduais.`});
+      }
+    }
+    // CST 10 (tributado com ST) — exige CFOP 5401, 5402, 6401, 6402
+    if(cstIcms==='10'){
+      const cfopsValidos10 = ['5401','5402','6401','6402','5403','6403'];
+      if(!cfopsValidos10.includes(cfopItem)){
+        rejeicoes.push({cod:'382',msg:`<strong>${xProdItem}</strong>: CST 10 (com ST) é incompatível com CFOP ${cfopItem}. Use CFOPs da série 54xx ou 64xx para operações com substituição tributária.`});
+      }
+    }
+    // CST 30 (isento com ST) — exige CFOP 5401, 5402, 6401, 6402
+    if(cstIcms==='30'){
+      const cfopsValidos30 = ['5401','5402','6401','6402'];
+      if(!cfopsValidos30.includes(cfopItem)){
+        rejeicoes.push({cod:'382',msg:`<strong>${xProdItem}</strong>: CST 30 (isento com ST) é incompatível com CFOP ${cfopItem}. Use CFOPs da série 54xx ou 64xx.`});
+      }
+    }
+    // CST 70 (red. BC com ST) — exige CFOP série 54xx ou 64xx
+    if(cstIcms==='70'){
+      const cfopsValidos70 = ['5401','5402','5403','6401','6402','6403'];
+      if(!cfopsValidos70.includes(cfopItem)){
+        rejeicoes.push({cod:'382',msg:`<strong>${xProdItem}</strong>: CST 70 (redução de BC com ST) é incompatível com CFOP ${cfopItem}. Use CFOPs da série 54xx ou 64xx.`});
+      }
+    }
+    // CST 40/41 (isento/não tributado) — não pode usar CFOPs de ST (54xx/64xx)
+    if(cstIcms==='40'||cstIcms==='41'){
+      if(cfopItem.startsWith('54')||cfopItem.startsWith('64')){
+        rejeicoes.push({cod:'382',msg:`<strong>${xProdItem}</strong>: CST ${cstIcms} (${cstIcms==='40'?'isento':'não tributado'}) não pode ser usado com CFOP ${cfopItem} (série ST). Use CFOPs da série 51xx ou 61xx.`});
+      }
+    }
+  });
+
+  // CRT x CST/CSOSN incompatível
+  // CRT 1 = Simples Nacional → deve usar CSOSN (1xx)
+  // CRT 2/3 = Lucro Presumido/Real → deve usar CST (00 a 90)
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const imp = det.querySelector('imposto');
+    if(!prod||!imp) return;
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    const csosn = xmlGet(imp,'ICMS CSOSN');
+    const cst = xmlGet(imp,'ICMS CST');
+    // CRT 2 ou 3 usando CSOSN (exclusivo do Simples)
+    if((emitCRT==='2'||emitCRT==='3') && csosn && !cst){
+      rejeicoes.push({cod:'592',msg:`<strong>${xProdItem}</strong>: emitente CRT ${emitCRT} (${emitCRT==='2'?'Lucro Presumido':'Lucro Real'}) utilizando CSOSN ${csosn}, que é exclusivo do Simples Nacional (CRT 1). O correto é usar CST de ICMS (00, 10, 20, etc.).`});
+    }
+    // CRT 1 usando CST comum (deve usar CSOSN)
+    if(emitCRT==='1' && cst && !csosn){
+      rejeicoes.push({cod:'592',msg:`<strong>${xProdItem}</strong>: emitente CRT 1 (Simples Nacional) utilizando CST ${cst}, que é exclusivo do Lucro Presumido/Real. O correto é usar CSOSN.`});
+    }
+  });
+
+  // Rej 507: cBenefRBC ausente em itens com redução de BC (CST 20 ou 70)
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const imp = det.querySelector('imposto');
+    if(!prod||!imp) return;
+    const cstIcms = xmlGet(imp,'ICMS CST')||'';
+    const cBenefRBC = xmlGet(prod,'cBenefRBC');
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    if((cstIcms==='20'||cstIcms==='70') && !cBenefRBC){
+      rejeicoes.push({cod:'507',msg:`<strong>${xProdItem}</strong>: CST ${cstIcms} com redução de base de cálculo exige o campo cBenefRBC (NT 1.70). Verifique se o sistema já contempla esse campo.`});
+    }
+  });
+
+  // NCM inválido (formato incorreto)
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    if(!prod) return;
+    const ncmItem = xmlGet(prod,'NCM');
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    if(ncmItem && ncmItem.replace(/\D/g,'').length !== 8){
+      rejeicoes.push({cod:'204-NCM',msg:`<strong>${xProdItem}</strong>: NCM "${ncmItem}" inválido — deve ter exatamente 8 dígitos numéricos. Corrija no cadastro do produto.`});
+    }
+    if(!ncmItem && mod==='55'){
+      rejeicoes.push({cod:'NCM',msg:`<strong>${xProdItem}</strong>: NCM não informado. Campo obrigatório em NF-e modelo 55.`});
+    }
+  });
+
+  // Rej 694: cBenef ausente em SP após 06/04/2026
+  if(spEmitente && emitDt && emitDt>=dtLimiteCbenef){
+    const itensSemCbenef2 = Array.from(dets).filter(det=>{const p=det.querySelector('prod');return p&&!xmlGet(p,'cBenef');}).length;
+    if(itensSemCbenef2>0) rejeicoes.push({cod:'694',msg:`${itensSemCbenef2} item(ns) sem cBenef em nota emitida em SP após 06/04/2026. Campo obrigatório conforme Decreto 69.981/2025.`});
+  }
+  // Rej 165: IE ausente em operação interestadual com PJ
+  if(interestadual && destCNPJ && !destIE){
+    rejeicoes.push({cod:'165',msg:'Operação interestadual com PJ sem IE do destinatário. Pode causar rejeição dependendo da UF de destino.'});
+  }
+  // Rej 302: CNPJ emitente ausente
+  if(!emitCNPJ){
+    rejeicoes.push({cod:'302',msg:'CNPJ do emitente não encontrado no XML. Nota será rejeitada pela SEFAZ.'});
+  }
+  // Rej 204 / NCM: NCM inválido (diferente de 8 dígitos numéricos)
+  Array.from(dets).forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    if(!prod) return;
+    const ncmItem = xmlGet(prod,'NCM');
+    const xProdItem = xmlGet(prod,'xProd')||`Item ${i+1}`;
+    if(ncmItem && !/^\d{8}$/.test(ncmItem)){
+      rejeicoes.push({cod:'316',msg:`<strong>${xProdItem}</strong>: NCM "${ncmItem}" inválido — deve conter exatamente 8 dígitos numéricos. Corrija no cadastro do produto.`});
+    }
+    if(!ncmItem && mod==='55'){
+      rejeicoes.push({cod:'316',msg:`<strong>${xProdItem}</strong>: NCM não informado. Campo obrigatório em NF-e modelo 55.`});
+    }
+  });
+  // Rej 204: Data de emissão fora do prazo
+  if(emitDt){
+    const hoje = new Date();
+    const diffDias = (hoje - emitDt) / (1000*60*60*24);
+    if(diffDias > 30) rejeicoes.push({cod:'204',msg:`Data de emissão há ${Math.floor(diffDias)} dias. Notas com mais de 30 dias são rejeitadas pela SEFAZ.`});
+  }
+  // Rej 750: infAdFisco obrigatório não preenchido
+  if(infAdFiscoAlert){
+    rejeicoes.push({cod:'750',msg:'Campo infAdFisco não preenchido. Itens com CST PIS/COFINS 06 ou 07 podem exigir informação adicional ao Fisco.'});
+  }
+
+  // Rej 593 - NFC-e com operação interestadual
+  if(mod==='65' && interestadual){
+    rejeicoes.push({cod:'593',msg:`NFC-e não permite operação interestadual. Emitente: ${emitUF} / Destinatário: ${destUF}. Use NF-e modelo 55 para operações entre estados.`});
+  }
+
+  // Rej 165 - IE destinatário inválida em operação interestadual
+  if(interestadual && destCNPJ && !destIE){
+    rejeicoes.push({cod:'165',msg:'Operação interestadual com PJ sem IE do destinatário. Pode causar rejeição dependendo da UF de destino e regime tributário.'});
+  }
+  // Rej 302 - CNPJ do emitente inválido / suspenso (alerta genérico)
+  if(!emitCNPJ){
+    rejeicoes.push({cod:'302',msg:'CNPJ do emitente não encontrado no XML. Nota será rejeitada pela SEFAZ.'});
+  }
+  // Rej 780 - CST inválido para NFC-e (200, 201, 202, 203)
+  if(mod==='65'){
+    Array.from(dets).forEach((det,i)=>{
+      const imp = det.querySelector('imposto');
+      if(!imp) return;
+      const orig = xmlGet(imp,'ICMS orig')||'';
+      const cstIcms = xmlGet(imp,'ICMS CST')||xmlGet(imp,'ICMS CSOSN')||'';
+      if(['200','201','202','203'].includes(cstIcms)){
+        rejeicoes.push({cod:'780',msg:`Item ${i+1}: CST ICMS ${cstIcms} não é permitido em NFC-e. Use CST compatível com venda a consumidor final.`});
+      }
+    });
+  }
+  // Rej 750 - infAdFisco obrigatório não preenchido
+  if(infAdFiscoAlert){
+    rejeicoes.push({cod:'750',msg:'Campo infAdFisco obrigatório não preenchido. Itens com CST PIS/COFINS 06 ou 07 podem exigir informação adicional ao Fisco conforme legislação vigente.'});
+  }
+
+  const rejEl = document.getElementById('xmlRejeicoes');
+  const rejBl = document.getElementById('xmlRejeicoesBl');
+  if(rejeicoes.length>0){
+    rejBl.style.display='block';
+    rejEl.innerHTML = rejeicoes.map(r=>`
+      <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+        <span style="background:rgba(239,68,68,.15);color:#f87171;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap;margin-top:1px">Rej ${r.cod}</span>
+        <span style="font-size:13px;color:var(--text2)">${r.msg}</span>
+      </div>`).join('');
+  } else {
+    rejBl.style.display='none';
+  }
+
+  resEl.classList.add('show');
+
+  // Validação de CNPJ (dígito verificador)
+  const cnpjAlertas = [];
+  if(emitCNPJ && !xmlValidarCNPJ(emitCNPJ)){
+    cnpjAlertas.push('<div class="xml-alert warn">⚠️ <span><strong>CNPJ do emitente inválido</strong> — dígito verificador incorreto. Verifique se o número está correto no cadastro.</span></div>');
+  }
+  if(destCNPJ && !xmlValidarCNPJ(destCNPJ)){
+    cnpjAlertas.push('<div class="xml-alert warn">⚠️ <span><strong>CNPJ do destinatário inválido</strong> — dígito verificador incorreto.</span></div>');
+  }
+  if(cnpjAlertas.length){
+    document.getElementById('xmlAlertas').innerHTML = cnpjAlertas.join('') + document.getElementById('xmlAlertas').innerHTML;
+  }
+}
+// ===================== EXTRAS VALIDADOR =====================
+
+// --- Validação de CNPJ (dígito verificador) ---
+function xmlValidarCNPJ(cnpj){
+  cnpj = cnpj.replace(/[^0-9]/g,'');
+  if(cnpj.length!==14) return false;
+  if(cnpj===cnpj[0].repeat(14)) return false;
+  const p1=[5,4,3,2,9,8,7,6,5,4,3,2];
+  const p2=[6,5,4,3,2,9,8,7,6,5,4,3,2];
+  let s1=0,s2=0;
+  for(let i=0;i<12;i++) s1+=parseInt(cnpj[i])*p1[i];
+  const r1=s1%11; const d1=r1<2?0:11-r1;
+  if(parseInt(cnpj[12])!==d1) return false;
+  for(let i=0;i<13;i++) s2+=parseInt(cnpj[i])*p2[i];
+  const r2=s2%11; const d2=r2<2?0:11-r2;
+  return parseInt(cnpj[13])===d2;
+}
+// --- Validação assíncrona de NCM via BrasilAPI ---
+async function xmlValidarNcm(ncm){
+  try{
+    const resp = await fetch(`https://brasilapi.com.br/api/ncm/v1/${ncm}`,{signal:AbortSignal.timeout(8000)});
+    if(resp.ok){
+      const data = await resp.json();
+      return {valido:true, descricao:data.descricao||''};
+    } else if(resp.status===404){
+      return {valido:false, descricao:''};
+    }
+    return null; // erro genérico — não alterar o campo
+  }catch(e){
+    return null; // timeout ou sem internet — não alterar o campo
+  }
+}
+
+async function xmlValidarNcmsAsync(itens){
+  // Disparar todas em paralelo
+  const resultados = await Promise.all(itens.map(async item=>{
+    const res = await xmlValidarNcm(item.ncm);
+    return {...item, resultado:res};
+  }));
+
+  const rejEl = document.getElementById('xmlRejeicoes');
+  const rejBl = document.getElementById('xmlRejeicoesBl');
+
+  resultados.forEach(item=>{
+    const cell = document.getElementById(`xmlNcmCell_${item.idx}`);
+    if(!cell) return;
+    const {resultado, ncm, xProd} = item;
+
+    if(resultado===null){
+      // Não foi possível validar — remover o spinner e manter neutro
+      cell.innerHTML = cell.innerHTML.replace(/<span[^>]*title="Verificando[^"]*"[^>]*>🔄<\/span>/,'<span style="font-size:10px;color:var(--text3)" title="Não foi possível validar via API">❓</span>');
+      return;
+    }
+
+    if(resultado.valido){
+      // NCM válido — mostrar verde com descrição no tooltip
+      cell.style.borderColor='rgba(52,211,153,.35)';
+      cell.style.background='rgba(52,211,153,.05)';
+      const desc = resultado.descricao?resultado.descricao.substring(0,80)+(resultado.descricao.length>80?'...':''):'';
+      cell.innerHTML = `<span style="color:#34d399" title="${desc}">${ncm} ✓</span>`;
+    } else {
+      // NCM inválido — destacar em vermelho e adicionar rejeição
+      cell.style.borderColor='rgba(239,68,68,.5)';
+      cell.style.background='rgba(239,68,68,.06)';
+      cell.innerHTML = `<span style="color:#f87171">⚠ inexistente (${ncm})</span>`;
+
+      // Adicionar rejeição 778 dinamicamente
+      rejBl.style.display='block';
+      const divRej = document.createElement('div');
+      divRej.style.cssText='background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start';
+      divRej.innerHTML=`<span style="background:rgba(239,68,68,.15);color:#f87171;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap;margin-top:1px">Rej 778</span><span style="font-size:13px;color:var(--text2)"><strong>${xProd}</strong>: NCM "${ncm}" não encontrado na tabela NCM/TIPI da Receita Federal. Corrija o código no cadastro do produto.</span>`;
+      const rejDiv = document.getElementById('xmlRejeicoes');
+      rejDiv.appendChild(divRej);
+    }
+  });
+}
+
+// ===================== FIM VALIDADOR XML =====================
 
 </script>
 <script id="docx-lib">(function(global2, factory) {
