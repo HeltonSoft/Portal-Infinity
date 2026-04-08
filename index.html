@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Central de Conhecimento do Sistema Infinity — Softline Sistemas. Documentação técnica, fluxogramas, base de conhecimento fiscal e ferramentas de suporte para implantação e atendimento.">
 <title>Sistema Infinity — Central de Conhecimento</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{--navy:#0f1b2d;--navy2:#162032;--navy3:#1e2d42;--blue:#1a6bcc;--blue2:#2481f0;--cyan:#00c4e8;--accent:#00e5b4;--text:#e8edf5;--text2:#8fa3bf;--text3:#c4d0e0;--border:rgba(255,255,255,0.07);--card:rgba(255,255,255,0.04);--sidebar-w:270px}
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
@@ -211,7 +215,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div>
         <div style="font-size:10px;color:#8fa3bf;font-weight:600;letter-spacing:.3px">Soft-line</div>
         <div style="font-size:9px;color:#5a7090;margin-top:1px">Soluções em sistemas</div>
-        <div style="font-size:8px;color:#3a5070;margin-top:3px;letter-spacing:.3px">v2.0.20260327</div>
+        <div style="font-size:8px;color:#3a5070;margin-top:3px;letter-spacing:.3px">v2.0.20260408</div>
       </div>
     </div>
   </div>
@@ -1228,13 +1232,32 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
   <div class="section" id="sec-nfenfce">
     <div class="module-header">
       <div class="module-icon" style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)">📋</div>
-      <div><h2>Regras NF-e x NFC-e <span class="module-update-tag">↻ Mar/2026</span></h2><p>Definição do documento fiscal correto com base no CST do produto. Emitir NFC-e com CSTs incompatíveis gera rejeição automática pela SEFAZ.</p></div>
+      <div><h2>Regras NF-e x NFC-e <span class="module-update-tag">↻ Abr/2026</span></h2><p>Definição do documento fiscal correto com base no CST do produto e no tipo de destinatário. Emitir NFC-e em situações incompatíveis gera rejeição automática pela SEFAZ.</p></div>
     </div>
 
     <!-- ALERTA PRINCIPAL -->
     <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:20px 24px;margin-bottom:28px">
       <div style="font-size:13px;font-weight:700;color:#f87171;margin-bottom:8px">⚠️ Atenção — Rejeição SEFAZ</div>
       <div style="font-size:13px;color:var(--text3);line-height:1.7">Se o produto estiver com <strong style="color:#f87171">CST 200, 201, 202 ou 203</strong>, a emissão de NFC-e será <strong style="color:#f87171">rejeitada automaticamente pela SEFAZ</strong>. Nesses casos, a nota correta é a <strong style="color:var(--text)">NF-e</strong>.</div>
+    </div>
+
+    <!-- ALERTA SINIEF 11/2025 — VIGÊNCIA FUTURA -->
+    <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.35);border-radius:12px;padding:20px 24px;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <span style="font-size:15px">📅</span>
+        <span style="font-size:13px;font-weight:700;color:#fbbf24">Mudança futura — Vigência a partir de 04/05/2026</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(251,191,36,.15);color:#fbbf24;margin-left:auto">Ajuste SINIEF 11/2025 — CONFAZ</span>
+      </div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.8">
+        O CONFAZ publicou o <strong style="color:var(--text)">Ajuste SINIEF 11/2025</strong>, que proíbe a emissão de <strong style="color:#fbbf24">NFC-e (modelo 65) quando o destinatário for pessoa jurídica (CNPJ)</strong>.<br>
+        A partir de <strong style="color:#fbbf24">4 de maio de 2026</strong>, toda venda destinada a PJ deverá ser obrigatoriamente documentada por <strong style="color:var(--text)">NF-e (modelo 55)</strong>. A NFC-e passa a ser válida exclusivamente para operações com consumidor final pessoa física, identificado por CPF.<br><br>
+        <strong style="color:var(--text)">Impacto prático:</strong> clientes que utilizam o frente de caixa do <strong style="color:var(--text)">Infinity</strong> para vendas a empresas — distribuidoras, revendas, restaurantes em compras de atacado — precisarão migrar essas operações para NF-e antes da data de vigência. Após 04/05/2026, a SEFAZ rejeitará automaticamente qualquer NFC-e emitida com CNPJ no campo destinatário.
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(251,191,36,.2);display:flex;gap:24px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">Base legal:</span> Ajuste SINIEF 11/2025 — CONFAZ</div>
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">Documento correto para PJ:</span> NF-e modelo 55</div>
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">NFC-e permitida para:</span> Consumidor final (CPF) — operações internas</div>
+      </div>
     </div>
 
     <!-- TABELA COMPLETA DE CSTs -->
@@ -1277,6 +1300,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
           <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Rejeição</th>
         </tr></thead>
         <tbody>
+          <tr style="background:rgba(251,191,36,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:#fbbf24">Destinatário CNPJ (PJ) — a partir de 04/05/2026</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">Pelo Ajuste SINIEF 11/2025 (CONFAZ), NFC-e fica proibida quando o destinatário for pessoa jurídica. Toda venda a CNPJ deverá ser documentada com NF-e modelo 55, independentemente do valor.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(251,191,36,.15);color:#fbbf24">Vigência 04/05/2026</span></td></tr>
           <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 10.000 sem destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e acima desse valor exige CPF ou CNPJ do destinatário obrigatoriamente. Valor pode variar por estado.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">750</span></td></tr>
           <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 200.000 com destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">Mesmo com CPF/CNPJ informado, NFC-e não pode ultrapassar R$ 200.000 por nota. Nesses casos emitir NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">780</span></td></tr>
           <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Operação interestadual</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e é exclusiva para venda presencial ao consumidor final dentro do mesmo estado. Operações interestaduais exigem NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-size:11px;color:var(--text2)">Operação interestadual não permitida</span></td></tr>
@@ -1657,11 +1681,11 @@ const CBENEF_REJEICOES=[
   {num:"507 / N14a",title:"cBenefRBC não informado ou inválido (Redução de BC)",regra:"N14a-10 e N14a-20 — NT 1.70",causa:"Novo campo introduzido pela NT 1.70: o cBenefRBC é obrigatório em operações com redução de base de cálculo (CST 20 ou 70). Diferente do cBenef, este campo é específico para identificar o benefício de redução.",solucao:"Verificar se a versão do Sistema Infinity já contempla o campo cBenefRBC. Caso não contemple, acionar a equipe de desenvolvimento. Para SP, esta regra entra em produção em 06/04/2026.",cor:"rgba(168,85,247,.1)",bordaCor:"rgba(168,85,247,.4)"}
 ];
 const CBENEF_FAQ=[
-  {num:"❓",title:"O cliente está emitindo NF-e sem o cBenef. Isso é problema agora?",causa:"",solucao:"Até 5 de abril de 2026, ainda não haverá rejeição pela SEFAZ-SP. Porém, o período atual é de testes. Orientar o cliente a parametrizar com antecedência para evitar problemas na virada de obrigatoriedade.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
-  {num:"❓",title:"O cliente tem muitos produtos. Como agilizar o cadastro?",causa:"",solucao:"Se a maior parte dos produtos usa a mesma regra tributária, o cadastro pela Tributação (Opção B) é o mais eficiente. Para exceções específicas, complementar com o cadastro por Produto (Opção A).",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
-  {num:"❓",title:"O cBenef é por item da nota ou por nota fiscal?",causa:"",solucao:"É por item. Cada produto na nota pode ter um cBenef diferente. No Infinity, o código é configurado no cadastro do Produto ou na Tributação e aplicado automaticamente na emissão.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
-  {num:"❓",title:"Posso usar o mesmo cBenef para todos os produtos?",causa:"",solucao:"Sim, se todos os produtos tiverem o mesmo tratamento tributário. Nesse caso, cadastrar o código diretamente na Tributação.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
-  {num:"❓",title:"Um cliente fora de SP precisa fazer algo?",causa:"",solucao:"Depende do estado. Consultar a tabela de estados com obrigatoriedade. Se o estado já exige o cBenef, a parametrização é necessária agora.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"}
+  {num:"FAQ",title:"O cliente está emitindo NF-e sem o cBenef. Isso é problema agora?",causa:"",solucao:"Até 5 de abril de 2026, ainda não haverá rejeição pela SEFAZ-SP. Porém, o período atual é de testes. Orientar o cliente a parametrizar com antecedência para evitar problemas na virada de obrigatoriedade.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
+  {num:"FAQ",title:"O cliente tem muitos produtos. Como agilizar o cadastro?",causa:"",solucao:"Se a maior parte dos produtos usa a mesma regra tributária, o cadastro pela Tributação (Opção B) é o mais eficiente. Para exceções específicas, complementar com o cadastro por Produto (Opção A).",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
+  {num:"FAQ",title:"O cBenef é por item da nota ou por nota fiscal?",causa:"",solucao:"É por item. Cada produto na nota pode ter um cBenef diferente. No Infinity, o código é configurado no cadastro do Produto ou na Tributação e aplicado automaticamente na emissão.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
+  {num:"FAQ",title:"Posso usar o mesmo cBenef para todos os produtos?",causa:"",solucao:"Sim, se todos os produtos tiverem o mesmo tratamento tributário. Nesse caso, cadastrar o código diretamente na Tributação.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"},
+  {num:"FAQ",title:"Um cliente fora de SP precisa fazer algo?",causa:"",solucao:"Depende do estado. Consultar a tabela de estados com obrigatoriedade. Se o estado já exige o cBenef, a parametrização é necessária agora.",cor:"rgba(0,196,232,.08)",bordaCor:"rgba(0,196,232,.3)"}
 ];
 const BASE_CONHECIMENTO=[
   {id:1,titulo:"Ocorrência vinculada incorretamente no título financeiro",modulo:"Financeiro",tipo:"Configuração",tags:["ocorrência","forma de pagamento","contas a receber","boleto","título"],situacao:"O título financeiro exibe uma conta/banco no campo Forma a Receber, mas a ocorrência vinculada aponta para outro banco/conta. A inconsistência também aparece no relatório de Contas a Receber.",causa:"No cadastro de Forma de Pagamento (Cadastros › Vendas › Forma de Pagamento), a ocorrência vinculada foi configurada incorretamente.",obs:"O cadastro de Forma de Pagamento é aberto: não é obrigatório vincular uma ocorrência. Se vincular, ela pode ser genérica ou específica.",correcao:["Ajustar o vínculo da ocorrência no cadastro da Forma de Pagamento: Cadastros › Vendas › Forma de Pagamento.","Para títulos já gerados com ocorrência errada: corrigir manualmente abrindo cada título e ajustando a ocorrência.","Caso o volume de registros seja grande, acionar o N2 para execução de script de atualização em massa."],sql:true,data:"Mar/2026"},
@@ -3010,6 +3034,8 @@ function taGoTo(step) {
   taCurrentStep = step;
   document.querySelectorAll('.ta-step').forEach(function(s,i){ s.classList.toggle('active', i===step); });
   document.querySelectorAll('.ta-tab').forEach(function(t,i){ t.classList.toggle('active', i===step); });
+  const taContainer = document.getElementById('sec-termoaceite');
+  if(taContainer) taContainer.scrollIntoView({behavior:'smooth', block:'start'});
   document.querySelectorAll('.ta-prog-dot').forEach(function(d,i){
     d.classList.toggle('current', i===step);
     d.classList.toggle('done', i<step);
@@ -3022,6 +3048,20 @@ function taGoTo(step) {
     btnNext.style.display = '';
     btnNext.textContent = 'Próximo →';
   }
+}
+
+function taToast(msg, tipo) {
+  const existing = document.getElementById('ta-toast');
+  if(existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'ta-toast';
+  const cor = tipo === 'warn' ? '#fbbf24' : '#34d399';
+  const bg = tipo === 'warn' ? 'rgba(251,191,36,.12)' : 'rgba(52,211,153,.12)';
+  const border = tipo === 'warn' ? 'rgba(251,191,36,.35)' : 'rgba(52,211,153,.35)';
+  t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:'+bg+';border:1px solid '+border+';color:'+cor+';padding:12px 22px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.3);transition:opacity .4s;white-space:nowrap';
+  t.textContent = (tipo === 'warn' ? '⚠️  ' : '✓  ') + msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 400); }, 4000);
 }
 
 function taNav(dir) {
@@ -3166,7 +3206,7 @@ function taGerarPDF() {
     } catch(e) {
       // Fallback: abrir em nova janela
       const win = window.open(blobUrl, '_blank');
-      if(!win) alert('Permita popups para este site e tente novamente.');
+      if(!win) taToast('Permita popups para este site e tente novamente.', 'warn');
     }
     setTimeout(function(){ 
       document.body.removeChild(iframe);
@@ -3180,7 +3220,7 @@ function taGerarWord() {
   if(window.docx && window.docx.Document) {
     taGerarWordExec(d);
   } else {
-    alert('Biblioteca não carregada. Recarregue a página e tente novamente.');
+    taToast('Biblioteca não carregada. Recarregue a página e tente novamente.', 'warn');
   }
 }
 
