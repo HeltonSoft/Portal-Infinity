@@ -3587,6 +3587,17 @@ function xmlValidar(){
     alertas.push({tipo:'danger',icone:'❌',msg:`<strong>Inconsistência CRT x Tributação ICMS:</strong> o emitente está configurado como CRT ${emitCRT} (${emitCRT==='1'?'Simples Nacional':emitCRT==='2'?'Lucro Presumido':'Lucro Real'}) mas os itens utilizam ${emitCRT==='1'?'CST de regime normal (deve ser CSOSN)':'CSOSN do Simples Nacional (deve ser CST)'}. Isso causará rejeição pela SEFAZ.`});
   }
   if(emitIEAlert) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>IE do emitente não informada.</strong> Para CRT 1, 2 ou 3 a Inscrição Estadual é obrigatória.'});
+
+  // Alerta tPag 90 — Sem Pagamento
+  const detPags = doc.querySelectorAll('detPag');
+  const temTpag90 = Array.from(detPags).some(dp=>{
+    const tPag = xmlGet(dp,'tPag');
+    const vPag = parseFloat(xmlGet(dp,'vPag')||'0');
+    return tPag==='90' && vPag===0;
+  });
+  if(temTpag90){
+    alertas.push({tipo:'info',icone:'ℹ️',msg:'<strong>tPag 90 — Sem Pagamento detectado:</strong> O emitente informou forma de pagamento 90 (Sem Pagamento) com valor R$ 0,00. Isso ocorre em operações onde o valor da nota é compensado com haver junto ao fornecedor, sem movimentação financeira real. <strong>Atenção no Infinity:</strong> ao importar este XML na entrada de NF, o sistema pode exigir o preenchimento de parcela — nesse caso, realize a entrada manualmente ou acione o suporte.'});
+  }
   if(spEmitente && emitDt && emitDt>=dtLimiteCbenef){
     const itensSemCbenef = Array.from(dets).filter(det=>{const p=det.querySelector('prod');return p&&!xmlGet(p,'cBenef');}).length;
     if(itensSemCbenef>0) alertas.push({tipo:'warn',icone:'⚠️',msg:`<strong>cBenef:</strong> ${itensSemCbenef} item(ns) sem cBenef em nota de SP após 06/04/2026. Verifique se os itens estão dispensados ou se o campo precisa ser preenchido.`});
