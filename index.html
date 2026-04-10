@@ -3487,12 +3487,18 @@ function xmlValidar(){
   const infAdFisco = infAdic?xmlGet(infAdic,'infAdFisco'):'';
   const infCpl = infAdic?xmlGet(infAdic,'infCpl'):'';
   const dets = doc.querySelectorAll('det');
-  const temCst0607 = Array.from(dets).some(det=>{
+  const itensCst0607 = [];
+  Array.from(dets).forEach((det,idx)=>{
     const imp = det.querySelector('imposto');
-    if(!imp) return false;
+    if(!imp) return;
     const cst = xmlGet(imp,'PISAliq CST')||xmlGet(imp,'PISNT CST')||xmlGet(imp,'PISQtde CST')||xmlGet(imp,'PISOutr CST');
-    return cst==='06'||cst==='07';
+    if(cst==='06'||cst==='07'){
+      const p = det.querySelector('prod');
+      const cfopItem = p?xmlGet(p,'CFOP'):'';
+      itensCst0607.push({n:idx+1, cst, cfop:cfopItem, xProd:p?xmlGet(p,'xProd'):`Item ${idx+1}`});
+    }
   });
+  const temCst0607 = itensCst0607.length>0;
   const infAdFiscoAlert = (temCst0607&&!infAdFisco)?'warn':null;
   document.getElementById('xmlFiscGrid').innerHTML =
     xmlField('infAdFisco',infAdFisco||'— (não informado)',false,infAdFiscoAlert)+
@@ -3521,7 +3527,14 @@ function xmlValidar(){
     const ncmValido = /^\d{8}$/.test(ncm);
     const ncmAlert = (!ncm||!ncmValido)?'border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.06)':'';
     const cfopAlert = !cfop?'border:1px solid rgba(239,68,68,.5);background:rgba(239,68,68,.06)':'';
-    const cBenefAlert = (!cBenef&&spEmitente&&emitDt&&emitDt>=dtLimiteCbenef)?'border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.06)':'';
+    // CST ICMS do item
+    const icmsCst = imposto?xmlGet(imposto,'ICMS CST')||xmlGet(imposto,'ICMS CSOSN')||'':'';
+    // cBenef: dispensado se CST sem benefício (00/40/41/50) + CFOP remessa/retorno (5910-5919, 6910-6919)
+    const cfopRemessa = cfop && /^[56]91\d$/.test(cfop);
+    const cstSemBeneficio = ['00','40','41','50'].includes(icmsCst);
+    const cBenefDispensado = !cBenef && cstSemBeneficio && cfopRemessa;
+    const cBenefNecessario = !cBenef && spEmitente && emitDt && emitDt>=dtLimiteCbenef && !cBenefDispensado;
+    const cBenefAlert = cBenefNecessario?'border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.06)':'';
     const tr = document.createElement('tr');
     tr.setAttribute('data-item', i);
     tr.innerHTML = `
@@ -3531,7 +3544,7 @@ function xmlValidar(){
       <td style="${cfopAlert};padding:6px 10px;border-radius:6px">${cfop||'<span style="color:#f87171">⚠ vazio</span>'}</td>
       <td>${pisCst?`<span class="xml-tag info">${pisCst}</span>`:'—'}</td>
       <td>${cofinsCst?`<span class="xml-tag info">${cofinsCst}</span>`:'—'}</td>
-      <td style="${cBenefAlert};padding:6px 10px;border-radius:6px">${cBenef?`<span class="xml-tag ok">${cBenef}</span>`:spEmitente&&emitDt&&emitDt>=dtLimiteCbenef?'<span style="color:#fbbf24">⚠ verificar</span>':'—'}</td>
+      <td style="${cBenefAlert};padding:6px 10px;border-radius:6px">${cBenef?`<span class="xml-tag ok">${cBenef}</span>`:cBenefDispensado?`<span style="color:var(--text3);font-size:11px" title="CST ${icmsCst} + CFOP ${cfop} (remessa/retorno) — dispensado do cBenef">dispensado</span>`:spEmitente&&emitDt&&emitDt>=dtLimiteCbenef?'<span style="color:#fbbf24">⚠ verificar</span>':'—'}</td>
       <td>${qtd||'—'}</td>
       <td>${xmlFmtMoeda(vUnCom)}</td>
       <td>${xmlFmtMoeda(vProd)}</td>`;
@@ -3555,7 +3568,11 @@ function xmlValidar(){
   // Alertas fiscais gerais
   const alertas = [];
   if(!chNFe) alertas.push({tipo:'danger',icone:'❌',msg:'<strong>Chave de acesso ausente.</strong> A nota pode estar sem autorização SEFAZ ou o XML está incompleto.'});
-  if(infAdFiscoAlert) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>infAdFisco não preenchido:</strong> esta nota possui itens com CST PIS/COFINS 06 ou 07. Verifique se há obrigatoriedade de preenchimento conforme legislação vigente (ex: LC 224/2025).'});
+  if(infAdFiscoAlert){
+    const itensStr = itensCst0607.map(x=>`#${x.n} (CST ${x.cst}${x.cfop?', CFOP '+x.cfop:''})`).join(', ');
+    const remessaAviso = itensCst0607.some(x=>x.cfop&&/^[56]91\d$/.test(x.cfop))?' Atenção: itens com CFOP de remessa/retorno podem estar dispensados conforme a operação.':'';
+    alertas.push({tipo:'warn',icone:'⚠️',msg:`<strong>infAdFisco não preenchido:</strong> ${itensStr} possuem CST PIS/COFINS 06 ou 07. Verifique a obrigatoriedade conforme LC 224/2025.${remessaAviso}`});
+  }
   if(infAdFisco && infAdFisco.toLowerCase().includes('224')) alertas.push({tipo:'info',icone:'ℹ️',msg:'<strong>LC 224/2025 detectada:</strong> infAdFisco contém referência à Lei Complementar nº 224/2025.'});
   if(destCNPJ && !destIE) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>IE do destinatário não informada.</strong> O destinatário possui CNPJ mas não tem Inscrição Estadual informada no XML. Verifique se é contribuinte de ICMS.'});
   // Alerta CRT x CSOSN/CST
