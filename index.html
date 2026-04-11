@@ -205,6 +205,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
   <div class="nav-section">Suporte</div>
   <div class="nav-item" onclick="showSection('baseconhecimento')"><span class="icon">🧠</span>Base de Conhecimento<span class="nav-badge">11</span></div>
   <div class="nav-item" onclick="showSection('xmlvalidador')"><span class="icon">🗂️</span>Validador de XML NF-e</div>
+  <div class="nav-item" onclick="showSection('xmleditor')"><span class="icon">✏️</span>Editor de XML NF-e</div>
   <div class="nav-section">Ferramentas</div>
   <div class="nav-item" onclick="showSection('termoaceite')"><span class="icon">📝</span>Termo de Aceite</div>
   <div class="nav-item" onclick="showSection('glossario')"><span class="icon">📖</span>Glossário</div>
@@ -783,6 +784,224 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
 
     </div>
   </div>
+  <div class="section" id="sec-xmleditor">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div><h2>Editor de XML NF-e <span class="module-update-tag">↻ Abr/2026</span> <span id="xmled-modelo-badge" style="display:none;font-size:11px;font-weight:700;padding:2px 10px;border-radius:8px;margin-left:6px"></span></h2>
+      <p>Edite campos do XML antes do reenvio pelo seu sistema emissor. Use o botão <strong>Remover Assinatura + Protocolo</strong> antes de exportar — a assinatura original precisa ser removida para que o sistema possa reassinar na transmissão.</p></div>
+    </div>
+
+    <div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--text2);line-height:1.7">
+      ⚠️ <strong style="color:#fbbf24">Atenção:</strong> qualquer alteração no conteúdo do XML invalida a assinatura digital original. Clique em <strong>Remover Assinatura + Protocolo</strong> antes de exportar, pois o arquivo precisa ser reassinado pelo sistema emissor antes da transmissão. Use apenas para correções que não exijam cancelamento da nota original.
+    </div>
+
+    <div id="xmled-upload-area" style="border:2px dashed var(--border);border-radius:14px;padding:40px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px" onclick="document.getElementById('xmled-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="xmledDrop(event)">
+      <div style="font-size:32px;margin-bottom:10px">📂</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Clique ou arraste o XML aqui</div>
+      <div style="font-size:12px;color:var(--text3)">Arquivo .xml de NF-e ou NFC-e</div>
+      <input type="file" id="xmled-input" accept=".xml" style="display:none" onchange="xmledLoad(this.files[0])">
+    </div>
+
+    <div id="xmled-editor" style="display:none">
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <button onclick="xmledRemoverAssinatura()" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Remover Assinatura + Protocolo</button>
+        <button onclick="xmledExportar()" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">⬇️ Exportar XML</button>
+        <button onclick="xmledLimpar()" style="background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">✖ Limpar</button>
+        <span id="xmled-status" style="font-size:12px;color:var(--text3);align-self:center;margin-left:4px"></span>
+      </div>
+
+      <!-- Banner info do documento -->
+      <div id="xmled-banner" style="background:var(--navy3);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px">
+        <span id="xmled-banner-tipo" style="font-size:13px;font-weight:700;padding:5px 14px;border-radius:8px;background:rgba(0,196,232,.15);color:var(--cyan);white-space:nowrap;letter-spacing:.5px">—</span>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--text2)">
+          <span>Série <strong id="xmled-banner-serie" style="color:var(--text)">—</strong></span>
+          <span>Nº <strong id="xmled-banner-num" style="color:var(--text)">—</strong></span>
+          <span>Data <strong id="xmled-banner-data" style="color:var(--text)">—</strong></span>
+          <span id="xmled-banner-emit-wrap">Emitente <strong id="xmled-banner-emit" style="color:var(--text)">—</strong></span>
+          <span>Valor <strong id="xmled-banner-valor" style="color:#34d399">—</strong></span>
+        </div>
+      </div>
+
+      <!-- IDENTIFICAÇÃO -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">📋</div><div style="flex:1"><h4>Identificação da Nota</h4><span class="menu-tag">ide</span></div><span class="process-chevron">▾</span></div>
+        <div class="process-body open">
+          <!-- Linha 1: Série | nNF | natOp | tpEmis -->
+          <div style="display:grid;grid-template-columns:80px 1fr 2fr 1fr;gap:12px;margin-bottom:12px">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Série</label><input id="xmled-serie" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Número NF (nNF)</label><input id="xmled-nnf" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Natureza da Operação (natOp)</label><input id="xmled-natop" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Tipo Emissão (tpEmis)</label>
+              <select id="xmled-tpemis" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="1">1 — Normal</option>
+                <option value="2">2 — FS (Formulário Segurança)</option>
+                <option value="3">3 — SCAN</option>
+                <option value="4">4 — DPEC</option>
+                <option value="5">5 — FS-DA</option>
+                <option value="6">6 — SVC-AN</option>
+                <option value="7">7 — SVC-RS</option>
+                <option value="9">9 — Contingência Offline NFC-e</option>
+              </select>
+            </div>
+          </div>
+          <!-- Linha 2: dhEmi | botão copiar | dhSaiEnt -->
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data/Hora Emissão (dhEmi)</label><input id="xmled-dhemi" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="2026-04-11T08:00:00-03:00"></div>
+            <div style="padding-bottom:2px"><button onclick="xmledCopiarDhEmi()" style="background:rgba(0,196,232,.1);border:1px solid rgba(0,196,232,.3);color:var(--cyan);border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">→ copiar</button></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data/Hora Saída/Entrada (dhSaiEnt)</label><input id="xmled-dhsaient" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMITENTE -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🏢</div><div style="flex:1"><h4>Emitente</h4><span class="menu-tag">emit</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Razão Social (xNome)</label><input id="xmled-emit-xnome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Nome Fantasia (xFant)</label><input id="xmled-emit-xfant" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ</label><input id="xmled-emit-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">IE</label><input id="xmled-emit-ie" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CRT <span title="1=Simples, 2=Lucro Presumido, 3=Lucro Real" style="color:var(--cyan);cursor:help">ℹ</span></label><input id="xmled-emit-crt" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="1=Simples / 3=Normal"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESTINATÁRIO -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">👤</div><div style="flex:1"><h4>Destinatário</h4><span class="menu-tag">dest</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Razão Social / Nome (xNome)</label><input id="xmled-dest-xnome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ</label><input id="xmled-dest-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CPF</label><input id="xmled-dest-cpf" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">IE</label><input id="xmled-dest-ie" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">indIEDest <span title="1=Contribuinte, 2=Isento, 9=Não contribuinte" style="color:var(--cyan);cursor:help">ℹ</span></label><input id="xmled-dest-indiedest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="1/2/9"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">E-mail</label><input id="xmled-dest-email" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Município (xMun)</label><input id="xmled-dest-xmun" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">UF</label><input id="xmled-dest-uf" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTOS -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">📦</div><div style="flex:1"><h4>Produtos / Itens</h4><span class="menu-tag">det</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div id="xmled-itens-container" style="display:flex;flex-direction:column;gap:12px;padding:4px 0"></div>
+        </div>
+      </div>
+
+      <!-- TOTAIS -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">💰</div><div style="flex:1"><h4>Totais da Nota</h4><span class="menu-tag">ICMSTot</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Total (vNF) <span style="color:#34d399;font-size:10px">auto</span></label><input id="xmled-vnf" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" readonly style="opacity:.7"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Produtos (vProd) <span style="color:#34d399;font-size:10px">auto</span></label><input id="xmled-vprod" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" readonly></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Desconto (vDesc)</label><input id="xmled-vdesc" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Frete (vFrete) <span id="xmled-frete-aviso" style="color:#fbbf24;font-size:10px;display:none">⚠ modFrete=9</span></label><input id="xmled-vfrete" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ICMS (vICMS) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vicms" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ST (vST) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vst" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div id="xmled-ibs-block" style="display:none"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor IBS (vIBS) <span style="background:rgba(52,211,153,.15);color:#34d399;font-size:10px;padding:1px 5px;border-radius:4px">Reforma Tributária</span></label><input id="xmled-vibs" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div id="xmled-cbs-block" style="display:none"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor CBS (vCBS) <span style="background:rgba(52,211,153,.15);color:#34d399;font-size:10px;padding:1px 5px;border-radius:4px">Reforma Tributária</span></label><input id="xmled-vcbs" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGAMENTO -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">💳</div><div style="flex:1"><h4>Pagamento</h4><span class="menu-tag">pag</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div id="xmled-pag-container" style="display:flex;flex-direction:column;gap:10px;padding:4px 0"></div>
+        </div>
+      </div>
+
+      <!-- TRANSPORTE -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🚛</div><div style="flex:1"><h4>Transporte</h4><span class="menu-tag">transp</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Modalidade Frete (modFrete)</label>
+              <select id="xmled-modfrete" class="xmled-field" onchange="xmledValidarFrete()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="0">0 — Por conta do Emitente</option>
+                <option value="1">1 — Por conta do Destinatário</option>
+                <option value="2">2 — Por conta de Terceiros</option>
+                <option value="3">3 — Próprio por conta do Remetente</option>
+                <option value="4">4 — Próprio por conta do Destinatário</option>
+                <option value="9">9 — Sem frete</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Transportadora (xNome)</label><input id="xmled-transp-xnome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ Transportadora</label><input id="xmled-transp-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO ADICIONAIS -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">📝</div><div style="flex:1"><h4>Informações Adicionais</h4><span class="menu-tag">infAdic</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="display:grid;gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Informações Complementares (infCpl)</label><textarea id="xmled-infcpl" class="xmled-field" rows="3" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical"></textarea></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Informações ao Fisco (infAdFisco)</label><textarea id="xmled-infadfisco" class="xmled-field" rows="2" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical"></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NFS-e Nacional -->
+      <div class="process-card" style="margin-bottom:14px;display:none" id="xmled-nfse-bloco">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🛠️</div><div style="flex:1"><h4>NFS-e — Serviço</h4><span class="menu-tag">InfNfse</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text2)">📄 Campos do padrão <strong style="color:#c084fc">NFS-e Nacional</strong> (ABRASF/RFB).</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Número NFS-e</label><input id="xmled-nfse-numero" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data Emissão</label><input id="xmled-nfse-dataemissao" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Competência</label><input id="xmled-nfse-competencia" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="AAAA-MM"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Nat. Operação (NatOp) <span title="1=Tributação no Município, 2=Tributação Fora, 3=Isenção, 4=Imune, 5=Susp.Judicial, 6=Susp.Adm." style="color:var(--cyan);cursor:help">ℹ</span></label><input id="xmled-nfse-natop" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="1–6"></div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">Prestador</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Razão Social</label><input id="xmled-nfse-prest-nome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ</label><input id="xmled-nfse-prest-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">IM (Insc. Municipal)</label><input id="xmled-nfse-prest-im" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">Tomador</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Razão Social / Nome</label><input id="xmled-nfse-tom-nome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ</label><input id="xmled-nfse-tom-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CPF</label><input id="xmled-nfse-tom-cpf" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">E-mail</label><input id="xmled-nfse-tom-email" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">Serviço / Valores</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+            <div style="grid-column:1/-1"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Descrição do Serviço</label><textarea id="xmled-nfse-desc" class="xmled-field" rows="2" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical"></textarea></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Serviços</label><input id="xmled-nfse-vserv" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Líquido</label><input id="xmled-nfse-vliq" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">ISS Retido?</label>
+              <select id="xmled-nfse-issret" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit">
+                <option value="1">1 — Sim (retido na fonte)</option>
+                <option value="2">2 — Não retido</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ISS</label><input id="xmled-nfse-viss" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Código Serviço</label><input id="xmled-nfse-codserv" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XML BRUTO -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🧾</div><div style="flex:1"><h4>XML Bruto</h4></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <textarea id="xmled-raw" rows="12" style="width:100%;background:#0d1520;border:1px solid var(--border);border-radius:8px;padding:12px;color:#7dd3fc;font-size:11px;font-family:'JetBrains Mono',monospace;resize:vertical;line-height:1.5" oninput="xmledSyncFromRaw()" placeholder="O XML carregado aparecerá aqui..."></textarea>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">💡 Editar aqui reflete nos campos acima e vice-versa.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="section" id="sec-termoaceite">
     <h2 style="margin-bottom:4px">Termo de Aceite — Gerador de Documento <span class="module-update-tag">↻ Mar/2026</span></h2>
     <p style="font-size:13px;color:var(--text2);margin-bottom:24px">Preencha os campos abaixo e gere o Termo de Aceite de Finalização de Implantação em PDF ou Word.</p>
@@ -2053,7 +2272,8 @@ function showSection(id) {
     ibscbs:'Reforma Tributária IBS/CBS', nfsenacional:'NFS-e Nacional', exclusaost:'Exclusão ST — SP 2026', cclasstrib:'cClassTrib IBS/CBS',
     baseconhecimento:'Base de Conhecimento', checklist:'Checklist de Implantação',
     glossario:'Glossário Técnico', fluxogramas:'Fluxogramas', integracoes:'Mapa de Integrações',
-    xmlvalidador:'Validador de XML NF-e'
+    xmlvalidador:'Validador de XML NF-e',
+    xmleditor:'Editor de XML NF-e'
   };
   document.getElementById('topbar-title').textContent = titles[id] || id;
   document.getElementById('topbar-breadcrumb').textContent = 'Sistema Infinity › ' + (titles[id] || id);
@@ -2113,9 +2333,16 @@ function impactoTag(v, icon, label) {
 function toggleProcess(header) {
   const body = header.nextElementSibling;
   const chev = header.querySelector('.process-chevron');
-  const open = body.classList.toggle('open');
-  header.classList.toggle('open', open);
-  if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+  const isOpen = body.classList.contains('open');
+  if(isOpen){
+    body.classList.remove('open');
+    header.classList.remove('open');
+    if(chev) chev.textContent = '▸';
+  } else {
+    body.classList.add('open');
+    header.classList.add('open');
+    if(chev) chev.textContent = '▾';
+  }
 }
 
 function renderChecklist(data) {
@@ -3891,6 +4118,788 @@ function xmlValidar(){
     document.getElementById('xmlAlertas').innerHTML = cnpjAlertas.join('') + document.getElementById('xmlAlertas').innerHTML;
   }
 }
+
+// ===================== EDITOR DE XML NF-e =====================
+let xmledDoc = null;
+let xmledFileName = 'nfe_editado.xml';
+
+function xmledDrop(e){
+  e.preventDefault();
+  document.getElementById('xmled-upload-area').style.borderColor='var(--border)';
+  const file = e.dataTransfer.files[0];
+  if(file) xmledLoad(file);
+}
+
+function xmledLoad(file){
+  if(!file) return;
+  xmledFileName = file.name.replace('.xml','_editado.xml');
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const text = e.target.result;
+    try{
+      const parser = new DOMParser();
+      xmledDoc = parser.parseFromString(text, 'application/xml');
+      if(xmledDoc.querySelector('parsererror')){ alert('XML inválido.'); return; }
+      xmledPopularCampos();
+      document.getElementById('xmled-editor').style.display='block';
+      document.getElementById('xmled-upload-area').style.display='none';
+      xmledAtualizarBanner();
+      xmledStatus('✅ XML carregado: ' + file.name);
+    }catch(ex){ alert('Erro ao carregar XML: ' + ex.message); }
+  };
+  reader.readAsText(file,'utf-8');
+}
+
+function xmledGetEl(tag){
+  if(!xmledDoc) return null;
+  return xmledDoc.querySelector(tag) || [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);
+}
+
+function xmledGetVal(tag){ const el=xmledGetEl(tag); return el?el.textContent:''; }
+
+function xmledSetVal(tag, val){
+  if(!xmledDoc) return;
+  const el = xmledDoc.querySelector(tag) || [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);
+  if(el) el.textContent = val;
+}
+
+function xmledGetValPath(path){
+  if(!xmledDoc) return '';
+  const tags = path.trim().split(' ');
+  let el = xmledDoc.documentElement;
+  for(const t of tags){
+    if(!el) return '';
+    el = [...el.children].find(c=>c.localName===t) || el.querySelector(t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t);
+  }
+  return el?el.textContent:'';
+}
+
+function xmledSetValPath(path, val){
+  if(!xmledDoc) return;
+  const tags = path.trim().split(' ');
+  let el = xmledDoc.documentElement;
+  for(const t of tags){
+    if(!el) return;
+    el = [...el.children].find(c=>c.localName===t) || el.querySelector(t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t);
+  }
+  if(el) el.textContent=val;
+}
+
+function xmledCopiarDhEmi(){
+  const v = document.getElementById('xmled-dhemi').value;
+  document.getElementById('xmled-dhsaient').value = v;
+  xmledSetVal('dhSaiEnt', v);
+  xmledAtualizarRaw();
+  xmledStatus('✅ dhSaiEnt copiado de dhEmi');
+}
+
+function xmledPopularCampos(){
+  // ide
+  const v = id => document.getElementById(id);
+  v('xmled-serie').value   = xmledGetVal('serie');
+  v('xmled-nnf').value     = xmledGetVal('nNF');
+  v('xmled-dhemi').value   = xmledGetVal('dhEmi');
+  v('xmled-dhsaient').value= xmledGetVal('dhSaiEnt');
+  v('xmled-natop').value   = xmledGetVal('natOp');
+  // tpEmis — select
+  const tpEmisVal = xmledGetVal('tpEmis');
+  const tpEmisEl = document.getElementById('xmled-tpemis');
+  if(tpEmisEl){ tpEmisEl.value = tpEmisVal; if(!tpEmisEl.value) tpEmisEl.value='1'; }
+  // emit
+  v('xmled-emit-xnome').value = xmledGetValPath('emit xNome');
+  v('xmled-emit-xfant').value = xmledGetValPath('emit xFant');
+  v('xmled-emit-cnpj').value  = xmledGetValPath('emit CNPJ');
+  v('xmled-emit-ie').value    = xmledGetValPath('emit IE');
+  v('xmled-emit-crt').value   = xmledGetValPath('emit CRT');
+  // dest
+  v('xmled-dest-xnome').value = xmledGetValPath('dest xNome');
+  v('xmled-dest-cnpj').value  = xmledGetValPath('dest CNPJ');
+  v('xmled-dest-cpf').value   = xmledGetValPath('dest CPF');
+  v('xmled-dest-ie').value    = xmledGetValPath('dest IE');
+  v('xmled-dest-indiedest').value = xmledGetValPath('dest indIEDest');
+  v('xmled-dest-email').value = xmledGetValPath('dest email');
+  v('xmled-dest-xmun').value  = xmledGetValPath('dest enderDest xMun');
+  v('xmled-dest-uf').value    = xmledGetValPath('dest enderDest UF');
+  // totais
+  v('xmled-vnf').value   = xmledGetValPath('ICMSTot vNF');
+  v('xmled-vprod').value = xmledGetValPath('ICMSTot vProd');
+  v('xmled-vdesc').value = xmledGetValPath('ICMSTot vDesc');
+  v('xmled-vfrete').value= xmledGetValPath('ICMSTot vFrete');
+  v('xmled-vicms').value = xmledGetValPath('ICMSTot vICMS');
+  v('xmled-vst').value   = xmledGetValPath('ICMSTot vST');
+  // transp
+  // modFrete — select
+  const modFreteVal = xmledGetValPath('transp modFrete');
+  const modFreteEl = document.getElementById('xmled-modfrete');
+  if(modFreteEl){ modFreteEl.value = modFreteVal; if(!modFreteEl.value) modFreteEl.value='0'; }
+  // Validar aviso frete
+  const avisoFrete = document.getElementById('xmled-frete-aviso');
+  if(avisoFrete) avisoFrete.style.display = modFreteVal==='9'?'inline':'none';
+  v('xmled-transp-xnome').value= xmledGetValPath('transp transporta xNome');
+  v('xmled-transp-cnpj').value = xmledGetValPath('transp transporta CNPJ');
+  // infAdic
+  v('xmled-infcpl').value     = xmledGetVal('infCpl');
+  v('xmled-infadfisco').value = xmledGetVal('infAdFisco');
+
+  // Itens (det)
+  const dets = xmledDoc.querySelectorAll('det');
+  const cont = document.getElementById('xmled-itens-container');
+  cont.innerHTML='';
+  dets.forEach((det,i)=>{
+    const prod = det.querySelector('prod');
+    const xProd = prod?prod.querySelector('xProd')||[...prod.getElementsByTagName('*')].find(n=>n.localName==='xProd'):null;
+    const title = xProd?xProd.textContent.substring(0,40):`Item ${i+1}`;
+    const fld = (lbl,id,val,ph='',onchg='')=>`<div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">${lbl}</label><input id="${id}" class="xmled-item-field" data-det="${i}" ${onchg?`oninput="${onchg}"`:''}  style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${val.replace(/"/g,'&quot;')}" placeholder="${ph}"></div>`;
+    const getP = tag=>{const e=prod?([...prod.getElementsByTagName('*')].find(n=>n.localName===tag)):null;return e?e.textContent:'';};
+    cont.innerHTML+=`
+      <div style="background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px">Item ${i+1} — ${title}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+          ${fld('Descrição (xProd)',`xmled-item-${i}-xprod`,getP('xProd'))}
+          ${fld('NCM',`xmled-item-${i}-ncm`,getP('NCM'))}
+          ${fld('CFOP',`xmled-item-${i}-cfop`,getP('CFOP'))}
+          ${fld('Cód. EAN (cEAN)',`xmled-item-${i}-cean`,getP('cEAN'))}
+          ${fld('Qtd (qCom)',`xmled-item-${i}-qcom`,getP('qCom'),'','xmledItemChange(this)')}
+          ${fld('Vl. Unit (vUnCom)',`xmled-item-${i}-vuncom`,getP('vUnCom'),'','xmledItemChange(this)')}
+          ${fld('Vl. Total (vProd)',`xmled-item-${i}-vprod`,getP('vProd'),'','xmledItemChange(this)')}
+          ${getP('cClassTrib')?fld('<span style="color:#34d399">cClassTrib</span>',`xmled-item-${i}-cclasstrib`,getP('cClassTrib')):''}
+        </div>
+      </div>`;
+  });
+
+  // Pagamentos
+  const detPags = xmledDoc.querySelectorAll('detPag');
+  const pagCont = document.getElementById('xmled-pag-container');
+  pagCont.innerHTML='';
+  detPags.forEach((dp,i)=>{
+    const tPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='tPag');
+    const vPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
+    const TPAG_DESC={'01':'Dinheiro','02':'Cheque','03':'Cartão Crédito','04':'Cartão Débito','05':'Crédito Loja','10':'Vale Alimentação','11':'Vale Refeição','12':'Vale Presente','13':'Vale Combustível','14':'Duplicata','15':'Boleto','17':'PIX Dinâmico','20':'PIX Estático','90':'Sem Pagamento','91':'Pagamento Posterior','99':'Outros'};
+    const tVal = tPag?tPag.textContent:'';
+    const desc = TPAG_DESC[tVal]?` (${TPAG_DESC[tVal]})`:'';
+    pagCont.innerHTML+=`
+      <div style="background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:8px">Pagamento ${i+1}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Tipo (tPag)${desc} <span title="01=Dinheiro | 02=Cheque | 03=Cartão Crédito | 04=Cartão Débito | 05=Crédito Loja | 10=Vale Alimentação | 11=Vale Refeição | 12=Vale Presente | 13=Vale Combustível | 14=Duplicata Mercantil | 15=Boleto Bancário | 17=PIX Dinâmico | 20=PIX Estático | 90=Sem Pagamento | 91=Pagamento Posterior | 99=Outros" style="color:var(--cyan);cursor:help;font-size:12px">ℹ</span></label>
+            <select id="xmled-pag-${i}-tpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
+              <option value="01" ${tVal==='01'?'selected':''}>01 — Dinheiro</option>
+              <option value="02" ${tVal==='02'?'selected':''}>02 — Cheque</option>
+              <option value="03" ${tVal==='03'?'selected':''}>03 — Cartão de Crédito</option>
+              <option value="04" ${tVal==='04'?'selected':''}>04 — Cartão de Débito</option>
+              <option value="05" ${tVal==='05'?'selected':''}>05 — Crédito Loja / Private Label</option>
+              <option value="10" ${tVal==='10'?'selected':''}>10 — Vale Alimentação</option>
+              <option value="11" ${tVal==='11'?'selected':''}>11 — Vale Refeição</option>
+              <option value="12" ${tVal==='12'?'selected':''}>12 — Vale Presente</option>
+              <option value="13" ${tVal==='13'?'selected':''}>13 — Vale Combustível</option>
+              <option value="14" ${tVal==='14'?'selected':''}>14 — Duplicata Mercantil</option>
+              <option value="15" ${tVal==='15'?'selected':''}>15 — Boleto Bancário</option>
+              <option value="17" ${tVal==='17'?'selected':''}>17 — PIX Dinâmico</option>
+              <option value="20" ${tVal==='20'?'selected':''}>20 — PIX Estático</option>
+              <option value="90" ${tVal==='90'?'selected':''}>90 — Sem Pagamento</option>
+              <option value="91" ${tVal==='91'?'selected':''}>91 — Pagamento Posterior</option>
+              <option value="99" ${tVal==='99'?'selected':''}>99 — Outros</option>
+            </select>
+          </div>
+          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor (vPag)</label><input id="xmled-pag-${i}-vpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${vPag?vPag.textContent:''}"></div>
+        </div>
+      </div>`;
+  });
+
+  xmledAtualizarRaw();
+  xmledAplicarModelo();
+}
+
+function xmledAplicarModelo(){
+  if(!xmledDoc) return;
+  const mod = xmledGetVal('mod') || '55';
+  const badge = document.getElementById('xmled-modelo-badge');
+
+  // Badge de modelo
+  if(badge){
+    badge.style.display='inline';
+    if(mod==='65'){
+      badge.textContent='NFC-e';
+      badge.style.background='rgba(251,191,36,.15)';
+      badge.style.color='#fbbf24';
+    } else if(mod==='55'){
+      badge.textContent='NF-e';
+      badge.style.background='rgba(0,196,232,.15)';
+      badge.style.color='var(--cyan)';
+    } else {
+      badge.textContent='NFS-e';
+      badge.style.background='rgba(167,139,250,.15)';
+      badge.style.color='#c084fc';
+    }
+  }
+
+  // Desabilitar campos de destinatário completo na NFC-e (consumidor sem identificação)
+  const destBlock = document.querySelector('#sec-xmleditor .process-body:nth-of-type(3)');
+  const destFields = document.querySelectorAll('#xmled-dest-xnome,#xmled-dest-cnpj,#xmled-dest-cpf,#xmled-dest-ie,#xmled-dest-indiedest,#xmled-dest-email,#xmled-dest-xmun,#xmled-dest-uf');
+  if(mod==='65'){
+    destFields.forEach(el=>{ el.disabled=true; el.style.opacity='.45'; el.title='Campo não aplicável para NFC-e sem destinatário identificado'; });
+  } else {
+    destFields.forEach(el=>{ el.disabled=false; el.style.opacity=''; el.title=''; });
+  }
+
+  // Mostrar IBS/CBS se existir no XML
+  const temIBS = xmledDoc.querySelector('IBSCBS') || xmledDoc.querySelector('IBSCBSTot');
+  const ibsBlock = document.getElementById('xmled-ibs-block');
+  const cbsBlock = document.getElementById('xmled-cbs-block');
+  if(ibsBlock) ibsBlock.style.display = temIBS ? '' : 'none';
+  if(cbsBlock) cbsBlock.style.display = temIBS ? '' : 'none';
+  if(temIBS){
+    const vIBSEl = document.getElementById('xmled-vibs');
+    const vCBSEl = document.getElementById('xmled-vcbs');
+    if(vIBSEl) vIBSEl.value = xmledGetValPath('IBSCBSTot gIBS vIBS') || xmledGetValPath('gIBS vIBS') || '';
+    if(vCBSEl) vCBSEl.value = xmledGetValPath('IBSCBSTot gCBS vCBS') || xmledGetValPath('gCBS vCBS') || '';
+  }
+}
+
+  // Detectar NFS-e
+  const isNFSe = [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
+  const modDoc = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='mod');
+  const modVal = modDoc?modDoc.textContent:'';
+  const isNFCe = modVal==='65'; // NFC-e não tem destinatário obrigatório
+  const nfseBloco = document.getElementById('xmled-nfse-bloco');
+  ['📋','🏢','👤','📦','💰','💳','🚛','📝'].forEach(em=>{
+    const el=[...document.querySelectorAll('#sec-xmleditor .process-num')].find(e=>e.textContent===em);
+    if(el){const card=el.closest('.process-card');if(card)card.style.display=isNFSe?'none':'';}
+  });
+  // Restaurar/esconder blocos conforme tipo
+  ['📋','🏢','👤','📦','💰','💳','🚛','📝'].forEach(em=>{
+    const elB=[...document.querySelectorAll('#sec-xmleditor .process-num')].find(e=>e.textContent===em);
+    if(elB){
+      const card=elB.closest('.process-card');
+      if(!card) return;
+      if(isNFSe){ card.style.display='none'; return; }
+      // NFC-e: esconder Destinatário (👤) pois não é obrigatório
+      if(isNFCe && em==='👤'){ card.style.display='none'; return; }
+      card.style.display='';
+    }
+  });
+  if(nfseBloco) nfseBloco.style.display=isNFSe?'block':'none';
+  if(isNFSe) xmledPopularNFSe();
+
+function xmledGetNFSeVal(tag){
+  if(!xmledDoc) return '';
+  const el=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);
+  return el?el.textContent:'';
+}
+function xmledSetNFSeVal(tag,val){
+  if(!xmledDoc) return;
+  const el=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);
+  if(el) el.textContent=val;
+}
+function xmledPopularNFSe(){
+  const s=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val;};
+  s('xmled-nfse-numero',     xmledGetNFSeVal('Numero'));
+  s('xmled-nfse-dataemissao',xmledGetNFSeVal('DataEmissao'));
+  s('xmled-nfse-competencia',xmledGetNFSeVal('Competencia'));
+  s('xmled-nfse-natop',      xmledGetNFSeVal('NaturezaOperacao'));
+  const cnpjs=[...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='Cnpj');
+  if(cnpjs[0]) s('xmled-nfse-prest-cnpj',cnpjs[0].textContent);
+  if(cnpjs[1]) s('xmled-nfse-tom-cnpj',  cnpjs[1].textContent);
+  const nomes=[...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='RazaoSocial');
+  if(nomes[0]) s('xmled-nfse-prest-nome',nomes[0].textContent);
+  if(nomes[1]) s('xmled-nfse-tom-nome',  nomes[1].textContent);
+  s('xmled-nfse-prest-im',  xmledGetNFSeVal('InscricaoMunicipal'));
+  s('xmled-nfse-tom-cpf',   xmledGetNFSeVal('Cpf'));
+  s('xmled-nfse-tom-email', xmledGetNFSeVal('Email'));
+  s('xmled-nfse-desc',      xmledGetNFSeVal('Discriminacao'));
+  s('xmled-nfse-vserv',     xmledGetNFSeVal('ValorServicos'));
+  s('xmled-nfse-vliq',      xmledGetNFSeVal('ValorLiquidoNfse'));
+  s('xmled-nfse-viss',      xmledGetNFSeVal('ValorIss'));
+  s('xmled-nfse-codserv',   xmledGetNFSeVal('ItemListaServico'));
+  const issRetEl=document.getElementById('xmled-nfse-issret');
+  if(issRetEl) issRetEl.value=xmledGetNFSeVal('IssRetido')||'2';
+}
+
+function xmledSalvarNFSe(){
+  if(!xmledDoc) return;
+  const v=id=>{const e=document.getElementById(id);return e?e.value:'';};
+  xmledSetNFSeVal('Numero',          v('xmled-nfse-numero'));
+  xmledSetNFSeVal('DataEmissao',     v('xmled-nfse-dataemissao'));
+  xmledSetNFSeVal('Competencia',     v('xmled-nfse-competencia'));
+  xmledSetNFSeVal('NaturezaOperacao',v('xmled-nfse-natop'));
+  xmledSetNFSeVal('Discriminacao',   v('xmled-nfse-desc'));
+  xmledSetNFSeVal('ValorServicos',   v('xmled-nfse-vserv'));
+  xmledSetNFSeVal('ValorLiquidoNfse',v('xmled-nfse-vliq'));
+  xmledSetNFSeVal('ValorIss',        v('xmled-nfse-viss'));
+  xmledSetNFSeVal('ItemListaServico',v('xmled-nfse-codserv'));
+  xmledSetNFSeVal('IssRetido',       v('xmled-nfse-issret'));
+}
+
+function xmledSalvarCampos(){
+  if(!xmledDoc) return;
+  const v = id=>{ const e=document.getElementById(id); return e?e.value:''; };
+  xmledSetVal('serie',   v('xmled-serie'));
+  xmledSetVal('nNF',     v('xmled-nnf'));
+  xmledSetVal('dhEmi',   v('xmled-dhemi'));
+  xmledSetVal('dhSaiEnt',v('xmled-dhsaient'));
+  xmledSetVal('natOp',   v('xmled-natop'));
+  xmledSetVal('tpEmis',  v('xmled-tpemis'));
+  xmledSetValPath('emit xNome', v('xmled-emit-xnome'));
+  xmledSetValPath('emit xFant', v('xmled-emit-xfant'));
+  xmledSetValPath('emit CNPJ',  v('xmled-emit-cnpj'));
+  xmledSetValPath('emit IE',    v('xmled-emit-ie'));
+  xmledSetValPath('emit CRT',   v('xmled-emit-crt'));
+  xmledSetValPath('dest xNome', v('xmled-dest-xnome'));
+  xmledSetValPath('dest CNPJ',  v('xmled-dest-cnpj'));
+  xmledSetValPath('dest CPF',   v('xmled-dest-cpf'));
+  xmledSetValPath('dest IE',    v('xmled-dest-ie'));
+  xmledSetValPath('dest indIEDest', v('xmled-dest-indiedest'));
+  xmledSetValPath('dest email', v('xmled-dest-email'));
+  xmledSetValPath('dest enderDest xMun', v('xmled-dest-xmun'));
+  xmledSetValPath('dest enderDest UF',   v('xmled-dest-uf'));
+  xmledSetValPath('ICMSTot vNF',   v('xmled-vnf'));
+  xmledSetValPath('ICMSTot vProd', v('xmled-vprod'));
+  xmledSetValPath('ICMSTot vDesc', v('xmled-vdesc'));
+  xmledSetValPath('ICMSTot vFrete',v('xmled-vfrete'));
+  xmledSetValPath('ICMSTot vICMS', v('xmled-vicms'));
+  xmledSetValPath('ICMSTot vST',   v('xmled-vst'));
+  xmledSetValPath('transp modFrete',          v('xmled-modfrete'));
+  xmledSetValPath('transp transporta xNome',  v('xmled-transp-xnome'));
+  xmledSetValPath('transp transporta CNPJ',   v('xmled-transp-cnpj'));
+  // infAdic
+  const infAd = xmledDoc.querySelector('infAdic') || (()=>{
+    const ns='http://www.portalfiscal.inf.br/nfe';
+    const el=xmledDoc.createElementNS(ns,'infAdic');
+    const infNFe=xmledDoc.querySelector('infNFe');
+    if(infNFe) infNFe.appendChild(el);
+    return el;
+  })();
+  const setOrCreate=(parent,tag,val)=>{
+    let el=[...parent.getElementsByTagName('*')].find(n=>n.localName===tag);
+    if(!el){el=xmledDoc.createElementNS('http://www.portalfiscal.inf.br/nfe',tag);parent.appendChild(el);}
+    el.textContent=val;
+  };
+  setOrCreate(infAd,'infCpl',     v('xmled-infcpl'));
+  setOrCreate(infAd,'infAdFisco', v('xmled-infadfisco'));
+  // Itens
+  const dets = xmledDoc.querySelectorAll('det');
+  dets.forEach((det,i)=>{
+    const prod=det.querySelector('prod');
+    if(!prod) return;
+    const setP=(tag,val)=>{
+      let el=[...prod.getElementsByTagName('*')].find(n=>n.localName===tag);
+      if(el) el.textContent=val;
+    };
+    const ve=id=>{ const e=document.getElementById(id); return e?e.value:null; };
+    if(ve(`xmled-item-${i}-xprod`)!==null){
+      setP('xProd',  ve(`xmled-item-${i}-xprod`)||'');
+      setP('NCM',    ve(`xmled-item-${i}-ncm`)||'');
+      setP('CFOP',   ve(`xmled-item-${i}-cfop`)||'');
+      setP('cEAN',   ve(`xmled-item-${i}-cean`)||'');
+      setP('qCom',   ve(`xmled-item-${i}-qcom`)||'');
+      setP('vUnCom', ve(`xmled-item-${i}-vuncom`)||'');
+      setP('vProd',  ve(`xmled-item-${i}-vprod`)||'');
+      const ccEl=ve(`xmled-item-${i}-cclasstrib`);
+      if(ccEl!==null) setP('cClassTrib', ccEl);
+    }
+  });
+  // Pagamentos
+  const detPags = xmledDoc.querySelectorAll('detPag');
+  detPags.forEach((dp,i)=>{
+    const setDP=(tag,val)=>{
+      let el=[...dp.getElementsByTagName('*')].find(n=>n.localName===tag);
+      if(el) el.textContent=val;
+    };
+    const ve=id=>{ const e=document.getElementById(id); return e?e.value:null; };
+    if(ve(`xmled-pag-${i}-tpag`)!==null){
+      setDP('tPag', ve(`xmled-pag-${i}-tpag`)||'');
+      setDP('vPag', ve(`xmled-pag-${i}-vpag`)||'');
+    }
+  });
+}
+
+function xmledAtualizarRaw(){
+  if(!xmledDoc) return;
+  const ser=new XMLSerializer();
+  document.getElementById('xmled-raw').value=ser.serializeToString(xmledDoc);
+}
+
+function xmledSyncFromRaw(){
+  const raw=document.getElementById('xmled-raw').value;
+  if(!raw.trim()) return;
+  try{
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(raw,'application/xml');
+    if(doc.querySelector('parsererror')) return;
+    xmledDoc=doc;
+    xmledPopularCampos();
+  }catch(e){}
+}
+
+// Salvar NFS-e quando campo do editor mudar
+document.addEventListener('input',function(e){
+  if(e.target.classList.contains('xmled-field') && e.target.id.startsWith('xmled-nfse-') && e.target.id!=='xmled-raw'){
+    xmledSalvarNFSe();
+    xmledAtualizarRaw();
+  }
+});
+
+document.addEventListener('input',function(e){
+  if((e.target.classList.contains('xmled-field')||e.target.classList.contains('xmled-item-field')||e.target.classList.contains('xmled-pag-field')) && e.target.id!=='xmled-raw'){
+    // Se mudou valor de item, oferecer recalculo dos totais
+    if(e.target.classList.contains('xmled-item-field') && (e.target.id.endsWith('-vprod')||e.target.id.endsWith('-qcom')||e.target.id.endsWith('-vuncom'))){
+      clearTimeout(window._xmledRecalcTimer);
+      const _tid = e.target.id; // capturar ID antes do setTimeout
+      window._xmledRecalcTimer = setTimeout(()=>{
+        const el = document.getElementById(_tid);
+        if(el) xmledOfereceRecalc(el);
+      }, 600);
+    }
+    xmledSalvarCampos();
+    xmledAtualizarRaw();
+  }
+});
+
+function xmledOfereceRecalc(campo){
+  if(!xmledDoc) return;
+  const id = campo.id;
+  const match = id.match(/xmled-item-(\d+)-(qcom|vuncom|vprod)/);
+  if(!match) return;
+  const idx = parseInt(match[1]);
+  const tipo = match[2];
+
+  const qEl  = document.getElementById(`xmled-item-${idx}-qcom`);
+  const vuEl = document.getElementById(`xmled-item-${idx}-vuncom`);
+  const vpEl = document.getElementById(`xmled-item-${idx}-vprod`);
+  if(!qEl||!vuEl||!vpEl) return;
+
+  const q  = parseFloat(qEl.value)||0;
+  const vu = parseFloat(vuEl.value)||0;
+  const vp = parseFloat(vpEl.value)||0;
+
+  if(tipo==='qcom'||tipo==='vuncom'){
+    // Recalcular vProd = qCom × vUnCom automaticamente
+    if(q>0 && vu>0){
+      const novoVProd = (q*vu).toFixed(2);
+      if(novoVProd !== vpEl.value){
+        vpEl.value = novoVProd;
+      }
+    }
+  }
+
+  if(tipo==='vprod'){
+    // Recalcular vUnCom = vProd / qCom automaticamente
+    if(q>0 && vp>0){
+      const precisao = q===1?2:10;
+      vuEl.value = (vp/q).toFixed(precisao).replace(/\.?0+$/,'');
+    }
+  }
+
+  // Salvar campos e recalcular totais
+  // Primeiro salvar o item modificado diretamente no doc
+  const dets2 = [...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+  if(dets2[idx]){
+    const prod2 = [...dets2[idx].getElementsByTagName('*')].find(n=>n.localName==='prod');
+    if(prod2){
+      const setP2=(tag,val)=>{const el=[...prod2.getElementsByTagName('*')].find(n=>n.localName===tag);if(el)el.textContent=val;};
+      setP2('vProd', vpEl.value);
+      setP2('vUnCom', vuEl.value);
+      setP2('qCom', qEl.value);
+    }
+  }
+  xmledRecalcularTotais();
+  xmledAvisarVPag();
+  xmledAtualizarRaw();
+  xmledStatus('✅ Totais atualizados');
+}
+function xmledRecalcularTotais(){
+  if(!xmledDoc) return;
+  const dets = [...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+  let somaVProd = 0;
+  let somaVDesc = 0;
+  dets.forEach((det,i)=>{
+    const prod=[...det.getElementsByTagName('*')].find(n=>n.localName==='prod');
+    if(!prod) return;
+    const vProdEl=[...prod.getElementsByTagName('*')].find(n=>n.localName==='vProd');
+    const vDescEl=[...prod.getElementsByTagName('*')].find(n=>n.localName==='vDesc');
+    somaVProd += parseFloat(vProdEl?vProdEl.textContent:0)||0;
+    somaVDesc += parseFloat(vDescEl?vDescEl.textContent:0)||0;
+  });
+  // vDesc e vFrete vêm dos campos de totais (podem ter sido editados diretamente)
+  const vDescCampo = parseFloat(document.getElementById('xmled-vdesc').value)||0;
+  const vFrete = parseFloat(document.getElementById('xmled-vfrete').value)||0;
+  // Usar o maior entre soma dos itens e campo manual (campo manual prevalece se diferente)
+  const vDescFinal = vDescCampo > 0 ? vDescCampo : somaVDesc;
+  const vNF = (somaVProd - vDescFinal + vFrete).toFixed(2);
+  const vProdFmt = somaVProd.toFixed(2);
+  // Atualizar campos
+  document.getElementById('xmled-vprod').value = vProdFmt;
+  document.getElementById('xmled-vnf').value = vNF;
+  if(vDescFinal!==somaVDesc) document.getElementById('xmled-vdesc').value = vDescFinal.toFixed(2);
+  // Atualizar no doc
+  xmledSetValPath('ICMSTot vProd', vProdFmt);
+  xmledSetValPath('ICMSTot vNF', vNF);
+  xmledSetValPath('ICMSTot vDesc', vDescFinal.toFixed(2));
+  xmledSetValPath('ICMSTot vFrete', vFrete.toFixed(2));
+  xmledStatus(`✅ Totais recalculados — vProd: R$ ${vProdFmt} | vNF: R$ ${vNF}`);
+}
+
+function xmledAvisarVPag(){
+  if(!xmledDoc) return;
+  // Usar getElementsByTagName para evitar problema de namespace
+  const detPagsAll = [...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='detPag');
+  if(detPagsAll.length === 0) return;
+  // Só atualiza automaticamente se houver 1 único pagamento e não for Sem Pagamento / Posterior
+  if(detPagsAll.length > 1) return; // pagamento misto — não alterar
+  const dp = detPagsAll[0];
+  const vPagEl = [...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
+  const tPagEl = [...dp.getElementsByTagName('*')].find(n=>n.localName==='tPag');
+  if(!vPagEl) return;
+  const tVal = tPagEl?tPagEl.textContent:'';
+  if(tVal==='90'||tVal==='91') return; // sem pagamento / posterior — não alterar
+  const vPagAtual = parseFloat(vPagEl.textContent)||0;
+  const vNFAtual  = parseFloat(document.getElementById('xmled-vnf').value)||0;
+  if(vNFAtual<=0) return;
+  if(Math.abs(vPagAtual-vNFAtual)<=0.01) return; // já está correto
+  // Atualizar vPag automaticamente (usuário já confirmou o recalculo dos totais)
+  vPagEl.textContent = vNFAtual.toFixed(2);
+  const pagInput = document.getElementById('xmled-pag-0-vpag');
+  if(pagInput) pagInput.value = vNFAtual.toFixed(2);
+  xmledStatus('✅ vPag atualizado automaticamente para R$ ' + vNFAtual.toFixed(2));
+}
+function xmledRecalcTotaisInput(){
+  // Chamada ao mudar vDesc ou vFrete diretamente nos campos de totais
+  if(!xmledDoc) return;
+  clearTimeout(window._xmledTotaisTimer);
+  window._xmledTotaisTimer = setTimeout(()=>{
+    xmledSalvarCampos();
+    xmledRecalcularTotais();
+    xmledAvisarVPag();
+    xmledAtualizarRaw();
+  }, 600);
+}
+
+function xmledValidarFrete(){
+  if(!xmledDoc) return;
+  const modFrete = document.getElementById('xmled-modfrete').value;
+  const vFreteEl = document.getElementById('xmled-vfrete');
+  const aviso = document.getElementById('xmled-frete-aviso');
+  const vFrete = parseFloat(vFreteEl.value)||0;
+
+  if(modFrete==='9'){
+    // Sem frete — avisar se tiver valor
+    if(aviso) aviso.style.display='inline';
+    if(vFrete>0){
+      if(confirm('Modalidade Frete = 9 (Sem frete) mas vFrete está R$ '+vFrete.toFixed(2)+'. Zerar?')){
+        vFreteEl.value='0.00';
+        xmledSalvarCampos();
+        xmledRecalcularTotais();
+        xmledAvisarVPag();
+        xmledAtualizarRaw();
+      }
+    }
+  } else {
+    if(aviso) aviso.style.display='none';
+  }
+  xmledSalvarCampos();
+  xmledAtualizarRaw();
+}
+
+function xmledRemoverAssinatura(){
+  if(!xmledDoc){ alert('Carregue um XML primeiro.'); return; }
+  xmledDoc.querySelectorAll('Signature').forEach(s=>s.parentNode.removeChild(s));
+  xmledDoc.querySelectorAll('protNFe').forEach(p=>p.parentNode.removeChild(p));
+  const nfeProc=xmledDoc.querySelector('nfeProc');
+  if(nfeProc){
+    const nfe=xmledDoc.querySelector('NFe');
+    if(nfe){ const d=new DOMParser().parseFromString('<NFe xmlns="http://www.portalfiscal.inf.br/nfe"></NFe>','application/xml'); d.documentElement.replaceWith(nfe.cloneNode(true)); xmledDoc=d; }
+  }
+  xmledAtualizarRaw();
+  xmledStatus('🗑️ Assinatura e protocolo removidos. Pronto para edição e reenvio.');
+}
+
+function xmledExportar(){
+  if(!xmledDoc){ alert('Carregue um XML primeiro.'); return; }
+  xmledSalvarCampos();
+  const ser=new XMLSerializer();
+  let xml=ser.serializeToString(xmledDoc);
+  if(!xml.startsWith('<?xml')) xml='<?xml version="1.0" encoding="UTF-8"?>'+xml;
+  const blob=new Blob([xml],{type:'application/xml;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=xmledFileName;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  xmledStatus('✅ XML exportado: '+xmledFileName);
+}
+
+function xmledLimpar(){
+  xmledDoc=null;
+  xmledFileName='nfe_editado.xml';
+  // Reset file input para permitir recarregar o mesmo arquivo
+  const inp=document.getElementById('xmled-input');
+  if(inp) inp.value='';
+  document.getElementById('xmled-editor').style.display='none';
+  const ua=document.getElementById('xmled-upload-area');
+  ua.style.display='block';
+  ua.style.borderColor='var(--border)';
+  document.getElementById('xmled-raw').value='';
+  document.getElementById('xmled-status').textContent='';
+  document.getElementById('xmled-itens-container').innerHTML='';
+  document.getElementById('xmled-pag-container').innerHTML='';
+  ['xmled-serie','xmled-nnf','xmled-dhemi','xmled-dhsaient','xmled-natop',
+   'xmled-emit-xnome','xmled-emit-xfant','xmled-emit-cnpj','xmled-emit-ie','xmled-emit-crt',
+   'xmled-dest-xnome','xmled-dest-cnpj','xmled-dest-cpf','xmled-dest-ie','xmled-dest-indiedest','xmled-dest-email','xmled-dest-xmun','xmled-dest-uf',
+   'xmled-vnf','xmled-vprod','xmled-vdesc','xmled-vfrete','xmled-vicms','xmled-vst',
+   'xmled-transp-xnome','xmled-transp-cnpj',
+   'xmled-infcpl','xmled-infadfisco'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const tpEmisEl=document.getElementById('xmled-tpemis'); if(tpEmisEl) tpEmisEl.value='1';
+  const modFreteEl=document.getElementById('xmled-modfrete'); if(modFreteEl) modFreteEl.value='0';
+  const avisoFrete=document.getElementById('xmled-frete-aviso'); if(avisoFrete) avisoFrete.style.display='none';
+  const badge=document.getElementById('xmled-modelo-badge'); if(badge) badge.style.display='none';
+  const ibsB=document.getElementById('xmled-ibs-block'); if(ibsB) ibsB.style.display='none';
+  const cbsB=document.getElementById('xmled-cbs-block'); if(cbsB) cbsB.style.display='none';
+  ['xmled-vibs','xmled-vcbs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+}
+  // Resetar banner
+  const bannerTipo=document.getElementById('xmled-banner-tipo'); if(bannerTipo) bannerTipo.textContent='—';
+  ['xmled-banner-serie','xmled-banner-num','xmled-banner-data','xmled-banner-emit'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—';});
+  const nfseBloco2=document.getElementById('xmled-nfse-bloco'); if(nfseBloco2) nfseBloco2.style.display='none';
+  ['xmled-nfse-numero','xmled-nfse-dataemissao','xmled-nfse-competencia','xmled-nfse-natop',
+   'xmled-nfse-prest-nome','xmled-nfse-prest-cnpj','xmled-nfse-prest-im',
+   'xmled-nfse-tom-nome','xmled-nfse-tom-cnpj','xmled-nfse-tom-cpf','xmled-nfse-tom-email',
+   'xmled-nfse-desc','xmled-nfse-vserv','xmled-nfse-vliq','xmled-nfse-viss','xmled-nfse-codserv'
+  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['📋','🏢','👤','📦','💰','💳','🚛','📝'].forEach(em=>{
+    const el=[...document.querySelectorAll('#sec-xmleditor .process-num')].find(e=>e.textContent===em);
+    if(el){const card=el.closest('.process-card');if(card)card.style.display='';}
+  });
+function xmledStatus(msg){
+  const el=document.getElementById('xmled-status');
+  if(el){ el.textContent=msg; setTimeout(()=>{ el.textContent=''; },5000); }
+}
+function xmledAtualizarBanner(){
+  if(!xmledDoc) return;
+  const get = tag => { const el=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag); return el?el.textContent:''; };
+
+  // Detectar tipo
+  const isNFSe = [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
+  const modDoc = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='mod');
+  const modVal = modDoc?modDoc.textContent:'';
+  const isNFCe = modVal==='65'; // NFC-e não tem destinatário obrigatório
+  const mod = get('mod');
+  let tipo = '—'; let cor = 'rgba(0,196,232,.15)'; let txtCor = 'var(--cyan)';
+  if(isNFSe){
+    tipo='NFS-e'; cor='rgba(167,139,250,.15)'; txtCor='#c084fc';
+  } else if(mod==='55'){
+    tipo='NF-e — Mod.55'; cor='rgba(0,196,232,.15)'; txtCor='var(--cyan)';
+  } else if(mod==='65'){
+    tipo='NFC-e — Mod.65'; cor='rgba(52,211,153,.15)'; txtCor='#34d399';
+  } else {
+    tipo='Documento Fiscal'; cor='rgba(255,255,255,.07)'; txtCor='var(--text2)';
+  }
+
+  // Dados
+  const serie  = isNFSe ? '' : get('serie');
+  const num    = isNFSe ? get('Numero') : get('nNF');
+  const dtRaw  = isNFSe ? get('DataEmissao') : get('dhEmi');
+  const emitente = isNFSe ? get('RazaoSocial') : (get('xFant')||get('xNome'));
+
+  // Formatar data
+  let dtFmt = '—';
+  if(dtRaw){
+    try{
+      const d = new Date(dtRaw);
+      dtFmt = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+      const h = d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      if(h!=='00:00') dtFmt += ' ' + h;
+    }catch(e){ dtFmt = dtRaw.substring(0,10); }
+  }
+
+  // Atualizar banner
+  const el = id => document.getElementById(id);
+  const tipoEl = el('xmled-banner-tipo');
+  if(tipoEl){ tipoEl.textContent=tipo; tipoEl.style.background=cor; tipoEl.style.color=txtCor; }
+  if(el('xmled-banner-serie')) el('xmled-banner-serie').textContent = serie||'—';
+  if(el('xmled-banner-num'))   el('xmled-banner-num').textContent   = num||'—';
+  if(el('xmled-banner-data'))  el('xmled-banner-data').textContent  = dtFmt;
+  if(el('xmled-banner-emit'))  el('xmled-banner-emit').textContent  = emitente ? emitente.substring(0,35)+(emitente.length>35?'...':'') : '—';
+  // Valor total
+  const vNFBanner = isNFSe ? get('ValorServicos') : get('vNF');
+  const vNFNum = parseFloat(vNFBanner)||0;
+  if(el('xmled-banner-valor')) el('xmled-banner-valor').textContent = vNFNum>0 ? 'R$ '+vNFNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+  // Ocultar série para NFS-e
+  const serieWrap = el('xmled-banner-serie') ? el('xmled-banner-serie').parentElement : null;
+  if(serieWrap) serieWrap.style.display = isNFSe?'none':'';
+}
+
+function xmledItemChange(el){
+  if(!xmledDoc||!el) return;
+  clearTimeout(window._xrc);
+  window._xrc = setTimeout(()=>{
+    const id = el.id;
+    const m = id.match(/xmled-item-(\d+)-(qcom|vuncom|vprod)/);
+    if(!m) return;
+    const idx=parseInt(m[1]), tipo=m[2];
+    const qEl=document.getElementById(`xmled-item-${idx}-qcom`);
+    const vuEl=document.getElementById(`xmled-item-${idx}-vuncom`);
+    const vpEl=document.getElementById(`xmled-item-${idx}-vprod`);
+    if(!qEl||!vuEl||!vpEl) return;
+    const q=parseFloat(qEl.value)||0, vu=parseFloat(vuEl.value)||0, vp=parseFloat(vpEl.value)||0;
+    // Recalcular valores cruzados
+    if((tipo==='qcom'||tipo==='vuncom') && q>0 && vu>0){
+      vpEl.value=(q*vu).toFixed(2);
+    }
+    if(tipo==='vprod' && q>0 && vp>0){
+      const prec=q===1?2:10;
+      vuEl.value=(vp/q).toFixed(prec).replace(/\.?0+$/,'');
+    }
+    // Salvar item no doc diretamente
+    const dets=[...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+    if(dets[idx]){
+      const prod=[...dets[idx].getElementsByTagName('*')].find(n=>n.localName==='prod');
+      if(prod){
+        const sp=(tag,val)=>{const e=[...prod.getElementsByTagName('*')].find(n=>n.localName===tag);if(e)e.textContent=val;};
+        sp('vProd',vpEl.value); sp('vUnCom',vuEl.value); sp('qCom',qEl.value);
+      }
+    }
+    // Recalcular totais
+    const allDets=[...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+    let soma=0;
+    allDets.forEach(det=>{
+      const pr=[...det.getElementsByTagName('*')].find(n=>n.localName==='prod');
+      if(!pr) return;
+      const vp2=[...pr.getElementsByTagName('*')].find(n=>n.localName==='vProd');
+      soma+=parseFloat(vp2?vp2.textContent:0)||0;
+    });
+    const vDesc=parseFloat(document.getElementById('xmled-vdesc').value)||0;
+    const vFrete=parseFloat(document.getElementById('xmled-vfrete').value)||0;
+    const vNF=(soma-vDesc+vFrete).toFixed(2);
+    const somaFmt=soma.toFixed(2);
+    // Atualizar campos totais
+    const vnfEl=document.getElementById('xmled-vnf');
+    const vprodEl=document.getElementById('xmled-vprod');
+    if(vnfEl) vnfEl.value=vNF;
+    if(vprodEl) vprodEl.value=somaFmt;
+    // Atualizar doc totais
+    const setT=(tag,val)=>{const e=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);if(e)e.textContent=val;};
+    setT('vNF',vNF); setT('vProd',somaFmt);
+    // Atualizar vPag se 1 pagamento
+    const dpAll=[...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='detPag');
+    if(dpAll.length===1){
+      const tPagEl=[...dpAll[0].getElementsByTagName('*')].find(n=>n.localName==='tPag');
+      const tVal=tPagEl?tPagEl.textContent:'';
+      if(tVal!=='90'&&tVal!=='91'){
+        const vPagEl=[...dpAll[0].getElementsByTagName('*')].find(n=>n.localName==='vPag');
+        if(vPagEl&&Math.abs(parseFloat(vPagEl.textContent)-parseFloat(vNF))>0.01){
+          vPagEl.textContent=vNF;
+          const pi=document.getElementById('xmled-pag-0-vpag');
+          if(pi) pi.value=vNF;
+        }
+      }
+    }
+    xmledAtualizarRaw();
+    xmledStatus('✅ Totais atualizados — vNF: R$ '+vNF);
+  }, 500);
+}
+
+// ===================== FIM EDITOR XML =====================
+
 // ===================== EXTRAS VALIDADOR =====================
 
 // --- Validação de CNPJ (dígito verificador) ---
