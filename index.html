@@ -811,15 +811,8 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       </div>
 
       <!-- Banner info do documento -->
-      <div id="xmled-banner" style="background:var(--navy3);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px">
-        <span id="xmled-banner-tipo" style="font-size:13px;font-weight:700;padding:5px 14px;border-radius:8px;background:rgba(0,196,232,.15);color:var(--cyan);white-space:nowrap;letter-spacing:.5px">—</span>
-        <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--text2)">
-          <span>Série <strong id="xmled-banner-serie" style="color:var(--text)">—</strong></span>
-          <span>Nº <strong id="xmled-banner-num" style="color:var(--text)">—</strong></span>
-          <span>Data <strong id="xmled-banner-data" style="color:var(--text)">—</strong></span>
-          <span id="xmled-banner-emit-wrap">Emitente <strong id="xmled-banner-emit" style="color:var(--text)">—</strong></span>
-          <span>Valor <strong id="xmled-banner-valor" style="color:#34d399">—</strong></span>
-        </div>
+      <div id="xmled-banner" style="margin-bottom:20px">
+        <span id="xmled-banner-tipo" style="font-size:13px;font-weight:700;padding:5px 14px;border-radius:8px;background:rgba(0,196,232,.15);color:var(--cyan);white-space:nowrap;letter-spacing:.5px;display:inline-block">—</span>
       </div>
 
       <!-- IDENTIFICAÇÃO -->
@@ -911,7 +904,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
 
       <!-- PAGAMENTO -->
       <div class="process-card" style="margin-bottom:14px">
-        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">💳</div><div style="flex:1"><h4>Pagamento</h4><span class="menu-tag">pag</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">💳</div><div style="flex:1"><h4>Pagamento <span id="xmled-pag-badge" style="display:none;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)">⚠ Inconsistência</span></h4><span class="menu-tag">pag</span></div><span class="process-chevron">▸</span></div>
         <div class="process-body">
           <div id="xmled-pag-container" style="display:flex;flex-direction:column;gap:10px;padding:4px 0"></div>
         </div>
@@ -994,8 +987,27 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div class="process-card" style="margin-bottom:14px">
         <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🧾</div><div style="flex:1"><h4>XML Bruto</h4></div><span class="process-chevron">▸</span></div>
         <div class="process-body">
-          <textarea id="xmled-raw" rows="12" style="width:100%;background:#0d1520;border:1px solid var(--border);border-radius:8px;padding:12px;color:#7dd3fc;font-size:11px;font-family:'JetBrains Mono',monospace;resize:vertical;line-height:1.5" oninput="xmledSyncFromRaw()" placeholder="O XML carregado aparecerá aqui..."></textarea>
-          <div style="font-size:11px;color:var(--text3);margin-top:6px">💡 Editar aqui reflete nos campos acima e vice-versa.</div>
+
+
+
+          <!-- TAG INFO -->
+          <div id="xmled-tag-info" style="display:none;background:rgba(0,196,232,.07);border:1px solid rgba(0,196,232,.2);border-radius:6px;padding:6px 12px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--cyan);margin-bottom:8px"></div>
+
+          <!-- TEXTAREA -->
+          <textarea id="xmled-raw" rows="12"
+            style="width:100%;background:#0d1520;border:1px solid var(--border);border-radius:8px;padding:12px;color:#7dd3fc;font-size:11px;font-family:'JetBrains Mono',monospace;resize:vertical;line-height:1.5"
+            oninput="xmledSyncFromRaw()"
+            ondblclick="xmledTagClick()"
+            placeholder="O XML carregado aparecerá aqui..."></textarea>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:6px">
+            <div style="font-size:11px;color:var(--text2)">
+              💡 Editar aqui reflete nos campos acima e vice-versa — exportação usa este conteúdo.
+              &nbsp;·&nbsp; Duplo clique numa tag para selecionar o bloco inteiro.
+            </div>
+            <div id="xmled-raw-status" style="font-size:11px;color:var(--text2)"></div>
+          </div>
+
         </div>
       </div>
 
@@ -1460,22 +1472,22 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div style="font-size:13px;color:var(--text3);line-height:1.7">Se o produto estiver com <strong style="color:#f87171">CST 200, 201, 202 ou 203</strong>, a emissão de NFC-e será <strong style="color:#f87171">rejeitada automaticamente pela SEFAZ</strong>. Nesses casos, a nota correta é a <strong style="color:var(--text)">NF-e</strong>.</div>
     </div>
 
-    <!-- ALERTA SINIEF 11/2025 — VIGÊNCIA FUTURA -->
-    <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.35);border-radius:12px;padding:20px 24px;margin-bottom:28px">
+    <!-- AVISO SINIEF 12/2026 — PROIBIÇÃO REVOGADA -->
+    <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.35);border-radius:12px;padding:20px 24px;margin-bottom:28px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="font-size:15px">📅</span>
-        <span style="font-size:13px;font-weight:700;color:#fbbf24">Mudança futura — Vigência a partir de 04/05/2026</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(251,191,36,.15);color:#fbbf24;margin-left:auto">Ajuste SINIEF 11/2025 — CONFAZ</span>
+        <span style="font-size:15px">✅</span>
+        <span style="font-size:13px;font-weight:700;color:#34d399">Proibição revogada — NFC-e para CNPJ continua permitida</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(52,211,153,.15);color:#34d399;margin-left:auto">Ajuste SINIEF 12/2026 — CONFAZ</span>
       </div>
       <div style="font-size:13px;color:var(--text3);line-height:1.8">
-        O CONFAZ publicou o <strong style="color:var(--text)">Ajuste SINIEF 11/2025</strong>, que proíbe a emissão de <strong style="color:#fbbf24">NFC-e (modelo 65) quando o destinatário for pessoa jurídica (CNPJ)</strong>.<br>
-        A partir de <strong style="color:#fbbf24">4 de maio de 2026</strong>, toda venda destinada a PJ deverá ser obrigatoriamente documentada por <strong style="color:var(--text)">NF-e (modelo 55)</strong>. A NFC-e passa a ser válida exclusivamente para operações com consumidor final pessoa física, identificado por CPF.<br><br>
-        <strong style="color:var(--text)">Impacto prático:</strong> clientes que utilizam o frente de caixa do <strong style="color:var(--text)">Infinity</strong> para vendas a empresas — distribuidoras, revendas, restaurantes em compras de atacado — precisarão migrar essas operações para NF-e antes da data de vigência. Após 04/05/2026, a SEFAZ rejeitará automaticamente qualquer NFC-e emitida com CNPJ no campo destinatário.
+        O <strong style="color:var(--text)">Ajuste SINIEF 12/2026</strong> revogou a proibição estabelecida pelo Ajuste SINIEF 11/2025, que previa vedar a emissão de NFC-e para destinatários pessoa jurídica (CNPJ) a partir de 04/05/2026.<br>
+        Com a revogação — publicada e com efeitos imediatos em <strong style="color:#34d399">abril de 2026</strong> — a <strong style="color:var(--text)">NFC-e (modelo 65) permanece válida para operações com CNPJ</strong>, preservando a agilidade do frente de caixa no varejo.<br><br>
+        <strong style="color:var(--text)">Atenção para o próximo prazo:</strong> a partir de <strong style="color:#fbbf24">03/08/2026</strong> entram em vigor o DANFE Simplificado Tipo 2, a obrigatoriedade de endereço do destinatário em NFC-e para operações <em>não presenciais</em>, e novos prazos para manifestação do destinatário. Fique atento a essas mudanças.
       </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(251,191,36,.2);display:flex;gap:24px;flex-wrap:wrap">
-        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">Base legal:</span> Ajuste SINIEF 11/2025 — CONFAZ</div>
-        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">Documento correto para PJ:</span> NF-e modelo 55</div>
-        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">NFC-e permitida para:</span> Consumidor final (CPF) — operações internas</div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(52,211,153,.2);display:flex;gap:24px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#34d399;font-weight:600">Base legal:</span> Ajuste SINIEF 12/2026 — CONFAZ (revoga SINIEF 11/2025)</div>
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#34d399;font-weight:600">Situação atual:</span> NFC-e para CNPJ permitida sem restrição de prazo</div>
+        <div style="font-size:12px;color:var(--text3)"><span style="color:#fbbf24;font-weight:600">Próxima mudança:</span> DANFE Simplificado Tipo 2 e endereço obrigatório (NFC-e não presencial) — 03/08/2026</div>
       </div>
     </div>
 
@@ -1519,7 +1531,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
           <th style="padding:10px 14px;text-align:center;border:1px solid var(--border);color:var(--text2);font-weight:600">Rejeição</th>
         </tr></thead>
         <tbody>
-          <tr style="background:rgba(251,191,36,.06)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:#fbbf24">Destinatário CNPJ (PJ) — a partir de 04/05/2026</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">Pelo Ajuste SINIEF 11/2025 (CONFAZ), NFC-e fica proibida quando o destinatário for pessoa jurídica. Toda venda a CNPJ deverá ser documentada com NF-e modelo 55, independentemente do valor.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(251,191,36,.15);color:#fbbf24">Vigência 04/05/2026</span></td></tr>
+          <tr style="background:rgba(52,211,153,.04)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:#34d399">Destinatário CNPJ (PJ) — proibição revogada</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">O Ajuste SINIEF 11/2025 previa proibir NFC-e para destinatário PJ a partir de 04/05/2026, mas foi revogado pelo <strong>Ajuste SINIEF 12/2026</strong> (abr/2026). NFC-e para CNPJ permanece permitida sem prazo de vedação.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(52,211,153,.15);color:#34d399">Revogado</span></td></tr>
           <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 10.000 sem destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e acima desse valor exige CPF ou CNPJ do destinatário obrigatoriamente. Valor pode variar por estado.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">750</span></td></tr>
           <tr style="background:rgba(255,255,255,.02)"><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Valor acima de R$ 200.000 com destinatário</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">Mesmo com CPF/CNPJ informado, NFC-e não pode ultrapassar R$ 200.000 por nota. Nesses casos emitir NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(239,68,68,.12);color:#f87171">780</span></td></tr>
           <tr><td style="padding:9px 14px;border:1px solid var(--border);font-weight:600;color:var(--text)">Operação interestadual</td><td style="padding:9px 14px;border:1px solid var(--border);color:var(--text3);font-size:12px">NFC-e é exclusiva para venda presencial ao consumidor final dentro do mesmo estado. Operações interestaduais exigem NF-e.</td><td style="padding:9px 14px;border:1px solid var(--border);text-align:center"><span style="font-size:11px;color:var(--text2)">Operação interestadual não permitida</span></td></tr>
@@ -3651,7 +3663,114 @@ function xmlValidar(){
     setTimeout(()=>{errEl.style.display='none';errEl.style.background='';errEl.style.border='';errEl.style.color='';},3000);
   }
 
-  // Identificação
+  // ── Detectar NFS-e Nacional (padrão RFB, xmlns sped.fazenda.gov.br/nfse) ──
+  const g = tag => { const el=[...doc.getElementsByTagName('*')].find(n=>n.localName===tag); return el?el.textContent.trim():''; };
+  const rootNS  = doc.documentElement ? (doc.documentElement.namespaceURI||'') : '';
+  const rootTag = doc.documentElement ? doc.documentElement.localName : '';
+  const isNFSeNacional = rootTag==='NFSe' && rootNS.includes('sped.fazenda.gov.br');
+
+  if(isNFSeNacional){
+    // NFS-e Nacional — exibir campos próprios e encerrar o fluxo padrão
+    const nfseId     = doc.documentElement.getAttribute('Id')||'';
+    const nNFSe      = g('nNFSe');
+    const nDFSe      = g('nDFSe');
+    const cStat      = g('cStat');
+    const dhProc     = g('dhProc');
+    const dhEmiNfse  = g('dhEmi');
+    const xNomeEmit  = g('xNome');
+    const cnpjEmit   = [...doc.getElementsByTagName('*')].find(n=>n.localName==='emit') ?
+                       [...[...doc.getElementsByTagName('*')].find(n=>n.localName==='emit').getElementsByTagName('*')].find(n=>n.localName==='CNPJ') : null;
+    const prestEl    = [...doc.getElementsByTagName('*')].find(n=>n.localName==='prest');
+    const tomaEl     = [...doc.getElementsByTagName('*')].find(n=>n.localName==='toma');
+    const getIn      = (parent,tag)=>{ if(!parent) return ''; const e=[...parent.getElementsByTagName('*')].find(n=>n.localName===tag); return e?e.textContent.trim():''; };
+    const vLiq       = g('vLiq');
+    const vServ      = g('vServ')||g('vServPrest');
+    const xDescServ  = g('xDescServ');
+    const xNBS       = g('xNBS');
+    const ambiStr    = g('tpAmb')==='1'?'Produção':'Homologação';
+
+    document.getElementById('xmlIdentGrid').innerHTML =
+      xmlField('Tipo','NFS-e Nacional (RFB)')+
+      xmlField('Número',nNFSe||'—')+
+      xmlField('nDFSe (Recibo)',nDFSe||'—')+
+      xmlField('cStat',cStat==='100'?'<span style="color:#34d399;font-weight:700">100 — Autorizada</span>':xmlFmt(cStat))+
+      xmlField('Ambiente',ambiStr)+
+      xmlField('Data Emissão',dhEmiNfse?xmlFmtData(dhEmiNfse):'—')+
+      xmlField('Data Processamento',dhProc?xmlFmtData(dhProc):'—')+
+      xmlField('Id / Chave',nfseId,true);
+
+    document.getElementById('xmlEmitGrid').innerHTML =
+      xmlField('Razão Social',xmlFmt(xNomeEmit),false,!xNomeEmit?'danger':null)+
+      xmlField('CNPJ',xmlFmtCNPJ(cnpjEmit?cnpjEmit.textContent:''),false,!cnpjEmit?'danger':null)+
+      xmlField('Município Emissão',g('xLocEmi'))+
+      xmlField('Município Prestação',g('xLocPrestacao'));
+
+    document.getElementById('xmlDestGrid').innerHTML =
+      xmlField('Nome/Razão Social',getIn(tomaEl,'xNome')||'—')+
+      xmlField('CNPJ',xmlFmtCNPJ(getIn(tomaEl,'CNPJ'))||getIn(tomaEl,'CPF')||'—')+
+      xmlField('Município',getIn(tomaEl,'xMun')||'—')+
+      xmlField('E-mail',getIn(tomaEl,'email')||'—');
+
+    // Totais + Serviço
+    const cNBS       = g('cNBS');
+    const cClassTrib = g('cClassTrib');
+    const cst        = g('CST');
+    const cIndOp     = g('cIndOp');
+    const CINDOP_DESC = {
+      '010101':'Estabelecimento do prestador','010201':'Estabelecimento do tomador',
+      '010301':'Local do imóvel','010401':'Endereço do destinatário',
+      '020101':'Via satélite','030101':'Exterior','040101':'Residência/domicílio',
+      '050101':'Executor no estabelecimento do contratante','050102':'Executor em outro local'
+    };
+    const cIndOpDesc = CINDOP_DESC[cIndOp] || cIndOp;
+    const vIBSMun = g('vIBSMun');
+    const vIBSUF  = g('vIBSUF');
+    const vCBS    = g('vCBS');
+    const pIBSMun = g('pIBSMun');
+    const pIBSUF  = g('pIBSUF');
+    const pCBS    = g('pCBS');
+    const opSimp  = g('opSimpNac');
+    const OPSIMP_DESC = {'1':'Simples Nacional — ISS','2':'Simples Nacional — ISSQN Fixo','3':'Simples Nacional — Estimativa','4':'ME/EPP — Sem retenção','5':'Regime Normal'};
+
+    document.getElementById('xmlTotGrid').innerHTML =
+      xmlField('Valor do Serviço',xmlFmtMoeda(vServ||g('vServPrest')))+
+      xmlField('Valor Líquido (vLiq)',xmlFmtMoeda(vLiq))+
+      (xDescServ?xmlField('Descrição do Serviço',xDescServ,true):'')+
+      xmlField('NBS',cNBS+(xNBS?' — '+xNBS:''));
+
+    // Informações fiscais específicas da NFS-e Nacional
+    document.getElementById('xmlFiscGrid').innerHTML =
+      xmlField('CST',cst||'—')+
+      xmlField('cClassTrib',cClassTrib||'—')+
+      (cIndOp?xmlField('cIndOp',cIndOp+(cIndOpDesc&&cIndOpDesc!==cIndOp?' — '+cIndOpDesc:'')):'')+
+      (opSimp?xmlField('Regime SN',OPSIMP_DESC[opSimp]||opSimp):'')+
+      xmlField('IBS Municipal (vIBSMun)',vIBSMun?'R$ '+parseFloat(vIBSMun).toFixed(2)+(pIBSMun?' ('+pIBSMun+'%)':''):'—')+
+      xmlField('IBS Estadual (vIBSUF)',vIBSUF?'R$ '+parseFloat(vIBSUF).toFixed(2)+(pIBSUF?' ('+pIBSUF+'%)':''):'—')+
+      xmlField('CBS (vCBS)',vCBS?'R$ '+parseFloat(vCBS).toFixed(2)+(pCBS?' ('+pCBS+'%)':''):'—');
+
+    // Ocultar tabela de itens (NFS-e não tem det/prod)
+    const itensBloco = document.getElementById('xmlItensBody');
+    if(itensBloco){
+      itensBloco.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text2);font-size:12px;padding:16px">NFS-e Nacional não possui itens no formato NCM/CFOP. Serviço descrito acima.</td></tr>';
+    }
+
+    const alertasEl = document.getElementById('xmlAlertas');
+    const avisoAmb = g('tpAmb')==='2'?
+      [{tipo:'warn',icone:'⚠️',msg:'<strong>Ambiente de Homologação.</strong> Este documento NÃO tem validade fiscal.'}] : [];
+    const alertasNfse = [
+      ...avisoAmb,
+      cStat!=='100'?{tipo:'warn',icone:'⚠️',msg:'<strong>cStat '+cStat+':</strong> Verifique o status da NFS-e na prefeitura/RFB.'}:null
+    ].filter(Boolean);
+    alertasEl.innerHTML = alertasNfse.length
+      ? alertasNfse.map(a=>`<div class="xml-alert ${a.tipo}">${a.icone} <span>${a.msg}</span></div>`).join('')
+      : '<div class="xml-alert ok">✅ <span><strong>NFS-e Nacional autorizada (cStat 100).</strong> Documento válido.</span></div>';
+
+    document.getElementById('xmlRejeicoesBl').style.display='none';
+    document.getElementById('xmlResult').classList.add('show');
+    return; // encerra o validador aqui para NFS-e Nacional
+  }
+
+  // Identificação (NF-e / NFC-e / CT-e)
   const tpNF = xmlGet(doc,'tpNF');
   const tpDoc = tpNF==='0'?'Entrada':'Saída';
   const mod = xmlGet(doc,'mod');
@@ -3683,13 +3802,26 @@ function xmlValidar(){
   const emitMun = emit?xmlGet(doc,'emit enderEmit xMun'):'';
   const emitIEAlert = (!emitIE&&(emitCRT==='1'||emitCRT==='2'||emitCRT==='3'))?'warn':null;
 
+  const emitEnd  = emit ? doc.querySelector('emit') : null;
+  const emitLgr  = emit?xmlGet(doc,'emit enderEmit xLgr'):'';
+  const emitNro  = emit?xmlGet(doc,'emit enderEmit nro'):'';
+  const emitBairro = emit?xmlGet(doc,'emit enderEmit xBairro'):'';
+  const emitCEP  = emit?xmlGet(doc,'emit enderEmit CEP'):'';
+  const emitFone = emit?xmlGet(emit,'fone')||xmlGet(doc,'emit enderEmit fone'):'';
+  const emitEmail= emit?xmlGet(emit,'email'):'';
+  const emitEnderFmt = [emitLgr,emitNro].filter(Boolean).join(', ')+
+    (emitBairro?' — '+emitBairro:'')+
+    (emitCEP?' · CEP '+emitCEP.replace(/^(\d{5})(\d{3})$/,'$1-$2'):'');
+
   document.getElementById('xmlEmitGrid').innerHTML =
     xmlField('Razão Social',xmlFmt(emit?xmlGet(emit,'xNome'):''),false,!emit||!xmlGet(emit,'xNome')?'danger':null)+
     xmlField('CNPJ',xmlFmtCNPJ(emitCNPJ),false,!emitCNPJ?'danger':null)+
     xmlField('IE',xmlFmt(emitIE),false,emitIEAlert)+
     xmlField('CRT',xmlFmt(emitCRT),false,!emitCRT?'danger':null)+
-    xmlField('UF',xmlFmt(emitUF),false,!emitUF?'warn':null)+
-    xmlField('Município',xmlFmt(emitMun),false,!emitMun?'warn':null);
+    xmlField('Município / UF',emitMun&&emitUF?emitMun+' / '+emitUF:xmlFmt(emitMun||emitUF),false,!emitUF?'warn':null)+
+    (emitEnderFmt.trim()?xmlField('Endereço',emitEnderFmt,true):'')+
+    (emitFone?xmlField('Telefone',emitFone):'') +
+    (emitEmail?xmlField('E-mail',emitEmail,true):'');
 
   // Destinatário
   const dest = doc.querySelector('dest');
@@ -3702,12 +3834,24 @@ function xmlValidar(){
   const interestadual = emitUF && destUF && emitUF !== destUF;
   const destIEAlert = (destCNPJ && !destIE)?'warn':null;
 
+  const destLgr   = dest?xmlGet(doc,'dest enderDest xLgr'):'';
+  const destNro   = dest?xmlGet(doc,'dest enderDest nro'):'';
+  const destBairro= dest?xmlGet(doc,'dest enderDest xBairro'):'';
+  const destCEP   = dest?xmlGet(doc,'dest enderDest CEP'):'';
+  const destFone  = dest?xmlGet(dest,'fone')||xmlGet(doc,'dest enderDest fone'):'';
+  const destEmail = dest?xmlGet(dest,'email'):'';
+  const destEnderFmt = [destLgr,destNro].filter(Boolean).join(', ')+
+    (destBairro?' — '+destBairro:'')+
+    (destCEP?' · CEP '+destCEP.replace(/^(\d{5})(\d{3})$/,'$1-$2'):'');
+
   document.getElementById('xmlDestGrid').innerHTML =
     xmlField('Razão Social/Nome',xmlFmt(destNome),false,!destNome?'danger':null)+
     xmlField('CNPJ/CPF',destCNPJ?xmlFmtCNPJ(destCNPJ):destCPF?xmlFmtCPF(destCPF):'—',false,(!destCNPJ&&!destCPF)?'danger':null)+
     xmlField('IE',xmlFmt(destIE),false,destIEAlert)+
-    xmlField('UF',xmlFmt(destUF),false,!destUF?'warn':null)+
-    xmlField('Município',xmlFmt(destMun),false,!destMun?'warn':null);
+    xmlField('Município / UF',destMun&&destUF?destMun+' / '+destUF:xmlFmt(destMun||destUF),false,!destUF?'warn':null)+
+    (destEnderFmt.trim()?xmlField('Endereço',destEnderFmt,true):'')+
+    (destFone?xmlField('Telefone',destFone):'')+
+    (destEmail?xmlField('E-mail',destEmail,true):'');
 
   // Totais
   const ICMSTot = doc.querySelector('ICMSTot');
@@ -3862,6 +4006,42 @@ function xmlValidar(){
     }).length;
     if(itensSemCbenef>0) alertas.push({tipo:'warn',icone:'⚠️',msg:`<strong>cBenef:</strong> ${itensSemCbenef} item(ns) sem cBenef após 06/04/2026. A obrigatoriedade é nacional para operações com benefício fiscal de ICMS. Verifique se os itens estão dispensados ou se o campo precisa ser preenchido.`});
   }
+
+  // ── Rej. 866 — Troco ausente ou incorreto ─────────────────────────────
+  {
+    const detPagAll = [...doc.getElementsByTagName('*')].filter(n=>n.localName==='detPag');
+    const somaPag   = detPagAll.reduce((s,dp)=>{
+      const vp = [...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
+      return s + (parseFloat(vp?vp.textContent:0)||0);
+    }, 0);
+    // Usar getElementsByTagName para ignorar namespace (querySelector falha com xmlns)
+    const vNFEl   = [...doc.getElementsByTagName('*')].find(n=>n.localName==='vNF');
+    const vNFNum  = parseFloat(vNFEl?vNFEl.textContent:0)||0;
+    const pagEl   = [...doc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+    const vTrocoEl= pagEl?[...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco'):null;
+    const vTrocoNum = parseFloat(vTrocoEl?vTrocoEl.textContent:0)||0;
+    const diff = parseFloat((somaPag - vNFNum).toFixed(2));
+    if(diff > 0.009){
+      const trocoCorreto = diff.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const somaPagFmt   = somaPag.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const vNFFmt       = vNFNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if(!vTrocoEl){
+        alertas.push({tipo:'danger',icone:'❌',msg:
+          '<strong>Rej. 866 — vTroco ausente:</strong> A soma dos pagamentos (R$ '+somaPagFmt+') é maior que o total da nota (R$ '+vNFFmt+'). ' +
+          'O campo <code>&lt;vTroco&gt;</code> é obrigatório dentro de <code>&lt;pag&gt;</code> com o valor do troco (R$ '+trocoCorreto+'). ' +
+          'Use o <strong>Editor de XML</strong> para inserir e corrigir antes de reenviar.'
+        });
+      } else if(Math.abs(vTrocoNum - diff) > 0.009){
+        const vTrocoFmt = vTrocoNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+        alertas.push({tipo:'danger',icone:'❌',msg:
+          '<strong>Rej. 866 — vTroco incorreto:</strong> A soma dos pagamentos (R$ '+somaPagFmt+') é maior que o total da nota (R$ '+vNFFmt+') em R$ '+trocoCorreto+', ' +
+          'mas o <code>&lt;vTroco&gt;</code> informado é R$ '+vTrocoFmt+'. ' +
+          'Corrija o valor para R$ '+trocoCorreto+' no <strong>Editor de XML</strong> antes de reenviar.'
+        });
+      }
+    }
+  }
+
   const alertasEl = document.getElementById('xmlAlertas');
   alertasEl.innerHTML = alertas.length
     ? alertas.map(a=>`<div class="xml-alert ${a.tipo}">${a.icone} <span>${a.msg}</span></div>`).join('')
@@ -4169,7 +4349,7 @@ function xmledGetValPath(path){
   let el = xmledDoc.documentElement;
   for(const t of tags){
     if(!el) return '';
-    el = [...el.children].find(c=>c.localName===t) || el.querySelector(t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t);
+    el = [...el.children].find(c=>c.localName===t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t) || null;
   }
   return el?el.textContent:'';
 }
@@ -4180,7 +4360,7 @@ function xmledSetValPath(path, val){
   let el = xmledDoc.documentElement;
   for(const t of tags){
     if(!el) return;
-    el = [...el.children].find(c=>c.localName===t) || el.querySelector(t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t);
+    el = [...el.children].find(c=>c.localName===t) || [...el.getElementsByTagName('*')].find(n=>n.localName===t) || null;
   }
   if(el) el.textContent=val;
 }
@@ -4267,10 +4447,30 @@ function xmledPopularCampos(){
       </div>`;
   });
 
+  // Troco
+  const vTrocoInp = document.getElementById('xmled-vtroco');
+  if(vTrocoInp){
+    const pagEl2 = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+    if(pagEl2){
+      const ns2 = pagEl2.namespaceURI||'http://www.portalfiscal.inf.br/nfe';
+      let vtEl = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
+      if(!vtEl && parseFloat(vTrocoInp.value)){
+        vtEl = xmledDoc.createElementNS(ns2,'vTroco');
+        const fdp = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='detPag');
+        if(fdp) pagEl2.insertBefore(vtEl,fdp); else pagEl2.appendChild(vtEl);
+      }
+      if(vtEl) vtEl.textContent = (parseFloat(vTrocoInp.value)||0).toFixed(2);
+    }
+  }
   // Pagamentos
   const detPags = xmledDoc.querySelectorAll('detPag');
   const pagCont = document.getElementById('xmled-pag-container');
   pagCont.innerHTML='';
+  // vTroco fica em <pag>, não em <detPag>
+  const pagEl   = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  const vTrocoEl= pagEl?[...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco'):null;
+  const vTrocoVal = vTrocoEl?vTrocoEl.textContent:'';
+
   detPags.forEach((dp,i)=>{
     const tPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='tPag');
     const vPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
@@ -4279,7 +4479,7 @@ function xmledPopularCampos(){
     const desc = TPAG_DESC[tVal]?` (${TPAG_DESC[tVal]})`:'';
     pagCont.innerHTML+=`
       <div style="background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:8px">Pagamento ${i+1}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:8px">💳 Pagamento ${i+1}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Tipo (tPag)${desc} <span title="01=Dinheiro | 02=Cheque | 03=Cartão Crédito | 04=Cartão Débito | 05=Crédito Loja | 10=Vale Alimentação | 11=Vale Refeição | 12=Vale Presente | 13=Vale Combustível | 14=Duplicata Mercantil | 15=Boleto Bancário | 17=PIX Dinâmico | 20=PIX Estático | 90=Sem Pagamento | 91=Pagamento Posterior | 99=Outros" style="color:var(--cyan);cursor:help;font-size:12px">ℹ</span></label>
             <select id="xmled-pag-${i}-tpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
@@ -4306,8 +4506,87 @@ function xmledPopularCampos(){
       </div>`;
   });
 
+  // Campo vTroco — aparece após os detPags
+  if(detPags.length > 0){
+    const somaPag = Array.from(detPags).reduce((s,dp)=>{
+      const vp=[...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
+      return s+(parseFloat(vp?vp.textContent:0)||0);
+    },0);
+    const vNFAtual  = parseFloat(xmledGetVal('vNF'))||0;
+    const trocoCalc = somaPag>vNFAtual?(somaPag-vNFAtual).toFixed(2):'0.00';
+    const vTrocoFmt   = vTrocoVal ? parseFloat(vTrocoVal).toFixed(2) : '';
+    const trocoErrado  = vTrocoVal && vTrocoFmt !== trocoCalc;
+    const trocoFalta   = somaPag>vNFAtual && !vTrocoVal;
+    const trocoAlerta  = trocoFalta || trocoErrado;
+    const corBorda  = trocoAlerta?'rgba(239,68,68,.4)':'var(--border)';
+    const corBg     = trocoAlerta?'rgba(239,68,68,.08)':'var(--navy3)';
+    const corLabel  = trocoAlerta?'#f87171':'var(--text2)';
+    const aviso     = trocoFalta?' — ⚠️ Rej. 866: campo obrigatório quando pagamento &gt; total':
+                      trocoErrado?' — ⚠️ Valor informado ('+vTrocoFmt+') difere do calculado ('+trocoCalc+')':
+                      '';
+    // Sinalizar inconsistência no cabeçalho da seção
+    const pagBadge = document.getElementById('xmled-pag-badge');
+    if(pagBadge) pagBadge.style.display = trocoAlerta ? 'inline' : 'none';
+
+    const divTroco  = document.createElement('div');
+    divTroco.id = 'xmled-troco-bloco';
+    divTroco.style.cssText = 'background:'+corBg+';border:1px solid '+corBorda+';border-radius:10px;padding:12px';
+    divTroco.innerHTML =
+      '<div style="font-size:12px;font-weight:700;color:'+corLabel+';margin-bottom:8px">Troco (vTroco)'+aviso+'</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end">'+
+        '<div>'+
+          '<label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor do troco (vTroco)</label>'+
+          '<input id="xmled-vtroco" class="xmled-field"'+
+            ' style="width:100%;background:var(--bg);border:1px solid '+corBorda+';border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit"'+
+            ' value="'+(vTrocoFmt||trocoCalc)+'" placeholder="0.00">'+
+        '</div>'+
+        '<div>'+
+          '<button onclick="xmledAplicarTroco()" style="width:100%;padding:8px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#34d399;font-size:12px;cursor:pointer;font-family:inherit">'+
+            'Aplicar troco calculado (R$ '+trocoCalc+')'+
+          '</button>'+
+        '</div>'+
+      '</div>';
+    pagCont.appendChild(divTroco);
+  }
+
   xmledAtualizarRaw();
   xmledAplicarModelo();
+}
+
+function xmledAplicarTroco(){
+  if(!xmledDoc) return;
+  const inp = document.getElementById('xmled-vtroco');
+  if(!inp) return;
+  const val = parseFloat(inp.value)||0;
+  const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  if(!pagEl){ xmledStatus('❌ Tag <pag> não encontrada no XML'); return; }
+  const ns = pagEl.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  let vTrocoEl = [...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
+  if(!vTrocoEl){
+    vTrocoEl = xmledDoc.createElementNS(ns,'vTroco');
+    const firstDetPag = [...pagEl.childNodes].find(n=>n.localName==='detPag');
+    if(firstDetPag) pagEl.insertBefore(vTrocoEl, firstDetPag);
+    else pagEl.appendChild(vTrocoEl);
+  }
+  vTrocoEl.textContent = val.toFixed(2);
+  inp.value = val.toFixed(2);
+  xmledAtualizarRaw();
+
+  // Remover badge de inconsistência do header
+  const pagBadge2 = document.getElementById('xmled-pag-badge');
+  if(pagBadge2) pagBadge2.style.display = 'none';
+
+  // Feedback visual no bloco do troco — usar id direto
+  const bloco = document.getElementById('xmled-troco-bloco');
+  if(bloco){
+    bloco.style.background = 'rgba(52,211,153,.08)';
+    bloco.style.border = '1px solid rgba(52,211,153,.4)';
+    bloco.innerHTML =
+      '<div style="font-size:12px;font-weight:700;color:#34d399;margin-bottom:4px">✅ Troco (vTroco) aplicado com sucesso</div>'+
+      '<div style="font-size:12px;color:#34d399;padding:8px 12px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.25);border-radius:8px;margin-top:8px;font-weight:600">'+
+        '✅ vTroco R$ '+val.toFixed(2)+' inserido — exporte o XML e reenvie à SEFAZ'+
+      '</div>';
+  }
 }
 
 function xmledAplicarModelo(){
@@ -4354,10 +4633,13 @@ function xmledAplicarModelo(){
     if(vIBSEl) vIBSEl.value = xmledGetValPath('IBSCBSTot gIBS vIBS') || xmledGetValPath('gIBS vIBS') || '';
     if(vCBSEl) vCBSEl.value = xmledGetValPath('IBSCBSTot gCBS vCBS') || xmledGetValPath('gCBS vCBS') || '';
   }
+  xmledAplicarModeloNFSe();
 }
 
-  // Detectar NFS-e
-  const isNFSe = [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
+function xmledAplicarModeloNFSe(){
+  if(!xmledDoc) return;
+  const rootLN = xmledDoc.documentElement?xmledDoc.documentElement.localName:'';
+  const isNFSe = rootLN==='NFSe' || [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
   const modDoc = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='mod');
   const modVal = modDoc?modDoc.textContent:'';
   const isNFCe = modVal==='65'; // NFC-e não tem destinatário obrigatório
@@ -4380,6 +4662,7 @@ function xmledAplicarModelo(){
   });
   if(nfseBloco) nfseBloco.style.display=isNFSe?'block':'none';
   if(isNFSe) xmledPopularNFSe();
+}
 
 function xmledGetNFSeVal(tag){
   if(!xmledDoc) return '';
@@ -4392,7 +4675,37 @@ function xmledSetNFSeVal(tag,val){
   if(el) el.textContent=val;
 }
 function xmledPopularNFSe(){
-  const s=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val;};
+  if(!xmledDoc) return;
+  const s=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val||'';};
+  const gN=tag=>{const e=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag);return e?e.textContent.trim():'';};
+  const isNac = xmledDoc.documentElement && xmledDoc.documentElement.localName==='NFSe';
+
+  if(isNac){
+    // NFS-e Nacional (padrão RFB)
+    s('xmled-nfse-numero',     gN('nNFSe'));
+    s('xmled-nfse-dataemissao',gN('dhEmi'));
+    s('xmled-nfse-competencia',gN('dCompet'));
+    s('xmled-nfse-natop',      gN('xTribNac'));
+    s('xmled-nfse-desc',       gN('xDescServ'));
+    s('xmled-nfse-vserv',      gN('vServ')||gN('vServPrest'));
+    s('xmled-nfse-vliq',       gN('vLiq'));
+    s('xmled-nfse-codserv',    gN('cNBS'));
+    // Prestador
+    const prestEl=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='prest');
+    const gP=tag=>{if(!prestEl)return'';const e=[...prestEl.getElementsByTagName('*')].find(n=>n.localName===tag);return e?e.textContent.trim():''};
+    s('xmled-nfse-prest-cnpj', gP('CNPJ'));
+    s('xmled-nfse-prest-nome', gN('xNome'));
+    // Tomador
+    const tomaEl=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='toma');
+    const gT=tag=>{if(!tomaEl)return'';const e=[...tomaEl.getElementsByTagName('*')].find(n=>n.localName===tag);return e?e.textContent.trim():''};
+    s('xmled-nfse-tom-cnpj',   gT('CNPJ'));
+    s('xmled-nfse-tom-cpf',    gT('CPF'));
+    s('xmled-nfse-tom-nome',   gT('xNome'));
+    s('xmled-nfse-tom-email',  gT('email'));
+    return;
+  }
+
+  // NFS-e municipal (formato ABRASF antigo)
   s('xmled-nfse-numero',     xmledGetNFSeVal('Numero'));
   s('xmled-nfse-dataemissao',xmledGetNFSeVal('DataEmissao'));
   s('xmled-nfse-competencia',xmledGetNFSeVal('Competencia'));
@@ -4498,6 +4811,21 @@ function xmledSalvarCampos(){
       if(ccEl!==null) setP('cClassTrib', ccEl);
     }
   });
+  // Troco
+  const vTrocoInp = document.getElementById('xmled-vtroco');
+  if(vTrocoInp){
+    const pagEl2 = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+    if(pagEl2){
+      const ns2 = pagEl2.namespaceURI||'http://www.portalfiscal.inf.br/nfe';
+      let vtEl = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
+      if(!vtEl && parseFloat(vTrocoInp.value)){
+        vtEl = xmledDoc.createElementNS(ns2,'vTroco');
+        const fdp = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='detPag');
+        if(fdp) pagEl2.insertBefore(vtEl,fdp); else pagEl2.appendChild(vtEl);
+      }
+      if(vtEl) vtEl.textContent = (parseFloat(vTrocoInp.value)||0).toFixed(2);
+    }
+  }
   // Pagamentos
   const detPags = xmledDoc.querySelectorAll('detPag');
   detPags.forEach((dp,i)=>{
@@ -4515,20 +4843,60 @@ function xmledSalvarCampos(){
 
 function xmledAtualizarRaw(){
   if(!xmledDoc) return;
-  const ser=new XMLSerializer();
-  document.getElementById('xmled-raw').value=ser.serializeToString(xmledDoc);
+  const ta = document.getElementById('xmled-raw');
+  // Não sobrescreve enquanto o usuário está editando o textarea diretamente
+  if(document.activeElement === ta) return;
+  const ser = new XMLSerializer();
+  ta.value = ser.serializeToString(xmledDoc);
 }
 
 function xmledSyncFromRaw(){
-  const raw=document.getElementById('xmled-raw').value;
+  const ta  = document.getElementById('xmled-raw');
+  const raw = ta.value;
   if(!raw.trim()) return;
   try{
-    const parser=new DOMParser();
-    const doc=parser.parseFromString(raw,'application/xml');
-    if(doc.querySelector('parsererror')) return;
-    xmledDoc=doc;
+    const parser = new DOMParser();
+    const doc    = parser.parseFromString(raw, 'application/xml');
+    const errEl  = doc.querySelector('parsererror');
+    if(errEl){
+      // XML inválido — aguarda o usuário parar de digitar para mostrar o erro
+      clearTimeout(window._xmledErrTimer);
+      window._xmledErrTimer = setTimeout(()=>{ xmledMostrarErroRaw(doc, ta); }, 600);
+      return;
+    }
+    // XML válido — limpa erro e sincroniza
+    xmledLimparErroRaw(ta);
+    xmledDoc = doc;
     xmledPopularCampos();
   }catch(e){}
+}
+
+function xmledMostrarErroRaw(errDoc, ta){
+  const infoEl = document.getElementById('xmled-tag-info');
+  // Extrair mensagem do parsererror
+  const errNode = errDoc.querySelector('parsererror');
+  let msg = errNode ? errNode.textContent.trim() : 'Estrutura XML inválida';
+  // Simplificar mensagem do browser
+  msg = msg.replace(/error on line (\d+) at column (\d+):/i, '📍 Linha $1, col $2 —')
+           .replace(/\s+/g, ' ').trim().substring(0, 200);
+  infoEl.style.display    = 'block';
+  infoEl.style.background = 'rgba(239,68,68,.08)';
+  infoEl.style.borderColor= 'rgba(239,68,68,.35)';
+  infoEl.style.color      = '#f87171';
+  infoEl.textContent      = '⚠️ XML inválido — ' + msg;
+  ta.style.borderColor    = 'rgba(239,68,68,.5)';
+}
+
+function xmledLimparErroRaw(ta){
+  const infoEl = document.getElementById('xmled-tag-info');
+  // Só limpa se estava mostrando erro (não apagar info de tag)
+  if(infoEl.style.color === 'rgb(248, 113, 113)'){
+    infoEl.style.display    = 'none';
+    infoEl.style.background = '';
+    infoEl.style.borderColor= '';
+    infoEl.style.color      = '';
+  }
+  if(ta) ta.style.borderColor = '';
 }
 
 // Salvar NFS-e quando campo do editor mudar
@@ -4728,6 +5096,98 @@ function xmledExportar(){
   xmledStatus('✅ XML exportado: '+xmledFileName);
 }
 
+// ── CLIQUE EM TAG NO XML BRUTO ──────────────────────────────────────────
+function xmledTagClick(){
+  const ta = document.getElementById('xmled-raw');
+  const txt = ta.value;
+  const pos = ta.selectionStart;
+  const infoEl = document.getElementById('xmled-tag-info');
+  const hide = ()=>{ infoEl.style.display='none'; };
+
+  // Encontrar início da tag (< antes do cursor)
+  let tStart = pos;
+  while(tStart > 0 && txt[tStart] !== '<' && txt[tStart] !== '>') tStart--;
+  if(txt[tStart] !== '<'){ hide(); return; }
+
+  // Encontrar fim da tag (> depois do cursor)
+  let tEnd = pos;
+  while(tEnd < txt.length && txt[tEnd] !== '>') tEnd++;
+  if(tEnd >= txt.length){ hide(); return; }
+
+  const tagInner = txt.substring(tStart + 1, tEnd).trim();
+  const isClose  = tagInner.startsWith('/');
+  const isSelfClose = tagInner.endsWith('/');
+  const tagName  = tagInner.replace(/^\//, '').split(/[\s\/]/)[0];
+
+  // Ignorar silenciosamente: declarações, auto-fechadas, sem nome
+  if(!tagName || /[?!]/.test(tagName[0]) || isSelfClose){ hide(); return; }
+
+  if(!isClose){
+    // Tag de abertura — localiza a tag de fechamento correspondente
+    const closeTag = '</' + tagName + '>';
+    // Busca com stack para tags aninhadas
+    let depth = 0, search = tEnd + 1;
+    let found = -1;
+    const openPat  = new RegExp('<'  + tagName + '[\s>]', 'g');
+    const closePat = new RegExp('</' + tagName + '\s*>',  'g');
+    const rest = txt.substring(tEnd + 1);
+    let oMatch, cMatch;
+    openPat.lastIndex  = 0;
+    closePat.lastIndex = 0;
+    const opens  = [...rest.matchAll(new RegExp('<'  + tagName + '[\s>/]', 'g'))].map(m=>m.index);
+    const closes = [...rest.matchAll(new RegExp('</' + tagName + '\s*>', 'g'))].map(m=>({i:m.index, l:m[0].length}));
+    let oi = 0, ci = 0;
+    while(ci < closes.length){
+      if(oi < opens.length && opens[oi] < closes[ci].i){
+        depth++; oi++;
+      } else {
+        if(depth === 0){ found = tEnd + 1 + closes[ci].i; break; }
+        depth--; ci++;
+      }
+    }
+    if(found !== -1){
+      const closeEnd = txt.indexOf('>', found) + 1;
+      ta.setSelectionRange(tStart, closeEnd);
+      const blocoLen = closeEnd - tStart;
+      infoEl.style.display = 'block';
+      infoEl.textContent = '<' + tagName + '> … </' + tagName + '>  —  ' + blocoLen + ' chars  (pos ' + tStart + '–' + closeEnd + ')';
+      // Scroll para início
+      const linhas = (txt.substring(0, tStart).match(/\n/g)||[]).length;
+      ta.scrollTop = Math.max(0, (linhas - 2)) * (parseInt(getComputedStyle(ta).lineHeight)||17);
+    } else {
+      // Sem fechamento — seleciona só a tag, sem banner
+      ta.setSelectionRange(tStart, tEnd + 1);
+      infoEl.style.display = 'none';
+    }
+  } else {
+    // Tag de fechamento — localiza a abertura correspondente
+    const openTag = '<' + tagName;
+    const before  = txt.substring(0, tStart);
+    const opens2  = [...before.matchAll(new RegExp('<' + tagName + '[\s>/]', 'g'))].map(m=>m.index);
+    const closes2 = [...before.matchAll(new RegExp('</' + tagName + '\s*>', 'g'))].map(m=>m.index);
+    let oi2 = opens2.length - 1, ci2 = closes2.length - 1, depth2 = 0, found2 = -1;
+    while(oi2 >= 0){
+      if(ci2 >= 0 && closes2[ci2] > opens2[oi2]){
+        depth2++; ci2--;
+      } else {
+        if(depth2 === 0){ found2 = opens2[oi2]; break; }
+        depth2--; oi2--;
+      }
+    }
+    if(found2 !== -1){
+      ta.setSelectionRange(found2, tEnd + 1);
+      const blocoLen = tEnd + 1 - found2;
+      infoEl.style.display = 'block';
+      infoEl.textContent = '<' + tagName + '> … </' + tagName + '>  —  ' + blocoLen + ' chars  (pos ' + found2 + '–' + (tEnd+1) + ')';
+      const linhas = (txt.substring(0, found2).match(/\n/g)||[]).length;
+      ta.scrollTop = Math.max(0, (linhas - 2)) * (parseInt(getComputedStyle(ta).lineHeight)||17);
+    } else {
+      ta.setSelectionRange(tStart, tEnd + 1);
+      infoEl.style.display = 'none';
+    }
+  }
+}
+
 function xmledLimpar(){
   xmledDoc=null;
   xmledFileName='nfe_editado.xml';
@@ -4738,7 +5198,10 @@ function xmledLimpar(){
   const ua=document.getElementById('xmled-upload-area');
   ua.style.display='block';
   ua.style.borderColor='var(--border)';
-  document.getElementById('xmled-raw').value='';
+  const _taRaw = document.getElementById('xmled-raw');
+  _taRaw.value='';
+  _taRaw.style.borderColor='';
+  xmledLimparErroRaw(null);
   document.getElementById('xmled-status').textContent='';
   document.getElementById('xmled-itens-container').innerHTML='';
   document.getElementById('xmled-pag-container').innerHTML='';
@@ -4778,7 +5241,8 @@ function xmledAtualizarBanner(){
   const get = tag => { const el=[...xmledDoc.getElementsByTagName('*')].find(n=>n.localName===tag); return el?el.textContent:''; };
 
   // Detectar tipo
-  const isNFSe = [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
+  const rootLN = xmledDoc.documentElement?xmledDoc.documentElement.localName:'';
+  const isNFSe = rootLN==='NFSe' || [...xmledDoc.getElementsByTagName('*')].some(n=>n.localName==='CompNfse'||n.localName==='InfNfse');
   const modDoc = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='mod');
   const modVal = modDoc?modDoc.textContent:'';
   const isNFCe = modVal==='65'; // NFC-e não tem destinatário obrigatório
@@ -4796,9 +5260,10 @@ function xmledAtualizarBanner(){
 
   // Dados
   const serie  = isNFSe ? '' : get('serie');
-  const num    = isNFSe ? get('Numero') : get('nNF');
-  const dtRaw  = isNFSe ? get('DataEmissao') : get('dhEmi');
-  const emitente = isNFSe ? get('RazaoSocial') : (get('xFant')||get('xNome'));
+  const isNFSeNacBn = xmledDoc.documentElement && xmledDoc.documentElement.localName==='NFSe';
+  const num    = isNFSe ? (isNFSeNacBn ? get('nNFSe') : get('Numero')) : get('nNF');
+  const dtRaw  = isNFSe ? (isNFSeNacBn ? get('dhEmi') : get('DataEmissao')) : get('dhEmi');
+  const emitente = isNFSe ? get('xNome') : (get('xFant')||get('xNome'));
 
   // Formatar data
   let dtFmt = '—';
@@ -4820,7 +5285,8 @@ function xmledAtualizarBanner(){
   if(el('xmled-banner-data'))  el('xmled-banner-data').textContent  = dtFmt;
   if(el('xmled-banner-emit'))  el('xmled-banner-emit').textContent  = emitente ? emitente.substring(0,35)+(emitente.length>35?'...':'') : '—';
   // Valor total
-  const vNFBanner = isNFSe ? get('ValorServicos') : get('vNF');
+  const isNFSeNacBv = xmledDoc.documentElement && xmledDoc.documentElement.localName==='NFSe';
+  const vNFBanner = isNFSe ? (isNFSeNacBv ? get('vLiq') : get('ValorServicos')) : get('vNF');
   const vNFNum = parseFloat(vNFBanner)||0;
   if(el('xmled-banner-valor')) el('xmled-banner-valor').textContent = vNFNum>0 ? 'R$ '+vNFNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
   // Ocultar série para NFS-e
