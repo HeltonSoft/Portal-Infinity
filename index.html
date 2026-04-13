@@ -806,6 +806,13 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
         <button onclick="xmledRemoverAssinatura()" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Remover Assinatura + Protocolo</button>
         <button onclick="xmledExportar()" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">⬇️ Exportar XML</button>
+        <div id="xmled-assinatura-aviso" style="display:none;margin-top:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:12px 16px;align-items:center;gap:12px">
+          <span style="font-size:18px;flex-shrink:0">⚠️</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:2px">XML precisa ser assinado digitalmente antes da transmissão</div>
+            <div style="font-size:12px;color:var(--text2)">Este arquivo foi editado e a assinatura original foi invalidada. Assine com o certificado digital A1/A3 da empresa emitente antes de reenviar à SEFAZ.</div>
+          </div>
+        </div>
         <button onclick="xmledLimpar()" style="background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">✖ Limpar</button>
         <span id="xmled-status" style="font-size:12px;color:var(--text3);align-self:center;margin-left:4px"></span>
       </div>
@@ -4042,6 +4049,86 @@ function xmlValidar(){
     }
   }
 
+  // ── Rej. 531 — vBC/vICMS divergente da soma dos itens ────────────────
+  {
+    const gN = tag => { const el=[...doc.getElementsByTagName('*')].find(n=>n.localName===tag); return el?parseFloat(el.textContent)||0:0; };
+    const vBCTot   = gN('vBC');
+    const vICMSTot = gN('vICMS');
+    const detsAll  = [...doc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+    let somaBCItens=0, somaICMSItens=0;
+    detsAll.forEach(det=>{
+      const icmsEl=[...det.getElementsByTagName('*')].find(n=>n.localName==='ICMS');
+      if(!icmsEl) return;
+      const vBCEl  =[...icmsEl.getElementsByTagName('*')].find(n=>n.localName==='vBC');
+      const vICMSEl=[...icmsEl.getElementsByTagName('*')].find(n=>n.localName==='vICMS');
+      somaBCItens   += parseFloat(vBCEl  ?vBCEl.textContent  :0)||0;
+      somaICMSItens += parseFloat(vICMSEl?vICMSEl.textContent:0)||0;
+    });
+    const diffBC   = Math.abs(vBCTot   - somaBCItens);
+    const diffICMS = Math.abs(vICMSTot - somaICMSItens);
+    if(detsAll.length>0 && vBCTot>0 && diffBC>0.02){
+      alertas.push({tipo:'danger',icone:'❌',msg:
+        '<strong>Rej. 531 — vBC divergente:</strong> O total de vBC em ICMSTot (R$ '+vBCTot.toFixed(2)+') difere da soma dos itens (R$ '+somaBCItens.toFixed(2)+'). ' +
+        'Diferença: R$ '+diffBC.toFixed(2)+'. Recalcule o ICMSTot ou corrija a tributação dos itens.'
+      });
+    }
+    if(detsAll.length>0 && vICMSTot>0 && diffICMS>0.02){
+      alertas.push({tipo:'danger',icone:'❌',msg:
+        '<strong>Rej. 531 — vICMS divergente:</strong> O total de vICMS em ICMSTot (R$ '+vICMSTot.toFixed(2)+') difere da soma dos itens (R$ '+somaICMSItens.toFixed(2)+'). ' +
+        'Diferença: R$ '+diffICMS.toFixed(2)+'. Recalcule o ICMSTot ou corrija a tributação dos itens.'
+      });
+    }
+  }
+
+  // ── Rej. 701 — NF referenciada ausente em devolução/complementar ───────
+  {
+    const finNFeVal = [...doc.getElementsByTagName('*')].find(n=>n.localName==='finNFe');
+    const fin = finNFeVal?finNFeVal.textContent:'';
+    // finNFe 2=Complementar, 4=Devolução exigem refNFe
+    if(fin==='2'||fin==='4'){
+      const refNFe = [...doc.getElementsByTagName('*')].find(n=>n.localName==='refNFe');
+      const finDesc = fin==='2'?'Complementar':'Devolução/Retorno';
+      if(!refNFe){
+        alertas.push({tipo:'danger',icone:'❌',msg:
+          '<strong>Rej. 701 — NF referenciada ausente:</strong> A nota é do tipo <strong>'+finDesc+'</strong> (finNFe='+fin+') e exige a tag <code>&lt;refNFe&gt;</code> com a chave da NF-e original dentro de <code>&lt;NFref&gt;</code>. ' +
+          'Inclua a referência antes de reenviar.'
+        });
+      }
+    }
+    // Também alertar se tem refNFe mas finNFe é Normal (1) — provavelmente erro
+    if(fin==='1'){
+      const refNFe = [...doc.getElementsByTagName('*')].find(n=>n.localName==='refNFe');
+      if(refNFe){
+        alertas.push({tipo:'warn',icone:'⚠️',msg:
+          '<strong>NF referenciada em nota Normal:</strong> A nota tem finalidade Normal (finNFe=1) mas contém <code>&lt;refNFe&gt;</code>. Verifique se a finalidade está correta.'
+        });
+      }
+    }
+  }
+
+  // ── vProd vs soma dos itens ────────────────────────────────────────────
+  {
+    const vProdTotEl = [...doc.getElementsByTagName('*')].find(n=>n.localName==='vProd' && n.parentElement && n.parentElement.localName==='ICMSTot');
+    const detsAll2   = [...doc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+    if(vProdTotEl && detsAll2.length>0){
+      let somaVProd=0;
+      detsAll2.forEach(det=>{
+        const prodEl=[...det.getElementsByTagName('*')].find(n=>n.localName==='prod');
+        if(!prodEl) return;
+        const vp=[...prodEl.getElementsByTagName('*')].find(n=>n.localName==='vProd');
+        somaVProd += parseFloat(vp?vp.textContent:0)||0;
+      });
+      const vProdTot = parseFloat(vProdTotEl.textContent)||0;
+      const diff = Math.abs(vProdTot - somaVProd);
+      if(diff>0.02){
+        alertas.push({tipo:'danger',icone:'❌',msg:
+          '<strong>vProd divergente:</strong> O total de produtos em ICMSTot (R$ '+vProdTot.toFixed(2)+') difere da soma dos itens (R$ '+somaVProd.toFixed(2)+'). ' +
+          'Diferença: R$ '+diff.toFixed(2)+'. Isso pode causar rejeição na transmissão. Recalcule os totais.'
+        });
+      }
+    }
+  }
+
   const alertasEl = document.getElementById('xmlAlertas');
   alertasEl.innerHTML = alertas.length
     ? alertas.map(a=>`<div class="xml-alert ${a.tipo}">${a.icone} <span>${a.msg}</span></div>`).join('')
@@ -5094,6 +5181,13 @@ function xmledExportar(){
   a.click();
   URL.revokeObjectURL(a.href);
   xmledStatus('✅ XML exportado: '+xmledFileName);
+
+  // Aviso de assinatura — sempre exibir após exportação
+  const avisoEl = document.getElementById('xmled-assinatura-aviso');
+  if(avisoEl){
+    avisoEl.style.display='flex';
+    setTimeout(()=>{ avisoEl.style.display='none'; }, 12000);
+  }
 }
 
 // ── CLIQUE EM TAG NO XML BRUTO ──────────────────────────────────────────
