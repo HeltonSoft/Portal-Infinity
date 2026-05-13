@@ -795,11 +795,24 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       ⚠️ <strong style="color:#fbbf24">Atenção:</strong> qualquer alteração no conteúdo do XML invalida a assinatura digital original. Clique em <strong>Remover Assinatura + Protocolo</strong> antes de exportar, pois o arquivo precisa ser reassinado pelo sistema emissor antes da transmissão. Use apenas para correções que não exijam cancelamento da nota original.
     </div>
 
-    <div id="xmled-upload-area" style="border:2px dashed var(--border);border-radius:14px;padding:40px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px" onclick="document.getElementById('xmled-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="xmledDrop(event)">
+    <div id="xmled-upload-area" style="border:2px dashed var(--border);border-radius:14px;padding:32px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:14px" onclick="document.getElementById('xmled-input').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="xmledDrop(event)">
       <div style="font-size:32px;margin-bottom:10px">📂</div>
       <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Clique ou arraste o XML aqui</div>
       <div style="font-size:12px;color:var(--text3)">Arquivo .xml de NF-e ou NFC-e</div>
       <input type="file" id="xmled-input" accept=".xml" style="display:none" onchange="xmledLoad(this.files[0])">
+    </div>
+
+    <!-- Importar via texto colado (Ctrl+V) -->
+    <div id="xmled-paste-area" style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;background:var(--card)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;flex-wrap:wrap">
+        <div style="font-size:12px;font-weight:600;color:var(--text)">📋 Ou cole o XML aqui (Ctrl+V)</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="xmledCarregarColado()" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Carregar XML colado</button>
+          <button onclick="xmledLimparPaste()" style="background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit">Limpar</button>
+        </div>
+      </div>
+      <textarea id="xmled-paste-input" placeholder="Cole o conteúdo do XML aqui... (Ctrl+V) — começa com &lt;?xml version=&quot;1.0&quot;..." style="width:100%;min-height:90px;max-height:200px;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;resize:vertical;outline:none" onpaste="setTimeout(()=>xmledCarregarColado(),50)"></textarea>
+      <div style="font-size:10px;color:var(--text2);margin-top:6px">💡 Cole o XML e o sistema carrega automaticamente</div>
     </div>
 
     <div id="xmled-editor" style="display:none">
@@ -1948,7 +1961,7 @@ const BASE_CONHECIMENTO=[
   {id:7,titulo:"Emissão de Boleto — Configuração e Operação",modulo:"Financeiro",tipo:"Configuração",tags:["boleto","emissão","reemissão","cancelamento","contas a receber","conta bancária","remessa","homologação","api","cnab","carteira","convênio","vencimento","filtro"],situacao:"Para emitir boletos pelo sistema é necessário que o boleto seja previamente homologado junto ao banco e configurado na conta bancária. O acesso à rotina é feito em Financeiro › Contas a Receber › Emissão de Boleto. A mesma tela é utilizada para as três operações: Emissão, Reemissão e Cancelamento.",causa:"A emissão depende de homologação bancária prévia. O sistema possui integração via API com algumas instituições financeiras, permitindo o registro automático do boleto no banco no momento da geração, conforme configuração da conta bancária utilizada.",obs:"O flag 'Questionar impressão de boleto?' em Configurações › Comercial faz o sistema perguntar ao usuário se deseja emitir o boleto ao finalizar uma venda (opcional). O campo 'Endereço Cobrança' quando marcado utiliza o endereço de cobrança cadastrado no cliente ao invés do endereço padrão.",correcao:["PRÉ-REQUISITO — Configuração da Conta Bancária: homologar o boleto junto ao banco e acessar o cadastro da Conta Bancária, aba 'Configurações de Boleto'. Preencher: Nome do Cedente, Tipo Documento, CNPJ do Beneficiário, Número da Carteira, Cedente, Dígito, Nosso Número, Convênio, Modalidade, Instruções de Cobrança (1ª e 2ª instrução), Tipo de Cobrança, Modelo de Remessa (CNAB 400 ou CNAB 240) e Código de Remessa.","EMISSÃO — Acessar Financeiro › Contas a Receber › Emissão de Boleto. Selecionar a Conta Bancária. Definir o Tipo de Leitura (Vencimento é o padrão) e informar o Vencimento Inicial e Vencimento Final para filtrar os títulos. O campo Opções não precisa ser selecionado para emissão. Utilizar os filtros adicionais se necessário: Clientes, Pagadores, Centro de Custo, Plano de Contas, Tipo de Envio do Boleto (Impresso ou Email), Ordem, Tipo Nota e Número da Nota. Clicar na lupa para carregar os títulos. Selecionar os títulos desejados e confirmar a emissão.","REEMISSÃO (via rotina) — ATENÇÃO: antes de reemitir, verificar se o boleto já foi enviado ao banco (registrado via API ou remessa CNAB). Se sim, é obrigatório dar baixa do boleto no próprio banco antes de realizar qualquer alteração no sistema, caso contrário o boleto antigo continuará válido no banco gerando inconsistência na cobrança. Após confirmar que o boleto não está mais ativo no banco: acessar Financeiro › Contas a Receber › Emissão de Boleto, selecionar a Conta Bancária, informar o período de vencimento, no campo Opções selecionar 'REEMISSÃO', aplicar os filtros necessários e clicar na lupa para localizar os boletos. Selecionar os títulos e confirmar. Utilizar quando houver necessidade de atualização do documento, como alteração de vencimento ou dados do cliente.","REEMISSÃO (via título financeiro) — Forma alternativa e mais rápida para reimprimir o boleto sem nenhuma alteração. Acessar o título financeiro do cliente em Financeiro › Contas a Receber, abrir o desdobramento da parcela desejada e localizar o bloco 'Boleto Bancário'. Clicar no ícone de código de barras exibido nesse bloco — o sistema reemite o boleto imediatamente. Este método não realiza nenhuma alteração no título, apenas gera uma nova impressão do boleto já existente. Indicado quando o cliente solicita uma segunda via sem necessidade de qualquer ajuste.","CANCELAMENTO — ATENÇÃO: assim como na reemissão, se o boleto já foi enviado ao banco é obrigatório cancelá-lo também na instituição financeira antes de cancelar no sistema. Acessar Financeiro › Contas a Receber › Emissão de Boleto. Selecionar a Conta Bancária. Informar o período de vencimento. No campo Opções, selecionar 'CANCELAR'. Aplicar os filtros necessários e clicar na lupa para localizar os boletos emitidos. Selecionar os títulos e confirmar o cancelamento. Utilizar quando o boleto não for mais válido ou quando houver renegociação do título."],sql:false,data:"Mar/2026"},
   {id:8,titulo:"Operação — Nome do produto na devolução igual ao XML",modulo:"Faturamento",tipo:"Melhoria",tags:["devolução","operação","nota fiscal","grade","descrição do produto","xml","faturamento"],situacao:"Ao realizar a devolução de um produto, o sistema apresentava o item com a descrição composta pela grade, por exemplo: 'CALÇA JEANS BARREL FIVE POCKETS – PRETA – 36'. Alguns fornecedores exigem que o produto retorne com a descrição original da nota fiscal de entrada, sem abertura por grade.",causa:"O sistema utilizava a descrição montada com as variações de grade no momento da devolução, sem opção de utilizar a descrição original gravada na nota fiscal de entrada.",obs:"A flag deve ser habilitada na operação utilizada para devolução. Caminho: Cadastros › Fiscal › Operação. Campo: 'Nome do produto na devolução igual ao XML'.",correcao:["Acessar Cadastros › Fiscal › Operação e localizar a operação utilizada para devolução.","Habilitar a flag 'Nome do produto na devolução igual ao XML'.","Com a flag ativa, ao realizar a devolução o sistema utilizará a descrição gravada na nota fiscal de entrada, sem a composição por grade."],sql:false,data:"Mar/2026"},
   {id:9,titulo:"Mensagem 'Nenhuma emissão de nota configurada para este lançamento' ao emitir NF-e pela Venda",modulo:"Faturamento",tipo:"Configuração",tags:["nf-e","emissão","configuração","parâmetros","cfop","operação","caixa","faturamento","venda"],situacao:"Ao tentar emitir NF-e pela Venda, o sistema exibe a mensagem 'Nenhuma emissão de nota configurada para este lançamento' e não realiza a emissão.",causa:"A emissão de NF-e pela Venda depende de três configurações distintas no sistema. Se qualquer uma delas estiver ausente ou incorreta, o sistema bloqueia a emissão sem indicar qual ponto está pendente.",obs:"Verificar os quatro pontos na ordem abaixo antes de acionar o N2.",correcao:["Cadastro do Cliente — Verificar se a flag 'Emite NF-e' está marcada em Cadastros › Pessoas › Clientes.","Operação / CFOP — Acessar o cadastro da operação utilizada na venda em Cadastros › Fiscal › Operação e verificar se a flag 'Questiona Emissão Nota' está marcada. Verificar também o CFOP vinculado.","Caixa — Verificar se a flag 'Impressão NF-e' está marcada em Faturamento › Caixa › Caixa.","Parâmetros de Nota Fiscal — Verificar se o campo 'Tipo de emissão fiscal' está configurado como NF-e ou Todos em Configurações › Sistema › Parâmetros Notas Fiscais."],sql:false,data:"Mar/2026"},
-  {id:10,titulo:"NF-e — Campo Observação Fisco (infAdFisco) no Cadastro de Tributação",modulo:"Fiscal",tipo:"Configuração",tags:["nf-e","infAdFisco","tributação","pis","cofins","cst","lc 224/2025","xml","dados adicionais","fisco"],situacao:"Clientes que precisam incluir informações adicionais de interesse do Fisco na NF-e, como textos exigidos por legislação específica, não tinham um campo dedicado no cadastro de Tributação para essa finalidade. O conteúdo acabava sendo inserido manualmente nas observações complementares, resultando na gravação incorreta na tag &lt;infCpl&gt; do XML em vez da tag &lt;infAdFisco&gt;, que é a exigida pelo Fisco.",causa:"O cadastro de Tributação não possuía um campo específico para gravação de informações adicionais ao Fisco. O campo de observações complementares existente grava na tag &lt;infCpl&gt;, não na &lt;infAdFisco&gt;.",obs:"O campo é de preenchimento livre e opcional por tributação, sem vínculo com uma legislação específica — pode ser usado para qualquer exigência atual ou futura que utilize a tag &lt;infAdFisco&gt;. A tag &lt;infAdFisco&gt; é única no cabeçalho do XML da NF-e. Se houver itens com tributações diferentes na mesma nota, o sistema grava o texto sempre que ao menos um item possuir o campo preenchido, cobrindo todos os itens enquadrados. Exemplo: tributações com CST PIS/COFINS 06 ou 07 afetadas pela LC 224/2025 devem conter o texto 'Operação sujeita ao disposto na Lei Complementar nº 224, de 2025.'",correcao:["Acessar o cadastro de Tributação: Cadastros › Fiscal › Tributação.","Localizar a tributação desejada e preencher o campo 'Observação Fisco (infAdFisco)' com o texto exigido pela legislação aplicável.","Se o campo estiver preenchido, o conteúdo será gravado automaticamente na tag &lt;infAdFisco&gt; do XML da NF-e no momento da emissão.","Se o campo estiver vazio, nenhuma informação será gerada na tag — o campo só impacta a NF-e quando preenchido."],sql:false,data:"Abr/2026"},,
+  {id:10,titulo:"NF-e — Campo Observação Fisco (infAdFisco) no Cadastro de Tributação",modulo:"Fiscal",tipo:"Configuração",tags:["nf-e","infAdFisco","tributação","pis","cofins","cst","lc 224/2025","xml","dados adicionais","fisco"],situacao:"Clientes que precisam incluir informações adicionais de interesse do Fisco na NF-e, como textos exigidos por legislação específica, não tinham um campo dedicado no cadastro de Tributação para essa finalidade. O conteúdo acabava sendo inserido manualmente nas observações complementares, resultando na gravação incorreta na tag &lt;infCpl&gt; do XML em vez da tag &lt;infAdFisco&gt;, que é a exigida pelo Fisco.",causa:"O cadastro de Tributação não possuía um campo específico para gravação de informações adicionais ao Fisco. O campo de observações complementares existente grava na tag &lt;infCpl&gt;, não na &lt;infAdFisco&gt;.",obs:"O campo é de preenchimento livre e opcional por tributação, sem vínculo com uma legislação específica — pode ser usado para qualquer exigência atual ou futura que utilize a tag &lt;infAdFisco&gt;. A tag &lt;infAdFisco&gt; é única no cabeçalho do XML da NF-e. Se houver itens com tributações diferentes na mesma nota, o sistema grava o texto sempre que ao menos um item possuir o campo preenchido, cobrindo todos os itens enquadrados. Exemplo: tributações com CST PIS/COFINS 06 ou 07 afetadas pela LC 224/2025 devem conter o texto 'Operação sujeita ao disposto na Lei Complementar nº 224, de 2025.'",correcao:["Acessar o cadastro de Tributação: Cadastros › Fiscal › Tributação.","Localizar a tributação desejada e preencher o campo 'Observação Fisco (infAdFisco)' com o texto exigido pela legislação aplicável.","Se o campo estiver preenchido, o conteúdo será gravado automaticamente na tag &lt;infAdFisco&gt; do XML da NF-e no momento da emissão.","Se o campo estiver vazio, nenhuma informação será gerada na tag — o campo só impacta a NF-e quando preenchido."],sql:false,data:"Abr/2026"},
   {id:11,titulo:"Entrada de XML — NF-e com tPag 90 (Sem Pagamento)",modulo:"Compras",tipo:"Fiscal",tags:["entrada de nota","xml","tpag 90","sem pagamento","haver","adiantamento","fornecedor","operação","financeiro","parcela"],situacao:"Ao importar um XML de NF-e onde o emitente informou a forma de pagamento tPag = 90 (Sem Pagamento) com vPag = 0,00, o sistema exige o preenchimento de parcela para concluir a entrada, impedindo o processo.",causa:"O emitente utilizou tPag 90 para indicar que o valor da nota foi compensado com haver junto ao fornecedor, sem movimentação financeira real. O sistema não reconhece essa condição automaticamente na importação do XML.",obs:"O tPag 90 é previsto no leiaute da NF-e 4.0 (Grupo YA — Informações de Pagamento) para operações sem movimentação financeira, como compensações de crédito entre fornecedor e cliente.",correcao:["Utilize uma operação de entrada configurada para não gerar financeiro, ou","Registre um adiantamento para o fornecedor antes da entrada — ao realizá-la, o sistema identificará o crédito existente e abaterá automaticamente o valor."],sql:false,data:"Abr/2026"},
   {id:12,titulo:"Cadastro de Autorizações e Controle de Inadimplência",modulo:"Configuração",tipo:"Configuração",tags:["autorização","liberação","trava","notificação","usuário","inadimplência","bloqueio","cliente","dias de atraso","parâmetros comercial"],situacao:"O cliente deseja configurar travas de segurança para ações específicas no sistema (como alterar valor de venda), ou quer ativar o bloqueio automático de clientes inadimplentes.",causa:"Funcionalidades não configuradas — o cadastro de autorizações e os parâmetros de inadimplência precisam ser ativados manualmente conforme a necessidade de cada empresa.",obs:"AUTORIZAÇÕES: o sistema possui vários tipos de bloqueio configuráveis, como Alteração de valor, Desconto acima do permitido, Cliente inadimplente, entre outros. Cada autorização pode ter um usuário responsável diferente. Apenas usuários com autorização cadastrada conseguem acessar o menu Cadastros → Usuários → Processo de Liberações. INADIMPLÊNCIA — DUAS FORMAS DE CONTROLE: 1) Bloqueio total via Parâmetros do Comercial — ativar a flag Bloquear clientes inadimplentes em Configurações → Sistema → Parâmetros do Comercial. Com essa opção ativa o sistema bloqueia o cliente definitivamente ao tentar realizar uma venda com título vencido, sem possibilidade de prosseguir. 2) Bloqueio com aprovação via Cadastro de Autorizações — criar uma autorização do tipo Cliente inadimplente em Cadastros → Usuários → Autorizações. O campo Dias de atraso do título nos Parâmetros do Comercial define a tolerância após o vencimento para acionar a trava. Em vez de bloquear definitivamente, o sistema solicita aprovação de um responsável para liberar o atendimento.",correcao:["AUTORIZAÇÕES — Acessar Cadastros → Usuários → Autorizações e criar um novo cadastro.","Definir o nome, a opção (ex: Venda) e o tipo de autorização desejado (o sistema oferece vários tipos, como Alteração de valor, Desconto e Cliente inadimplente).","Vincular os usuários responsáveis por aprovar a ação.","Quando um usuário executar uma ação com trava ativa, o sistema notifica o responsável em tempo real pelo sino de notificações no topo da tela.","O responsável aprova ou recusa diretamente pela notificação ou pelo menu Cadastros → Usuários → Processo de Liberações.","INADIMPLÊNCIA FORMA 1 (Bloqueio total) — Acessar Configurações → Sistema → Parâmetros do Comercial e ativar a flag Bloquear clientes inadimplentes. O sistema bloqueia definitivamente o cliente ao tentar vender com título vencido.","INADIMPLÊNCIA FORMA 2 (Bloqueio com aprovação) — Criar uma autorização do tipo Cliente inadimplente em Cadastros → Usuários → Autorizações. Em paralelo acessar Configurações → Sistema → Parâmetros do Comercial e preencher o campo Dias de atraso do título com o número de dias de tolerância após o vencimento (0 = aciona no mesmo dia). Em vez de bloquear definitivamente o sistema solicita aprovação de um responsável para prosseguir."],sql:false,data:"Abr/2026"}
 ];
@@ -4400,19 +4413,201 @@ function xmledLoad(file){
   xmledFileName = file.name.replace('.xml','_editado.xml');
   const reader = new FileReader();
   reader.onload = function(e){
-    const text = e.target.result;
-    try{
-      const parser = new DOMParser();
-      xmledDoc = parser.parseFromString(text, 'application/xml');
-      if(xmledDoc.querySelector('parsererror')){ alert('XML inválido.'); return; }
-      xmledPopularCampos();
-      document.getElementById('xmled-editor').style.display='block';
-      document.getElementById('xmled-upload-area').style.display='none';
-      xmledAtualizarBanner();
-      xmledStatus('✅ XML carregado: ' + file.name);
-    }catch(ex){ alert('Erro ao carregar XML: ' + ex.message); }
+    xmledCarregarTexto(e.target.result, file.name);
   };
   reader.readAsText(file,'utf-8');
+}
+
+// Carrega XML a partir de uma string (compartilhado entre arquivo e paste)
+function xmledCarregarTexto(text, origem){
+  try{
+    const parser = new DOMParser();
+    xmledDoc = parser.parseFromString(text, 'application/xml');
+    if(xmledDoc.querySelector('parsererror')){
+      alert('XML inválido. Verifique se o conteúdo está completo e bem formado.');
+      return false;
+    }
+    xmledNormalizarOrdem();
+    xmledPopularCampos();
+    document.getElementById('xmled-editor').style.display='block';
+    document.getElementById('xmled-upload-area').style.display='none';
+    const pasteArea = document.getElementById('xmled-paste-area');
+    if(pasteArea) pasteArea.style.display='none';
+    xmledAtualizarBanner();
+    xmledStatus('✅ XML carregado'+(origem?': '+origem:''));
+    return true;
+  }catch(ex){
+    alert('Erro ao carregar XML: ' + ex.message);
+    return false;
+  }
+}
+
+// Carrega o XML que foi colado no textarea
+function xmledCarregarColado(){
+  const ta = document.getElementById('xmled-paste-input');
+  if(!ta) return;
+  const txt = (ta.value||'').trim();
+  if(!txt){ xmledStatus('⚠️ Cole o conteúdo do XML antes de carregar.'); return; }
+  // Detecta se parece XML antes de tentar parse
+  if(!/^<\?xml|^<NFe|^<nfeProc/i.test(txt)){
+    if(!confirm('O texto colado não parece ser um XML de NF-e. Tentar carregar mesmo assim?')) return;
+  }
+  // Define um nome default para o export ('editado_colado.xml' ou usa a chave se disponível)
+  const chMatch = txt.match(/Id="NFe(\d{44})"/);
+  xmledFileName = chMatch ? chMatch[1]+'_editado.xml' : 'xml_colado_editado.xml';
+  xmledCarregarTexto(txt, 'colado');
+}
+
+// Limpa a área de paste
+function xmledLimparPaste(){
+  const ta = document.getElementById('xmled-paste-input');
+  if(ta){ ta.value=''; ta.focus(); }
+}
+
+// Normaliza a ordem dos filhos de <pag> e <infAdic> conforme schema NFe 4.00.
+// Corrige XMLs gerados por sistemas que colocam vTroco/infAdFisco fora de ordem.
+function xmledNormalizarOrdem(){
+  if(!xmledDoc) return;
+  // <pag>: detPag(s) -> vTroco
+  const PAG_ORDER = ['detPag','vTroco'];
+  const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  if(pagEl){
+    const filhos = [...pagEl.children];
+    filhos.sort((a,b)=>{
+      const ia = PAG_ORDER.indexOf(a.localName); const ib = PAG_ORDER.indexOf(b.localName);
+      return (ia<0?99:ia) - (ib<0?99:ib);
+    });
+    filhos.forEach(f=>pagEl.appendChild(f));
+  }
+  // <infAdic>: infAdFisco -> infCpl -> obsCont -> obsFisco -> procRef
+  const INFADIC_ORDER = ['infAdFisco','infCpl','obsCont','obsFisco','procRef'];
+  const infAd = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='infAdic');
+  if(infAd){
+    const filhos = [...infAd.children];
+    filhos.sort((a,b)=>{
+      const ia = INFADIC_ORDER.indexOf(a.localName); const ib = INFADIC_ORDER.indexOf(b.localName);
+      return (ia<0?99:ia) - (ib<0?99:ib);
+    });
+    filhos.forEach(f=>infAd.appendChild(f));
+  }
+  // Corrige <imposto> sem bloco <ICMS> (cadastro de produto sem tributação ICMS)
+  xmledCorrigirImpostoSemICMS();
+  // Recalcula totais a partir da soma real dos itens (corrige Rej. 564)
+  xmledRecalcularTotais();
+}
+
+// Detecta itens com <imposto> sem <ICMS> e insere um bloco ICMS default.
+// Para CRT=1 (Simples Nacional): ICMSSN102 com orig=0 e CSOSN=102.
+// Para CRT=2 ou 3 (Regime Normal): ICMS00 com orig=0, CST=00, modBC=3, vBC=vICMS=0, pICMS=0.
+// O bloco <ICMS> deve ser o PRIMEIRO filho de <imposto> (antes de PIS).
+function xmledCorrigirImpostoSemICMS(){
+  if(!xmledDoc) return;
+  const ns = 'http://www.portalfiscal.inf.br/nfe';
+  const crtEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='CRT');
+  const crt = crtEl ? crtEl.textContent : '1';
+  const dets = xmledDoc.querySelectorAll('det');
+  const corrigidos = [];
+  dets.forEach(det=>{
+    const imp = det.querySelector('imposto');
+    if(!imp) return;
+    const temICMS = [...imp.children].find(n=>n.localName==='ICMS');
+    if(temICMS) return;
+    // Cria bloco <ICMS> default conforme regime tributário
+    const icms = xmledDoc.createElementNS(ns,'ICMS');
+    let inner;
+    if(crt==='1'){
+      // Simples Nacional — ICMSSN102 (Tributada pelo Simples sem permissão de crédito)
+      inner = xmledDoc.createElementNS(ns,'ICMSSN102');
+      const orig = xmledDoc.createElementNS(ns,'orig'); orig.textContent='0';
+      const cso  = xmledDoc.createElementNS(ns,'CSOSN'); cso.textContent='102';
+      inner.appendChild(orig); inner.appendChild(cso);
+    } else {
+      // Regime Normal — ICMS00 (alíquota zerada, ajustar depois)
+      inner = xmledDoc.createElementNS(ns,'ICMS00');
+      ['orig:0','CST:00','modBC:3','vBC:0.00','pICMS:0.0000','vICMS:0.00'].forEach(p=>{
+        const [t,v] = p.split(':');
+        const el = xmledDoc.createElementNS(ns,t); el.textContent=v;
+        inner.appendChild(el);
+      });
+    }
+    icms.appendChild(inner);
+    // Insere <ICMS> ANTES de qualquer outro filho de <imposto> (PIS, COFINS, etc)
+    imp.insertBefore(icms, imp.firstChild);
+    const nItem = det.getAttribute('nItem') || '?';
+    corrigidos.push(nItem);
+  });
+  if(corrigidos.length){
+    console.log('[xmled] Itens corrigidos (ICMS inserido):', corrigidos.join(', '));
+    // Avisa o usuário na barra de status (se a função existir)
+    if(typeof xmledStatus === 'function'){
+      const csn = crt==='1' ? 'ICMSSN102/CSOSN=102' : 'ICMS00/CST=00';
+      xmledStatus('⚠️ Inserido <ICMS> default ('+csn+') nos itens: '+corrigidos.join(', ')+'. Revise o cadastro do produto no sistema.');
+    }
+  }
+}
+
+// Soma vProd dos itens e ajusta ICMSTot/vProd, vNF e vTroco. Idempotente.
+function xmledRecalcularTotais(){
+  if(!xmledDoc) return;
+  const dets = xmledDoc.querySelectorAll('det');
+  if(!dets.length) return;
+  let somaVProd = 0;
+  dets.forEach(det=>{
+    const prod = det.querySelector('prod');
+    if(!prod) return;
+    const vp = [...prod.children].find(n=>n.localName==='vProd');
+    if(vp) somaVProd += parseFloat(vp.textContent)||0;
+  });
+  somaVProd = Math.round(somaVProd*100)/100;
+  const icmsTot = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+  if(!icmsTot) return;
+  const get = tag => {
+    const el = [...icmsTot.children].find(n=>n.localName===tag);
+    return el ? (parseFloat(el.textContent)||0) : 0;
+  };
+  const set = (tag,val)=>{
+    const el = [...icmsTot.children].find(n=>n.localName===tag);
+    if(el) el.textContent = val.toFixed(2);
+  };
+  // Fórmula oficial vNF da NF-e 4.00:
+  // vNF = vProd - vDesc + vST + vFCPST + vFrete + vSeg + vOutro + vII + vIPI + vIPIDevol - vICMSDeson
+  const vDesc       = get('vDesc');
+  const vST         = get('vST');
+  const vFCPST      = get('vFCPST');
+  const vFrete      = get('vFrete');
+  const vSeg        = get('vSeg');
+  const vOutro      = get('vOutro');
+  const vII         = get('vII');
+  const vIPI        = get('vIPI');
+  const vIPIDevol   = get('vIPIDevol');
+  const vICMSDeson  = get('vICMSDeson');
+  const novoVNF = Math.round((somaVProd - vDesc + vST + vFCPST + vFrete + vSeg + vOutro + vII + vIPI + vIPIDevol - vICMSDeson)*100)/100;
+  set('vProd', somaVProd);
+  set('vNF',   novoVNF);
+  // Recalcula vTroco se houver pagamentos e o troco já existir ou for necessário
+  const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  if(pagEl){
+    const detPags = [...pagEl.children].filter(n=>n.localName==='detPag');
+    let somaPag = 0;
+    detPags.forEach(dp=>{
+      const vp = [...dp.children].find(n=>n.localName==='vPag');
+      if(vp) somaPag += parseFloat(vp.textContent)||0;
+    });
+    somaPag = Math.round(somaPag*100)/100;
+    const diff = Math.round((somaPag - novoVNF)*100)/100;
+    let vtEl = [...pagEl.children].find(n=>n.localName==='vTroco');
+    if(diff > 0){
+      if(!vtEl){
+        const ns = pagEl.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+        vtEl = xmledDoc.createElementNS(ns,'vTroco');
+        pagEl.appendChild(vtEl);
+      }
+      vtEl.textContent = diff.toFixed(2);
+    } else if(vtEl){
+      // Não há troco — remove tag (evita vTroco=0.00 desnecessário)
+      pagEl.removeChild(vtEl);
+    }
+  }
 }
 
 function xmledGetEl(tag){
@@ -4516,13 +4711,49 @@ function xmledPopularCampos(){
     const title = xProd?xProd.textContent.substring(0,40):`Item ${i+1}`;
     const fld = (lbl,id,val,ph='',onchg='')=>`<div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">${lbl}</label><input id="${id}" class="xmled-item-field" data-det="${i}" ${onchg?`oninput="${onchg}"`:''}  style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${val.replace(/"/g,'&quot;')}" placeholder="${ph}"></div>`;
     const getP = tag=>{const e=prod?([...prod.getElementsByTagName('*')].find(n=>n.localName===tag)):null;return e?e.textContent:'';};
+
+    // Extrai CSOSN ou CST do bloco <imposto><ICMS><ICMS??>
+    const imposto = det.querySelector('imposto');
+    const icmsRoot = imposto ? [...imposto.children].find(n=>n.localName==='ICMS') : null;
+    const icmsInner = icmsRoot ? [...icmsRoot.children][0] : null;
+    const icmsTipo = icmsInner ? icmsInner.localName : '';
+    const csosnEl = icmsInner ? [...icmsInner.children].find(n=>n.localName==='CSOSN') : null;
+    const cstEl   = icmsInner ? [...icmsInner.children].find(n=>n.localName==='CST') : null;
+    const ehSN    = !!csosnEl;
+    const trib    = csosnEl ? csosnEl.textContent : (cstEl ? cstEl.textContent : '');
+    const tribLbl = ehSN ? 'CSOSN' : (cstEl ? 'CST' : 'CSOSN/CST');
+
+    // Valida CFOP × CSOSN/CST (regras simplificadas)
+    const cfop = getP('CFOP');
+    const cfopST  = /^[56]405$/.test(cfop);
+    const cfopNorm= /^[56]10[2-9]$/.test(cfop) || /^[56]4(03|04|0[67-9])$/.test(cfop);
+    let aviso = '';
+    if(trib){
+      // CSOSN 500 (Simples - ICMS retido por ST) — exige CFOP de venda c/ ST (5405/6404)
+      if(ehSN && trib==='500' && !cfopST){
+        aviso = `⚠️ CSOSN 500 (ICMS retido por ST) exige CFOP de ST (ex: 5405). CFOP atual: ${cfop}`;
+      }
+      // CST 60 (Regime Normal - ICMS retido por ST) — mesma exigência
+      else if(!ehSN && trib==='60' && !cfopST){
+        aviso = `⚠️ CST 60 (ICMS retido por ST) exige CFOP de ST (ex: 5405). CFOP atual: ${cfop}`;
+      }
+      // CSOSN 102/103/300/400/900 + CFOP de ST = inconsistente
+      else if(ehSN && /^(102|103|300|400|900)$/.test(trib) && cfopST){
+        aviso = `⚠️ CSOSN ${trib} não combina com CFOP de ST. CFOP esperado: 5102.`;
+      }
+    }
+    const corBorda = aviso ? 'rgba(239,68,68,.4)' : 'var(--border)';
+    const corBg    = aviso ? 'rgba(239,68,68,.05)' : 'var(--navy3)';
+
     cont.innerHTML+=`
-      <div style="background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:14px">
-        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px">Item ${i+1} — ${title}</div>
+      <div style="background:${corBg};border:1px solid ${corBorda};border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px">Item ${i+1} — ${title}${icmsTipo?` <span style="font-size:10px;font-weight:500;color:var(--text2);background:var(--navy2);padding:2px 6px;border-radius:6px;margin-left:6px">${icmsTipo}</span>`:''}</div>
+        ${aviso?`<div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:6px 10px;font-size:11px;color:#fca5a5;margin-bottom:10px">${aviso}</div>`:''}
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
           ${fld('Descrição (xProd)',`xmled-item-${i}-xprod`,getP('xProd'))}
           ${fld('NCM',`xmled-item-${i}-ncm`,getP('NCM'))}
-          ${fld('CFOP',`xmled-item-${i}-cfop`,getP('CFOP'))}
+          ${fld('CFOP',`xmled-item-${i}-cfop`,cfop)}
+          ${trib!==''||icmsInner?fld(tribLbl,`xmled-item-${i}-cst`,trib):''}
           ${fld('Cód. EAN (cEAN)',`xmled-item-${i}-cean`,getP('cEAN'))}
           ${fld('Qtd (qCom)',`xmled-item-${i}-qcom`,getP('qCom'),'','xmledItemChange(this)')}
           ${fld('Vl. Unit (vUnCom)',`xmled-item-${i}-vuncom`,getP('vUnCom'),'','xmledItemChange(this)')}
@@ -4541,8 +4772,8 @@ function xmledPopularCampos(){
       let vtEl = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
       if(!vtEl && parseFloat(vTrocoInp.value)){
         vtEl = xmledDoc.createElementNS(ns2,'vTroco');
-        const fdp = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='detPag');
-        if(fdp) pagEl2.insertBefore(vtEl,fdp); else pagEl2.appendChild(vtEl);
+        // vTroco DEVE vir DEPOIS de todos os detPag (schema NFe 4.00)
+        pagEl2.appendChild(vtEl);
       }
       if(vtEl) vtEl.textContent = (parseFloat(vTrocoInp.value)||0).toFixed(2);
     }
@@ -4623,10 +4854,10 @@ function xmledPopularCampos(){
           '<label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor do troco (vTroco)</label>'+
           '<input id="xmled-vtroco" class="xmled-field"'+
             ' style="width:100%;background:var(--bg);border:1px solid '+corBorda+';border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit"'+
-            ' value="'+(vTrocoFmt||trocoCalc)+'" placeholder="0.00">'+
+            ' value="'+(trocoErrado?trocoCalc:(vTrocoFmt||trocoCalc))+'" placeholder="0.00">'+
         '</div>'+
         '<div>'+
-          '<button onclick="xmledAplicarTroco()" style="width:100%;padding:8px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#34d399;font-size:12px;cursor:pointer;font-family:inherit">'+
+          '<button onclick="xmledAplicarTroco(\''+trocoCalc+'\')" style="width:100%;padding:8px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#34d399;font-size:12px;cursor:pointer;font-family:inherit">'+
             'Aplicar troco calculado (R$ '+trocoCalc+')'+
           '</button>'+
         '</div>'+
@@ -4638,20 +4869,27 @@ function xmledPopularCampos(){
   xmledAplicarModelo();
 }
 
-function xmledAplicarTroco(){
+function xmledAplicarTroco(valForcado){
   if(!xmledDoc) return;
   const inp = document.getElementById('xmled-vtroco');
   if(!inp) return;
-  const val = parseFloat(inp.value)||0;
+  // Se o botão passou um valor explícito (trocoCalc), usa ele e sincroniza o input.
+  // Caso contrário, lê do input (permite o usuário digitar manualmente).
+  let val;
+  if(valForcado !== undefined && valForcado !== null && valForcado !== ''){
+    val = parseFloat(valForcado)||0;
+    inp.value = val.toFixed(2);
+  } else {
+    val = parseFloat(inp.value)||0;
+  }
   const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
   if(!pagEl){ xmledStatus('❌ Tag <pag> não encontrada no XML'); return; }
   const ns = pagEl.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
   let vTrocoEl = [...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
   if(!vTrocoEl){
     vTrocoEl = xmledDoc.createElementNS(ns,'vTroco');
-    const firstDetPag = [...pagEl.childNodes].find(n=>n.localName==='detPag');
-    if(firstDetPag) pagEl.insertBefore(vTrocoEl, firstDetPag);
-    else pagEl.appendChild(vTrocoEl);
+    // vTroco DEVE vir DEPOIS de todos os detPag (schema NFe 4.00)
+    pagEl.appendChild(vTrocoEl);
   }
   vTrocoEl.textContent = val.toFixed(2);
   inp.value = val.toFixed(2);
@@ -4872,8 +5110,32 @@ function xmledSalvarCampos(){
     if(!el){el=xmledDoc.createElementNS('http://www.portalfiscal.inf.br/nfe',tag);parent.appendChild(el);}
     el.textContent=val;
   };
-  setOrCreate(infAd,'infCpl',     v('xmled-infcpl'));
-  setOrCreate(infAd,'infAdFisco', v('xmled-infadfisco'));
+  // Ordem obrigatória dentro de <infAdic> (schema NFe 4.00):
+  // infAdFisco -> infCpl -> obsCont -> obsFisco -> procRef
+  const INFADIC_ORDER = ['infAdFisco','infCpl','obsCont','obsFisco','procRef'];
+  const setInfAdic = (tag,val)=>{
+    let el = [...infAd.children].find(n=>n.localName===tag);
+    const valTrim = (val||'').trim();
+    // Schema NFe: infAdFisco/infCpl têm minLength=1 — não criar tag vazia.
+    // Se o campo veio vazio: remover o elemento existente (se houver) e sair.
+    if(!valTrim){
+      if(el) infAd.removeChild(el);
+      return;
+    }
+    if(!el){
+      el = xmledDoc.createElementNS('http://www.portalfiscal.inf.br/nfe',tag);
+      const myIdx = INFADIC_ORDER.indexOf(tag);
+      const next = [...infAd.children].find(n=>INFADIC_ORDER.indexOf(n.localName) > myIdx);
+      if(next) infAd.insertBefore(el,next); else infAd.appendChild(el);
+    }
+    el.textContent = valTrim;
+  };
+  setInfAdic('infAdFisco', v('xmled-infadfisco'));
+  setInfAdic('infCpl',     v('xmled-infcpl'));
+  // Se <infAdic> ficou completamente vazio, remove para não enviar tag oca
+  if(infAd && infAd.children.length === 0 && !infAd.textContent.trim()){
+    infAd.parentNode.removeChild(infAd);
+  }
   // Itens
   const dets = xmledDoc.querySelectorAll('det');
   dets.forEach((det,i)=>{
@@ -4894,6 +5156,39 @@ function xmledSalvarCampos(){
       setP('vProd',  ve(`xmled-item-${i}-vprod`)||'');
       const ccEl=ve(`xmled-item-${i}-cclasstrib`);
       if(ccEl!==null) setP('cClassTrib', ccEl);
+      // Salva CSOSN/CST no bloco <imposto><ICMS><ICMS??> e ajusta o tipo quando muda
+      const novoTrib = ve(`xmled-item-${i}-cst`);
+      if(novoTrib!==null && novoTrib!==''){
+        const imp = det.querySelector('imposto');
+        const icmsRoot = imp ? [...imp.children].find(n=>n.localName==='ICMS') : null;
+        const inner = icmsRoot ? [...icmsRoot.children][0] : null;
+        if(inner){
+          const ns = inner.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+          const ehSN = !!([...inner.children].find(n=>n.localName==='CSOSN'));
+          // Mapeia CSOSN → nome do bloco filho de <ICMS>
+          const MAP_SN = {'101':'ICMSSN101','102':'ICMSSN102','103':'ICMSSN102','201':'ICMSSN201','202':'ICMSSN202','203':'ICMSSN202','300':'ICMSSN102','400':'ICMSSN102','500':'ICMSSN500','900':'ICMSSN900'};
+          const MAP_CST= {'00':'ICMS00','10':'ICMS10','20':'ICMS20','30':'ICMS30','40':'ICMS40','41':'ICMS40','50':'ICMS40','51':'ICMS51','60':'ICMS60','70':'ICMS70','90':'ICMS90'};
+          const nomeAlvo = ehSN ? (MAP_SN[novoTrib]||inner.localName) : (MAP_CST[novoTrib]||inner.localName);
+          let alvo = inner;
+          // Se o nome do bloco precisa mudar (ex: 102→500: ICMSSN102→ICMSSN500), recria preservando orig
+          if(nomeAlvo !== inner.localName){
+            const orig = [...inner.children].find(n=>n.localName==='orig');
+            const origVal = orig ? orig.textContent : '0';
+            alvo = xmledDoc.createElementNS(ns,nomeAlvo);
+            const origNew = xmledDoc.createElementNS(ns,'orig'); origNew.textContent = origVal;
+            alvo.appendChild(origNew);
+            const tribNew = xmledDoc.createElementNS(ns, ehSN?'CSOSN':'CST'); tribNew.textContent = novoTrib;
+            alvo.appendChild(tribNew);
+            icmsRoot.replaceChild(alvo, inner);
+          } else {
+            // Mesmo tipo de bloco — só atualiza o valor da tag CSOSN/CST
+            const tag = ehSN ? 'CSOSN' : 'CST';
+            let tEl = [...alvo.children].find(n=>n.localName===tag);
+            if(!tEl){ tEl = xmledDoc.createElementNS(ns,tag); alvo.appendChild(tEl); }
+            tEl.textContent = novoTrib;
+          }
+        }
+      }
     }
   });
   // Troco
@@ -4905,8 +5200,8 @@ function xmledSalvarCampos(){
       let vtEl = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
       if(!vtEl && parseFloat(vTrocoInp.value)){
         vtEl = xmledDoc.createElementNS(ns2,'vTroco');
-        const fdp = [...pagEl2.getElementsByTagName('*')].find(n=>n.localName==='detPag');
-        if(fdp) pagEl2.insertBefore(vtEl,fdp); else pagEl2.appendChild(vtEl);
+        // vTroco DEVE vir DEPOIS de todos os detPag (schema NFe 4.00)
+        pagEl2.appendChild(vtEl);
       }
       if(vtEl) vtEl.textContent = (parseFloat(vTrocoInp.value)||0).toFixed(2);
     }
@@ -5290,6 +5585,8 @@ function xmledLimpar(){
   const ua=document.getElementById('xmled-upload-area');
   ua.style.display='block';
   ua.style.borderColor='var(--border)';
+  const pa=document.getElementById('xmled-paste-area');
+  if(pa){ pa.style.display='block'; const pt=document.getElementById('xmled-paste-input'); if(pt) pt.value=''; }
   const _taRaw = document.getElementById('xmled-raw');
   _taRaw.value='';
   _taRaw.style.borderColor='';
