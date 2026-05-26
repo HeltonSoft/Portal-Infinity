@@ -216,7 +216,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
       <div>
         <div style="font-size:12px;color:#c4d0e0;font-weight:600;letter-spacing:.3px">Soft-line</div>
         <div style="font-size:10px;color:#6a84a0;margin-top:2px">Soluções em sistemas</div>
-        <div style="font-size:9px;color:#4a6480;margin-top:3px;letter-spacing:.3px;font-family:'JetBrains Mono',monospace">v2.0.20260408</div>
+        <div style="font-size:9px;color:#4a6480;margin-top:3px;letter-spacing:.3px;font-family:'JetBrains Mono',monospace">v2.0.20260514</div>
       </div>
     </div>
   </div>
@@ -746,6 +746,27 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
         <div class="xml-grid" id="xmlTotGrid"></div>
       </div>
 
+      <!-- Cobrança / Duplicatas (cobr) -->
+      <div class="xml-block" id="xmlCobrBl" style="display:none">
+        <div class="xml-block-title">💳 Cobrança / Duplicatas <span style="font-size:11px;color:var(--text2);font-weight:400;margin-left:6px">cobr</span></div>
+        <div class="xml-grid" id="xmlFatGrid" style="margin-bottom:10px"></div>
+        <div id="xmlDupTable" style="overflow-x:auto"></div>
+      </div>
+
+      <!-- Transporte (transp / veicTransp / vol / lacres) -->
+      <div class="xml-block" id="xmlTranspBl" style="display:none">
+        <div class="xml-block-title">🚛 Transporte <span style="font-size:11px;color:var(--text2);font-weight:400;margin-left:6px">transp</span></div>
+        <div class="xml-grid" id="xmlTranspGrid" style="margin-bottom:10px"></div>
+        <div id="xmlVolTable" style="overflow-x:auto"></div>
+      </div>
+
+      <!-- Pagamentos (pag / detPag / card / vTroco) -->
+      <div class="xml-block" id="xmlPagBl" style="display:none">
+        <div class="xml-block-title">💳 Pagamentos <span style="font-size:11px;color:var(--text2);font-weight:400;margin-left:6px">pag</span></div>
+        <div id="xmlPagTable" style="overflow-x:auto"></div>
+        <div class="xml-grid" id="xmlTrocoGrid" style="margin-top:10px"></div>
+      </div>
+
       <!-- Informações fiscais -->
       <div class="xml-block">
         <div class="xml-block-title">🏛️ Informações Fiscais</div>
@@ -759,14 +780,17 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
           <table class="xml-itens-table" id="xmlItensTable">
             <thead>
               <tr>
+                <th></th>
                 <th>#</th>
                 <th>Descrição</th>
                 <th>NCM</th>
+                <th>CEST</th>
                 <th>CFOP</th>
                 <th>CST ICMS</th>
                 <th>CST PIS</th>
                 <th>CST COFINS</th>
                 <th>cBenef</th>
+                <th title="Item com grupo ICMSUFDest (DIFAL)">DIFAL</th>
                 <th>Qtd</th>
                 <th>Vl Unit</th>
                 <th>Vl Total</th>
@@ -774,6 +798,7 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             </thead>
             <tbody id="xmlItensBody"></tbody>
           </table>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">💡 Clique numa linha para ver os detalhes fiscais do item (vBC/ICMS, descontos, DIFAL, etc).</div>
         </div>
       </div>
 
@@ -859,10 +884,43 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             </div>
           </div>
           <!-- Linha 2: dhEmi | botão copiar | dhSaiEnt -->
-          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end">
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:12px">
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data/Hora Emissão (dhEmi)</label><input id="xmled-dhemi" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="2026-04-11T08:00:00-03:00"></div>
             <div style="padding-bottom:2px"><button onclick="xmledCopiarDhEmi()" style="background:rgba(0,196,232,.1);border:1px solid rgba(0,196,232,.3);color:var(--cyan);border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">→ copiar</button></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data/Hora Saída/Entrada (dhSaiEnt)</label><input id="xmled-dhsaient" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+          <!-- Linha 3: tpAmb | indPres | idDest | indFinal -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Ambiente (tpAmb) <span title="1=Produção (valor fiscal) | 2=Homologação (testes, sem valor fiscal)" style="color:var(--cyan);cursor:help">ℹ</span></label>
+              <select id="xmled-tpamb" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="1">1 — Produção</option>
+                <option value="2">2 — Homologação (sem valor fiscal)</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Indicador de Presença (indPres) <span title="0=N/A | 1=Presencial | 2=Internet | 3=Teleatendimento | 4=NFC-e entrega | 5=Fora do estab. | 9=Outros" style="color:var(--cyan);cursor:help">ℹ</span></label>
+              <select id="xmled-indpres" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="0">0 — Não se aplica</option>
+                <option value="1">1 — Presencial</option>
+                <option value="2">2 — Internet</option>
+                <option value="3">3 — Teleatendimento</option>
+                <option value="4">4 — NFC-e em entrega domiciliar</option>
+                <option value="5">5 — Presencial fora do estabelecimento</option>
+                <option value="9">9 — Outros (não presencial)</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Destino (idDest)</label>
+              <select id="xmled-iddest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="1">1 — Interna</option>
+                <option value="2">2 — Interestadual</option>
+                <option value="3">3 — Exterior</option>
+              </select>
+            </div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Consumidor Final (indFinal)</label>
+              <select id="xmled-indfinal" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="0">0 — Não</option>
+                <option value="1">1 — Consumidor final</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -915,10 +973,43 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Produtos (vProd) <span style="color:#34d399;font-size:10px">auto</span></label><input id="xmled-vprod" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" readonly></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Desconto (vDesc)</label><input id="xmled-vdesc" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Frete (vFrete) <span id="xmled-frete-aviso" style="color:#fbbf24;font-size:10px;display:none">⚠ modFrete=9</span></label><input id="xmled-vfrete" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Seguro (vSeg)</label><input id="xmled-vseg" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Outras Despesas (vOutro)</label><input id="xmled-voutro" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ICMS (vICMS) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vicms" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ST (vST) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vst" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor FCP (vFCP) <span title="Total de Fundo de Combate à Pobreza dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vfcp" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">DIFAL UF Destino (vICMSUFDest) <span title="EC 87/2015 — soma do ICMS-DIFAL devido à UF de destino em operação interestadual a consumidor final." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vicmsufdest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">DIFAL UF Remet. (vICMSUFRemet) <span title="EC 87/2015 — desde 2019 a partilha foi 100% para o destino, então este valor costuma ser 0,00." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vicmsufremet" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">FCP UF Destino (vFCPUFDest) <span title="Total do Fundo de Combate à Pobreza devido à UF de destino (quando aplicável)." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vfcpufdest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div id="xmled-ibs-block" style="display:none"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor IBS (vIBS) <span style="background:rgba(52,211,153,.15);color:#34d399;font-size:10px;padding:1px 5px;border-radius:4px">Reforma Tributária</span></label><input id="xmled-vibs" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div id="xmled-cbs-block" style="display:none"><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor CBS (vCBS) <span style="background:rgba(52,211,153,.15);color:#34d399;font-size:10px;padding:1px 5px;border-radius:4px">Reforma Tributária</span></label><input id="xmled-vcbs" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)">
+            <span style="font-size:11px;color:var(--text3)">Soma vBC, vICMS, vBCST, vST, vFCP, vIPI, vII, DIFAL dos itens e sobrescreve o ICMSTot. Recalcula vNF e cascateia para fat/dup/pag.</span>
+            <button onclick="xmledSincronizarICMSDeItens()" style="background:rgba(0,196,232,.1);border:1px solid rgba(0,196,232,.4);color:var(--cyan);font-size:12px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap">🔄 Sincronizar ICMS dos itens</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COBRANÇA / DUPLICATAS -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">📑</div><div style="flex:1"><h4>Cobrança / Duplicatas <span id="xmled-cobr-badge" style="display:none;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)">⚠ Soma divergente</span></h4><span class="menu-tag">cobr</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="background:rgba(0,196,232,.04);border:1px solid rgba(0,196,232,.15);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text2)">Fatura (nFat / valores) + Duplicatas a receber. Comum em vendas para PJ a prazo. A soma das duplicatas deve bater com <code>vLiq</code> da fatura (ou <code>vNF</code>).</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Número Fatura (nFat)</label><input id="xmled-fat-nfat" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Original (vOrig)</label><input id="xmled-fat-vorig" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" placeholder="0.00"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Desconto (vDesc)</label><input id="xmled-fat-vdesc" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" placeholder="0.00"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor Líquido (vLiq)</label><input id="xmled-fat-vliq" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" placeholder="0.00"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:12px;font-weight:600;color:var(--cyan)">Duplicatas <span id="xmled-dup-soma" style="font-size:11px;color:var(--text3);margin-left:8px"></span></div>
+            <button type="button" onclick="xmledDupAdicionar()" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">+ Adicionar duplicata</button>
+          </div>
+          <div id="xmled-dup-container" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" onclick="xmledDupGerarPorVencimento()" style="background:rgba(0,196,232,.1);border:1px solid rgba(0,196,232,.3);color:var(--cyan);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🧮 Gerar duplicatas (dividir vNF)</button>
+            <button type="button" onclick="xmledDupLimpar()" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">✖ Remover bloco &lt;cobr&gt;</button>
           </div>
         </div>
       </div>
@@ -949,6 +1040,30 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Transportadora (xNome)</label><input id="xmled-transp-xnome" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ Transportadora</label><input id="xmled-transp-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
           </div>
+
+          <!-- VEÍCULO -->
+          <details style="margin-top:14px;border-top:1px dashed var(--border);padding-top:10px">
+            <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);padding:4px 0;user-select:none">
+              🚐 Veículo de Transporte (veicTransp) <span id="xmled-veictransp-status" style="margin-left:6px;font-size:10px;color:var(--text3)"></span>
+            </summary>
+            <div style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Placa</label><input id="xmled-veic-placa" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" placeholder="AAA-0000 ou Mercosul"></div>
+              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">UF</label><input id="xmled-veic-uf" class="xmled-field" maxlength="2" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;text-transform:uppercase" placeholder="SP"></div>
+              <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">RNTRC <span title="Registro Nacional de Transportadores Rodoviários de Cargas — ANTT" style="color:var(--cyan);cursor:help">ℹ</span></label><input id="xmled-veic-rntrc" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" placeholder="opcional"></div>
+            </div>
+          </details>
+
+          <!-- VOLUMES -->
+          <details style="margin-top:14px;border-top:1px dashed var(--border);padding-top:10px">
+            <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);padding:4px 0;user-select:none">
+              📦 Volumes (vol) <span id="xmled-vol-soma" style="margin-left:6px;font-size:10px;color:var(--text3)"></span>
+            </summary>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0">
+              <span style="font-size:11px;color:var(--text2)">Quantidade, espécie, peso e lacres do(s) volume(s) transportado(s).</span>
+              <button type="button" onclick="xmledVolAdicionar()" style="background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);color:#34d399;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">+ Adicionar volume</button>
+            </div>
+            <div id="xmled-vol-container" style="display:flex;flex-direction:column;gap:8px"></div>
+          </details>
         </div>
       </div>
 
@@ -1000,6 +1115,20 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             </div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ISS</label><input id="xmled-nfse-viss" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Código Serviço</label><input id="xmled-nfse-codserv" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESPONSÁVEL TÉCNICO -->
+      <div class="process-card" style="margin-bottom:14px">
+        <div class="process-header" onclick="toggleProcess(this)"><div class="process-num">🛠️</div><div style="flex:1"><h4>Responsável Técnico</h4><span class="menu-tag">infRespTec</span></div><span class="process-chevron">▸</span></div>
+        <div class="process-body">
+          <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text2)">⚠️ Obrigatório pela NT 2018/005 para emitentes que utilizam sistema próprio ou de terceiros. Preencha todos os campos para criar o bloco; deixe todos vazios para remover.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:4px 0">
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">CNPJ do Resp. Técnico</label><input id="xmled-resptec-cnpj" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="apenas dígitos"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Nome do Contato (xContato)</label><input id="xmled-resptec-xcontato" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">E-mail</label><input id="xmled-resptec-email" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Telefone (fone)</label><input id="xmled-resptec-fone" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit" placeholder="DDD+número"></div>
           </div>
         </div>
       </div>
@@ -3803,6 +3932,15 @@ function xmlValidar(){
   const dhSaiEnt = xmlGet(doc,'dhSaiEnt');
   const dhEmi = xmlGet(doc,'dhEmi');
   const natOp = xmlGet(doc,'natOp');
+  const idDest = xmlGet(doc,'idDest');
+  const idDestDesc = idDest==='1'?'1 — Interna':idDest==='2'?'2 — Interestadual':idDest==='3'?'3 — Exterior':idDest;
+  const indFinal = xmlGet(doc,'indFinal');
+  const indFinalDesc = indFinal==='0'?'0 — Não':indFinal==='1'?'1 — Consumidor final':indFinal;
+  const tpAmb = xmlGet(doc,'tpAmb');
+  const tpAmbDesc = tpAmb==='1'?'<span style="color:#34d399;font-weight:700">1 — Produção</span>':tpAmb==='2'?'<span style="color:#fbbf24;font-weight:700">2 — Homologação (sem valor fiscal)</span>':tpAmb;
+  const indPres = xmlGet(doc,'indPres');
+  const INDPRES_DESC = {'0':'0 — Não se aplica','1':'1 — Operação presencial','2':'2 — Operação não presencial — internet','3':'3 — Operação não presencial — teleatendimento','4':'4 — NFC-e em operação com entrega em domicílio','5':'5 — Operação presencial, fora do estabelecimento','9':'9 — Operação não presencial — outros'};
+  const indPresDesc = INDPRES_DESC[indPres] || indPres;
 
   document.getElementById('xmlIdentGrid').innerHTML =
     xmlField('Modelo',xmlFmt(modDesc))+
@@ -3813,6 +3951,10 @@ function xmlValidar(){
     xmlField('Data Emissão',xmlFmtData(dhEmi),false,!dhEmi?'danger':null)+
     xmlField('Data Saída/Entrada',dhSaiEnt?xmlFmtData(dhSaiEnt):'—',false,(!dhSaiEnt&&mod==='55')?'warn':null)+
     xmlField('Natureza da Operação',xmlFmt(natOp),false,!natOp?'danger':null)+
+    xmlField('Destino da Operação (idDest)',xmlFmt(idDestDesc),false,!idDest&&mod==='55'?'warn':null)+
+    xmlField('Consumidor Final (indFinal)',xmlFmt(indFinalDesc),false,!indFinal&&mod==='55'?'warn':null)+
+    xmlField('Ambiente (tpAmb)',xmlFmt(tpAmbDesc),false,tpAmb==='2'?'warn':!tpAmb?'danger':null)+
+    xmlField('Indicador de Presença (indPres)',xmlFmt(indPresDesc),false,!indPres&&(mod==='55'||mod==='65')?'warn':null)+
     xmlField('Chave de Acesso',xmlFmt(chNFe),true,!chNFe?'danger':null);
 
   // Emitente
@@ -3853,6 +3995,8 @@ function xmlValidar(){
   const destUF = dest?xmlGet(doc,'dest enderDest UF'):'';
   const destMun = dest?xmlGet(doc,'dest enderDest xMun'):'';
   const destNome = dest?xmlGet(dest,'xNome'):'';
+  const indIEDest = dest?xmlGet(dest,'indIEDest'):'';
+  const indIEDestDesc = indIEDest==='1'?'1 — Contribuinte ICMS':indIEDest==='2'?'2 — Contribuinte isento de IE':indIEDest==='9'?'9 — Não contribuinte':indIEDest;
   const interestadual = emitUF && destUF && emitUF !== destUF;
   const destIEAlert = (destCNPJ && !destIE)?'warn':null;
 
@@ -3870,6 +4014,7 @@ function xmlValidar(){
     xmlField('Razão Social/Nome',xmlFmt(destNome),false,!destNome?'danger':null)+
     xmlField('CNPJ/CPF',destCNPJ?xmlFmtCNPJ(destCNPJ):destCPF?xmlFmtCPF(destCPF):'—',false,(!destCNPJ&&!destCPF)?'danger':null)+
     xmlField('IE',xmlFmt(destIE),false,destIEAlert)+
+    xmlField('Indicador de IE (indIEDest)',xmlFmt(indIEDestDesc),false,!indIEDest&&mod==='55'?'warn':null)+
     xmlField('Município / UF',destMun&&destUF?destMun+' / '+destUF:xmlFmt(destMun||destUF),false,!destUF?'warn':null)+
     (destEnderFmt.trim()?xmlField('Endereço',destEnderFmt,true):'')+
     (destFone?xmlField('Telefone',destFone):'')+
@@ -3877,6 +4022,11 @@ function xmlValidar(){
 
   // Totais
   const ICMSTot = doc.querySelector('ICMSTot');
+  // Tags DIFAL / FCP nos totais (grupo ICMSUFDest é por item — aqui são apenas totalizadores opcionais)
+  const totICMSUFDest  = ICMSTot?xmlGet(ICMSTot,'vICMSUFDest'):'';
+  const totICMSUFRemet = ICMSTot?xmlGet(ICMSTot,'vICMSUFRemet'):'';
+  const totFCPUFDest   = ICMSTot?xmlGet(ICMSTot,'vFCPUFDest'):'';
+  const totFCP         = ICMSTot?xmlGet(ICMSTot,'vFCP'):'';
   document.getElementById('xmlTotGrid').innerHTML =
     xmlField('Valor Total NF',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vNF'):''),false,!ICMSTot?'danger':null)+
     xmlField('Valor Produtos',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vProd'):''))+
@@ -3886,7 +4036,177 @@ function xmlValidar(){
     xmlField('Valor COFINS',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vCOFINS'):''))+
     xmlField('Valor ST',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vST'):''))+
     xmlField('Valor Frete',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vFrete'):''))+
-    xmlField('Valor Desconto',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vDesc'):''));
+    xmlField('Valor Desconto',xmlFmtMoeda(ICMSTot?xmlGet(ICMSTot,'vDesc'):''))+
+    (totFCP?xmlField('Valor FCP',xmlFmtMoeda(totFCP)):'')+
+    (totICMSUFDest?xmlField('ICMS-DIFAL — UF Destino (vICMSUFDest)',xmlFmtMoeda(totICMSUFDest)):'')+
+    (totICMSUFRemet?xmlField('ICMS-DIFAL — UF Remetente (vICMSUFRemet)',xmlFmtMoeda(totICMSUFRemet)):'')+
+    (totFCPUFDest?xmlField('FCP — UF Destino (vFCPUFDest)',xmlFmtMoeda(totFCPUFDest)):'');
+
+  // Cobrança / Faturas / Duplicatas (cobr) — exibição (validação cruzada é feita depois, junto dos demais alertas)
+  const cobrEl = doc.querySelector('cobr');
+  const cobrBl = document.getElementById('xmlCobrBl');
+  let cobrSomaDup = 0, cobrVLiq = '';
+  if(cobrEl){
+    const fat = cobrEl.querySelector('fat');
+    const nFat   = fat?xmlGet(fat,'nFat'):'';
+    const vOrigF = fat?xmlGet(fat,'vOrig'):'';
+    const vDescF = fat?xmlGet(fat,'vDesc'):'';
+    cobrVLiq     = fat?xmlGet(fat,'vLiq'):'';
+    document.getElementById('xmlFatGrid').innerHTML =
+      (nFat?xmlField('Fatura (nFat)',xmlFmt(nFat)):'')+
+      (vOrigF?xmlField('Valor Original',xmlFmtMoeda(vOrigF)):'')+
+      (vDescF?xmlField('Desconto Fatura',xmlFmtMoeda(vDescF)):'')+
+      (cobrVLiq?xmlField('Valor Líquido',xmlFmtMoeda(cobrVLiq)):'');
+    const dups = cobrEl.querySelectorAll('dup');
+    let dupTable = '';
+    if(dups.length>0){
+      dupTable = '<table class="xml-itens-table" style="margin-top:8px"><thead><tr>'+
+        '<th>#</th><th>nDup</th><th>Vencimento</th><th>Valor</th></tr></thead><tbody>';
+      Array.from(dups).forEach((d,idx)=>{
+        const nDup = xmlGet(d,'nDup');
+        const dVenc = xmlGet(d,'dVenc');
+        const vDup = parseFloat(xmlGet(d,'vDup'))||0;
+        cobrSomaDup += vDup;
+        dupTable += `<tr><td style="color:var(--text3)">${idx+1}</td><td>${xmlFmt(nDup)}</td><td>${dVenc?dVenc.split('-').reverse().join('/'):'—'}</td><td>${xmlFmtMoeda(vDup)}</td></tr>`;
+      });
+      dupTable += `<tr style="background:rgba(0,196,232,.05);font-weight:600"><td colspan="3" style="text-align:right">Soma das duplicatas:</td><td>${xmlFmtMoeda(cobrSomaDup)}</td></tr>`;
+      dupTable += '</tbody></table>';
+    }
+    document.getElementById('xmlDupTable').innerHTML = dupTable;
+    cobrBl.style.display = 'block';
+  } else if(cobrBl){
+    cobrBl.style.display = 'none';
+  }
+
+  // Transporte (transp / transporta / veicTransp / vol / lacres)
+  const transpEl = doc.querySelector('transp');
+  const transpBl = document.getElementById('xmlTranspBl');
+  if(transpEl){
+    const modFrete = xmlGet(transpEl,'modFrete');
+    const MODFRETE = {'0':'0 — Por conta do Emitente','1':'1 — Por conta do Destinatário','2':'2 — Por conta de Terceiros','3':'3 — Próprio (Remetente)','4':'4 — Próprio (Destinatário)','9':'9 — Sem frete'};
+    const transporta = transpEl.querySelector('transporta');
+    const tNome  = transporta?xmlGet(transporta,'xNome'):'';
+    const tCNPJ  = transporta?xmlGet(transporta,'CNPJ'):'';
+    const tIE    = transporta?xmlGet(transporta,'IE'):'';
+    const tEnd   = transporta?xmlGet(transporta,'xEnder'):'';
+    const tMun   = transporta?xmlGet(transporta,'xMun'):'';
+    const tUF    = transporta?xmlGet(transporta,'UF'):'';
+    const veic = transpEl.querySelector('veicTransp');
+    const vPlaca = veic?xmlGet(veic,'placa'):'';
+    const vUF    = veic?xmlGet(veic,'UF'):'';
+    const vRNTRC = veic?xmlGet(veic,'RNTRC'):'';
+    document.getElementById('xmlTranspGrid').innerHTML =
+      xmlField('Modalidade (modFrete)',xmlFmt(MODFRETE[modFrete]||modFrete))+
+      (tNome?xmlField('Transportadora',xmlFmt(tNome)):'')+
+      (tCNPJ?xmlField('CNPJ Transp.',xmlFmtCNPJ(tCNPJ)):'')+
+      (tIE?xmlField('IE Transp.',xmlFmt(tIE)):'')+
+      ((tMun||tUF)?xmlField('Município/UF',(tMun||'')+(tMun&&tUF?' / ':'')+(tUF||'')):'')+
+      (tEnd?xmlField('Endereço',xmlFmt(tEnd),true):'')+
+      (vPlaca?xmlField('🚐 Veículo — Placa',xmlFmt(vPlaca)):'')+
+      (vUF?xmlField('🚐 Veículo — UF',xmlFmt(vUF)):'')+
+      (vRNTRC?xmlField('🚐 RNTRC',xmlFmt(vRNTRC)):'');
+    // Tabela de volumes
+    const vols = transpEl.querySelectorAll('vol');
+    let volTable = '';
+    if(vols.length>0){
+      volTable = '<table class="xml-itens-table" style="margin-top:8px"><thead><tr>'+
+        '<th>#</th><th>Qtd</th><th>Espécie</th><th>Marca</th><th>Nº</th><th>Peso Líq.</th><th>Peso Bruto</th><th>Lacres</th></tr></thead><tbody>';
+      let qTot=0, pesoLT=0, pesoBT=0;
+      Array.from(vols).forEach((vl,idx)=>{
+        const qVol = parseFloat(xmlGet(vl,'qVol'))||0;
+        const esp   = xmlGet(vl,'esp');
+        const marca = xmlGet(vl,'marca');
+        const nVol  = xmlGet(vl,'nVol');
+        const pesoL = parseFloat(xmlGet(vl,'pesoL'))||0;
+        const pesoB = parseFloat(xmlGet(vl,'pesoB'))||0;
+        qTot += qVol; pesoLT += pesoL; pesoBT += pesoB;
+        const lacres = [...vl.querySelectorAll('lacres')].map(l=>{
+          const n=[...l.children].find(c=>c.localName==='nLacre'); return n?n.textContent:'';
+        }).filter(Boolean).join(', ');
+        volTable += `<tr><td style="color:var(--text3)">${idx+1}</td><td>${qVol||'—'}</td><td>${xmlFmt(esp)}</td><td>${xmlFmt(marca)}</td><td>${xmlFmt(nVol)}</td><td>${pesoL?pesoL.toFixed(3)+' kg':'—'}</td><td>${pesoB?pesoB.toFixed(3)+' kg':'—'}</td><td style="font-size:11px;color:var(--text3)">${xmlFmt(lacres)}</td></tr>`;
+      });
+      volTable += `<tr style="background:rgba(0,196,232,.05);font-weight:600"><td colspan="1" style="text-align:right">Σ:</td><td>${qTot||'—'}</td><td colspan="3"></td><td>${pesoLT?pesoLT.toFixed(3)+' kg':'—'}</td><td>${pesoBT?pesoBT.toFixed(3)+' kg':'—'}</td><td></td></tr>`;
+      volTable += '</tbody></table>';
+    }
+    document.getElementById('xmlVolTable').innerHTML = volTable;
+    transpBl.style.display = 'block';
+  } else if(transpBl){
+    transpBl.style.display = 'none';
+  }
+
+  // Pagamentos (pag / detPag / card / vTroco)
+  const pagEl   = doc.querySelector('pag');
+  const pagBl   = document.getElementById('xmlPagBl');
+  const detPags = doc.querySelectorAll('detPag');
+  if(pagEl && detPags.length>0){
+    const TPAG_DESC={'01':'Dinheiro','02':'Cheque','03':'Cartão Crédito','04':'Cartão Débito','05':'Crédito Loja','10':'Vale Alimentação','11':'Vale Refeição','12':'Vale Presente','13':'Vale Combustível','14':'Duplicata','15':'Boleto','17':'PIX Dinâmico','20':'PIX Estático','90':'Sem Pagamento','91':'Pag. Posterior','99':'Outros'};
+    const INDPAG_DESC={'0':'À vista','1':'A prazo','2':'Outros'};
+    const TBAND={'01':'Visa','02':'Mastercard','03':'Amex','04':'Sorocred','05':'Diners','06':'Elo','07':'Hipercard','08':'Aura','09':'Cabal','99':'Outros'};
+    const TPINTEGRA={'1':'Integrado (TEF)','2':'Não integrado (POS)'};
+    let pagTable = '<table class="xml-itens-table"><thead><tr>'+
+      '<th>#</th><th>tPag</th><th>Tipo</th><th>indPag</th><th>dPag</th><th>vPag</th><th>Cartão</th></tr></thead><tbody>';
+    let somaPagTotal = 0;
+    Array.from(detPags).forEach((dp,idx)=>{
+      const get = tag => { const e=[...dp.children].find(n=>n.localName===tag); return e?e.textContent.trim():''; };
+      const tPag    = get('tPag');
+      const vPag    = parseFloat(get('vPag'))||0;
+      const indPag  = get('indPag');
+      const dPag    = get('dPag');
+      somaPagTotal += vPag;
+      const card = [...dp.children].find(n=>n.localName==='card');
+      let cardInfo = '—';
+      if(card){
+        const getCard = tag => { const e=[...card.children].find(n=>n.localName===tag); return e?e.textContent.trim():''; };
+        const tpInt = getCard('tpIntegra');
+        const cnpjC = getCard('CNPJ');
+        const tBand = getCard('tBand');
+        const cAut  = getCard('cAut');
+        const partes = [];
+        if(tBand) partes.push(TBAND[tBand]||('Band '+tBand));
+        if(tpInt) partes.push(TPINTEGRA[tpInt]||('tpIntegra '+tpInt));
+        if(cnpjC) partes.push('CNPJ '+xmlFmtCNPJ(cnpjC));
+        if(cAut)  partes.push('Aut '+cAut);
+        cardInfo = partes.length?partes.join(' · '):'<span style="color:var(--text3)">card vazio</span>';
+      }
+      const tpAviso = (!card && (tPag==='03'||tPag==='04'||tPag==='05'))?'<span title="Cartão sem bloco &lt;card&gt; — recomendado informar tBand/cAut" style="color:#fbbf24;font-size:11px;margin-left:4px">⚠</span>':'';
+      pagTable += '<tr>'+
+        `<td style="color:var(--text3)">${idx+1}</td>`+
+        `<td><span class="xml-tag info">${tPag||'—'}</span>${tpAviso}</td>`+
+        `<td>${TPAG_DESC[tPag]||'—'}</td>`+
+        `<td>${indPag?indPag+' — '+(INDPAG_DESC[indPag]||''):'—'}</td>`+
+        `<td>${dPag?dPag.split('-').reverse().join('/'):'—'}</td>`+
+        `<td>${xmlFmtMoeda(vPag)}</td>`+
+        `<td style="font-size:11px;color:var(--text2)">${cardInfo}</td>`+
+        '</tr>';
+    });
+    pagTable += `<tr style="background:rgba(0,196,232,.05);font-weight:600"><td colspan="5" style="text-align:right">Soma dos pagamentos:</td><td>${xmlFmtMoeda(somaPagTotal)}</td><td></td></tr>`;
+    pagTable += '</tbody></table>';
+    document.getElementById('xmlPagTable').innerHTML = pagTable;
+    // vTroco — exibido só quando existe ou é necessário
+    const vTrocoElPg = [...pagEl.children].find(n=>n.localName==='vTroco');
+    const vTrocoNumPg = vTrocoElPg?(parseFloat(vTrocoElPg.textContent)||0):0;
+    const vNFNumPg = parseFloat(ICMSTot?xmlGet(ICMSTot,'vNF'):0)||0;
+    const diff = somaPagTotal - vNFNumPg;
+    const trocoNec = diff > 0.009;
+    const mostrar = vTrocoElPg || trocoNec;
+    const grid = document.getElementById('xmlTrocoGrid');
+    if(mostrar){
+      const trocoCorr = trocoNec?diff.toFixed(2):'0.00';
+      const divergente = vTrocoElPg && trocoNec && Math.abs(vTrocoNumPg - parseFloat(trocoCorr)) > 0.009;
+      const ausente    = trocoNec && !vTrocoElPg;
+      const aviso = ausente?'danger':divergente?'warn':null;
+      grid.innerHTML =
+        xmlField('Troco (vTroco)', vTrocoElPg?xmlFmtMoeda(vTrocoNumPg):'— ausente', false, aviso)+
+        (trocoNec?xmlField('Troco calculado',xmlFmtMoeda(trocoCorr)+(divergente?' <span style="color:#fbbf24;font-size:11px">(esperado)</span>':'')):'')+
+        xmlField('Σ Pagamentos', xmlFmtMoeda(somaPagTotal))+
+        xmlField('vNF', xmlFmtMoeda(vNFNumPg));
+    } else {
+      grid.innerHTML = '';
+    }
+    pagBl.style.display = 'block';
+  } else if(pagBl){
+    pagBl.style.display = 'none';
+  }
 
   // Informações fiscais
   const infAdic = doc.querySelector('infAdic');
@@ -3906,9 +4226,20 @@ function xmlValidar(){
   });
   const temCst0607 = itensCst0607.length>0;
   const infAdFiscoAlert = (temCst0607&&!infAdFisco)?'warn':null;
+  // Responsável Técnico (infRespTec) — obrigatório desde NT 2018/005 para emitentes que utilizam sistema próprio ou de terceiros
+  const respTec      = doc.querySelector('infRespTec');
+  const respTecCNPJ  = respTec?xmlGet(respTec,'CNPJ'):'';
+  const respTecCont  = respTec?xmlGet(respTec,'xContato'):'';
+  const respTecEmail = respTec?xmlGet(respTec,'email'):'';
+  const respTecFone  = respTec?xmlGet(respTec,'fone'):'';
+  const respTecAlert = !respTec && (mod==='55'||mod==='65') ? 'warn' : null;
   document.getElementById('xmlFiscGrid').innerHTML =
     xmlField('infAdFisco',infAdFisco||'— (não informado)',false,infAdFiscoAlert)+
-    xmlField('infCpl',xmlFmt(infCpl));
+    xmlField('infCpl',xmlFmt(infCpl))+
+    xmlField('Resp. Técnico — CNPJ',respTec?xmlFmtCNPJ(respTecCNPJ):'— (não informado)',false,respTecAlert)+
+    (respTec?xmlField('Resp. Técnico — Contato',xmlFmt(respTecCont)):'')+
+    (respTec?xmlField('Resp. Técnico — E-mail',xmlFmt(respTecEmail),true):'')+
+    (respTec?xmlField('Resp. Técnico — Telefone',xmlFmt(respTecFone)):'');
 
   // Itens
   const tbody = document.getElementById('xmlItensBody');
@@ -3927,6 +4258,7 @@ function xmlValidar(){
     const vUnCom = prod?xmlGet(prod,'vUnCom'):'';
     const vProd = prod?xmlGet(prod,'vProd'):'';
     const ncm = prod?xmlGet(prod,'NCM'):'';
+    const cest = prod?xmlGet(prod,'CEST'):'';
     const cfop = prod?xmlGet(prod,'CFOP'):'';
     const xProd = prod?xmlGet(prod,'xProd'):'';
     // Validação NCM: deve ter exatamente 8 dígitos numéricos
@@ -3937,29 +4269,131 @@ function xmlValidar(){
     const icmsCst = imposto?xmlGet(imposto,'ICMS CST')||xmlGet(imposto,'ICMS CSOSN')||'':'';
     // cBenef: dispensado se CST sem benefício (00/40/41/50) + CFOP remessa/retorno (5910-5919, 6910-6919)
     const cfopRemessa = cfop && /^[56]91\d$/.test(cfop);
-    // CST 60: ST já recolhida — benefício foi na operação anterior, não exige cBenef
-    // CST 00: tributação normal sem benefício — cBenef não se aplica
-    // CST 60: ST já recolhida — benefício foi na operação anterior
     const cstSemBeneficioSempre = ['00','60'].includes(icmsCst);
     const cstSemBeneficioComRemessa = ['00','40','41','50'].includes(icmsCst) && cfopRemessa;
     const cBenefDispensado = !cBenef && (cstSemBeneficioSempre || cstSemBeneficioComRemessa);
     const cBenefNecessario = !cBenef && emitDt && emitDt>=dtLimiteCbenef && !cBenefDispensado;
     const cBenefAlert = cBenefNecessario?'border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.06)':'';
+    // CEST: cstsST exigem CEST quando aplicável (10, 30, 60, 70, 90, 201, 202, 203, 500, 900)
+    const cstsExigemCest = ['10','30','60','70','90','201','202','203','500','900'];
+    const cestExigido = cstsExigemCest.includes(icmsCst);
+    const cestAlert   = cestExigido && !cest ? 'border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.06)' : '';
+    const cestValido  = cest && /^\d{7}$/.test(cest);
+    // DIFAL: indicador se o item tem ICMSUFDest
+    const ufDestEl = imposto?[...imposto.children].find(n=>n.localName==='ICMSUFDest'):null;
+    const difalCell = (()=>{
+      if(!ufDestEl) return '<span style="color:var(--text3);font-size:11px">—</span>';
+      const getU = t=>{const e=[...ufDestEl.children].find(n=>n.localName===t);return e?(parseFloat(e.textContent)||0):0;};
+      const vDifal = getU('vICMSUFDest');
+      return `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(0,196,232,.1);color:var(--cyan);font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid rgba(0,196,232,.3)" title="vICMSUFDest: R$ ${vDifal.toFixed(2)}">⚖️ ${vDifal.toFixed(2)}</span>`;
+    })();
+    // ===== Linha principal =====
     const tr = document.createElement('tr');
     tr.setAttribute('data-item', i);
+    tr.style.cursor = 'pointer';
+    tr.onclick = (ev)=>{
+      if(ev.target.tagName==='BUTTON'||ev.target.tagName==='A') return;
+      const det = document.getElementById('xmlItemDet_'+i);
+      const chev = document.getElementById('xmlItemChev_'+i);
+      if(det){
+        const aberto = det.style.display !== 'none';
+        det.style.display = aberto ? 'none' : 'table-row';
+        if(chev) chev.textContent = aberto ? '▸' : '▾';
+      }
+    };
     tr.innerHTML = `
+      <td style="width:24px;text-align:center"><span id="xmlItemChev_${i}" style="color:var(--text3);font-size:12px;user-select:none">▸</span></td>
       <td style="color:var(--text3)">${i+1}</td>
       <td style="max-width:220px;white-space:normal">${xProd||'—'}</td>
       <td id="xmlNcmCell_${i}" style="${ncmAlert};padding:6px 10px;border-radius:6px">${ncm?(!ncmValido?`<span style="color:#f87171">⚠ inválido (${ncm})</span>`:ncm+(mod==='55'?` <span style="font-size:10px;color:var(--text3)" title="Verificando NCM na tabela TIPI...">🔄</span>`:'')):( mod==='55'?'<span style="color:#f87171">⚠ vazio</span>':'—')}</td>
+      <td style="${cestAlert};padding:6px 10px;border-radius:6px">${cest?(cestValido?cest:`<span style="color:#f87171" title="CEST deve ter 7 dígitos">⚠ ${cest}</span>`):cestExigido?'<span style="color:#fbbf24" title="CST '+icmsCst+' costuma exigir CEST">⚠ verificar</span>':'<span style="color:var(--text3)">—</span>'}</td>
       <td style="${cfopAlert};padding:6px 10px;border-radius:6px">${cfop||'<span style="color:#f87171">⚠ vazio</span>'}</td>
       <td>${icmsCst?`<span class="xml-tag info">${icmsCst}</span>`:'—'}</td>
       <td>${pisCst?`<span class="xml-tag info">${pisCst}</span>`:'—'}</td>
       <td>${cofinsCst?`<span class="xml-tag info">${cofinsCst}</span>`:'—'}</td>
       <td style="${cBenefAlert};padding:6px 10px;border-radius:6px">${cBenef?`<span class="xml-tag ok">${cBenef}</span>`:cBenefDispensado?`<span style="color:var(--text3);font-size:11px" title="CST ${icmsCst}${cfopRemessa?", CFOP "+cfop+" (remessa/retorno)":""} — dispensado do cBenef">dispensado</span>`:emitDt&&emitDt>=dtLimiteCbenef?'<span style="color:#fbbf24">⚠ verificar</span>':'—'}</td>
+      <td>${difalCell}</td>
       <td>${qtd||'—'}</td>
       <td>${xmlFmtMoeda(vUnCom)}</td>
       <td>${xmlFmtMoeda(vProd)}</td>`;
     tbody.appendChild(tr);
+
+    // ===== Linha de detalhes (oculta) =====
+    const cEAN     = prod?xmlGet(prod,'cEAN'):'';
+    const uCom     = prod?xmlGet(prod,'uCom'):'';
+    const vFrete   = prod?xmlGet(prod,'vFrete'):'';
+    const vSeg     = prod?xmlGet(prod,'vSeg'):'';
+    const vDescIt  = prod?xmlGet(prod,'vDesc'):'';
+    const vOutroIt = prod?xmlGet(prod,'vOutro'):'';
+    const cBenefRBC= prod?xmlGet(prod,'cBenefRBC'):'';
+    const xPedIt   = prod?xmlGet(prod,'xPed'):'';
+    const nItemPed = prod?xmlGet(prod,'nItemPed'):'';
+    // ICMS do item — vBC/pICMS/vICMS dos subgrupos
+    const icmsGroup = imposto?imposto.querySelector('ICMS'):null;
+    const icmsInner = icmsGroup?icmsGroup.children[0]:null;
+    const vBCIt    = icmsInner?xmlGet(icmsInner,'vBC'):'';
+    const pICMSIt  = icmsInner?xmlGet(icmsInner,'pICMS'):'';
+    const vICMSIt  = icmsInner?xmlGet(icmsInner,'vICMS'):'';
+    const vBCSTIt  = icmsInner?xmlGet(icmsInner,'vBCST'):'';
+    const pICMSSTIt= icmsInner?xmlGet(icmsInner,'pICMSST'):'';
+    const vICMSSTIt= icmsInner?xmlGet(icmsInner,'vICMSST'):'';
+    // DIFAL detalhado
+    let difalDet = '';
+    if(ufDestEl){
+      const gU = t=>{const e=[...ufDestEl.children].find(n=>n.localName===t);return e?e.textContent:'';};
+      difalDet = `
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:6px">⚖️ DIFAL (ICMSUFDest)</div>
+          <div class="xml-grid">
+            ${xmlField('vBCUFDest', xmlFmtMoeda(gU('vBCUFDest')))}
+            ${xmlField('pICMSUFDest', gU('pICMSUFDest')?gU('pICMSUFDest')+'%':'—')}
+            ${xmlField('pICMSInter', gU('pICMSInter')?gU('pICMSInter')+'%':'—')}
+            ${xmlField('pICMSInterPart', gU('pICMSInterPart')?gU('pICMSInterPart')+'%':'—')}
+            ${xmlField('vICMSUFDest', xmlFmtMoeda(gU('vICMSUFDest')))}
+            ${xmlField('vICMSUFRemet', xmlFmtMoeda(gU('vICMSUFRemet')))}
+            ${gU('vFCPUFDest')?xmlField('vFCPUFDest', xmlFmtMoeda(gU('vFCPUFDest'))):''}
+            ${gU('pFCPUFDest')?xmlField('pFCPUFDest', gU('pFCPUFDest')+'%'):''}
+            ${gU('vBCFCPUFDest')?xmlField('vBCFCPUFDest', xmlFmtMoeda(gU('vBCFCPUFDest'))):''}
+          </div>
+        </div>`;
+    }
+    const trDet = document.createElement('tr');
+    trDet.id = 'xmlItemDet_'+i;
+    trDet.style.display = 'none';
+    trDet.innerHTML = `
+      <td colspan="14" style="background:rgba(0,196,232,.03);padding:14px 20px">
+        <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">📋 Detalhes do item ${i+1}</div>
+        <div class="xml-grid">
+          ${xmlField('cProd', xmlFmt(prod?xmlGet(prod,'cProd'):''))}
+          ${cEAN?xmlField('cEAN', xmlFmt(cEAN)):''}
+          ${xmlField('uCom', xmlFmt(uCom))}
+          ${xmlField('uTrib', xmlFmt(prod?xmlGet(prod,'uTrib'):''))}
+          ${xmlField('qTrib', xmlFmt(prod?xmlGet(prod,'qTrib'):''))}
+          ${xmlField('vUnTrib', xmlFmt(prod?xmlGet(prod,'vUnTrib'):''))}
+          ${vFrete?xmlField('vFrete', xmlFmtMoeda(vFrete)):''}
+          ${vSeg?xmlField('vSeg', xmlFmtMoeda(vSeg)):''}
+          ${vDescIt?xmlField('vDesc', xmlFmtMoeda(vDescIt)):''}
+          ${vOutroIt?xmlField('vOutro', xmlFmtMoeda(vOutroIt)):''}
+          ${xmlField('indTot', xmlFmt(prod?xmlGet(prod,'indTot'):''))}
+          ${cBenefRBC?xmlField('cBenefRBC', xmlFmt(cBenefRBC)):''}
+          ${xPedIt?xmlField('xPed', xmlFmt(xPedIt)):''}
+          ${nItemPed?xmlField('nItemPed', xmlFmt(nItemPed)):''}
+        </div>
+        ${icmsInner?`
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:6px">💰 ICMS (${icmsInner.localName})</div>
+          <div class="xml-grid">
+            ${vBCIt?xmlField('vBC', xmlFmtMoeda(vBCIt)):''}
+            ${pICMSIt?xmlField('pICMS', pICMSIt+'%'):''}
+            ${vICMSIt?xmlField('vICMS', xmlFmtMoeda(vICMSIt)):''}
+            ${vBCSTIt?xmlField('vBCST', xmlFmtMoeda(vBCSTIt)):''}
+            ${pICMSSTIt?xmlField('pICMSST', pICMSSTIt+'%'):''}
+            ${vICMSSTIt?xmlField('vICMSST', xmlFmtMoeda(vICMSSTIt)):''}
+          </div>
+        </div>`:''}
+        ${difalDet}
+      </td>`;
+    tbody.appendChild(trDet);
   });
 
   // Validação assíncrona de NCM via BrasilAPI
@@ -3983,6 +4417,26 @@ function xmlValidar(){
   // Alertas fiscais gerais
   const alertas = [];
   if(!chNFe) alertas.push({tipo:'danger',icone:'❌',msg:'<strong>Chave de acesso ausente.</strong> A nota pode estar sem autorização SEFAZ ou o XML está incompleto.'});
+  if(tpAmb==='2'){
+    alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>Ambiente de Homologação (tpAmb=2):</strong> esta nota <u>não tem valor fiscal</u>. É usada apenas para testes. Verifique se a empresa está em produção antes de emitir.'});
+  }
+  if(!tpAmb && (mod==='55'||mod==='65')){
+    alertas.push({tipo:'danger',icone:'❌',msg:'<strong>tpAmb ausente:</strong> a tag de ambiente (Produção/Homologação) é obrigatória. SEFAZ rejeitará a transmissão.'});
+  }
+  if(!indPres && (mod==='55'||mod==='65')){
+    alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>indPres ausente:</strong> o indicador de presença do comprador é obrigatório (especialmente em NFC-e). Valores válidos: 0/1/2/3/4/5/9.'});
+  }
+  if(!respTec && (mod==='55'||mod==='65')){
+    alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>infRespTec não informado:</strong> a NT 2018/005 exige o Responsável Técnico (CNPJ, contato, e-mail e telefone) para emitentes que utilizam sistema próprio ou de terceiros.'});
+  }
+  // Cobrança: soma das duplicatas deve bater com vLiq da fatura (ou vNF, se fat ausente)
+  if(cobrEl && cobrSomaDup > 0){
+    const vNFNum = parseFloat(ICMSTot?xmlGet(ICMSTot,'vNF'):0)||0;
+    const referencia = parseFloat(cobrVLiq)||vNFNum;
+    if(referencia>0 && Math.abs(cobrSomaDup-referencia)>0.02){
+      alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>Soma das duplicatas divergente:</strong> R$ '+cobrSomaDup.toFixed(2)+' não bate com '+(cobrVLiq?'vLiq da fatura':'vNF')+' (R$ '+referencia.toFixed(2)+'). Diferença: R$ '+Math.abs(cobrSomaDup-referencia).toFixed(2)+'.'});
+    }
+  }
   if(infAdFiscoAlert){
     const itensStr = itensCst0607.map(x=>`#${x.n} (CST ${x.cst}${x.cfop?', CFOP '+x.cfop:''})`).join(', ');
     const remessaAviso = itensCst0607.some(x=>x.cfop&&/^[56]91\d$/.test(x.cfop))?' Atenção: itens com CFOP de remessa/retorno podem estar dispensados conforme a operação.':'';
@@ -4008,8 +4462,7 @@ function xmlValidar(){
   }
   if(emitIEAlert) alertas.push({tipo:'warn',icone:'⚠️',msg:'<strong>IE do emitente não informada.</strong> Para CRT 1, 2 ou 3 a Inscrição Estadual é obrigatória.'});
 
-  // Alerta tPag 90 — Sem Pagamento
-  const detPags = doc.querySelectorAll('detPag');
+  // Alerta tPag 90 — Sem Pagamento (reutiliza detPags já obtido no bloco Pagamentos acima)
   const temTpag90 = Array.from(detPags).some(dp=>{
     const tPag = xmlGet(dp,'tPag');
     const vPag = parseFloat(xmlGet(dp,'vPag')||'0');
@@ -4044,21 +4497,47 @@ function xmlValidar(){
     const vTrocoEl= pagEl?[...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco'):null;
     const vTrocoNum = parseFloat(vTrocoEl?vTrocoEl.textContent:0)||0;
     const diff = parseFloat((somaPag - vNFNum).toFixed(2));
+    // Decomposição do vNF (mostra a fórmula pra deixar claro de onde sai o total)
+    const icmsTotEl = [...doc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+    const gT = tag => {
+      if(!icmsTotEl) return 0;
+      const el=[...icmsTotEl.children].find(n=>n.localName===tag);
+      return el?(parseFloat(el.textContent)||0):0;
+    };
+    const fmt = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const vProdT=gT('vProd'), vDescT=gT('vDesc'), vFreteT=gT('vFrete'), vSegT=gT('vSeg'),
+          vOutroT=gT('vOutro'), vSTT=gT('vST'), vIPIT=gT('vIPI'), vIIT=gT('vII'),
+          vIPIDevolT=gT('vIPIDevol'), vFCPSTT=gT('vFCPST'), vICMSDesonT=gT('vICMSDeson');
+    // Monta string da fórmula: sempre mostra vProd/vFrete/vDesc; demais só se ≠ 0.
+    const partesPos = ['<strong>vProd '+fmt(vProdT)+'</strong>'];
+    partesPos.push('vFrete '+fmt(vFreteT));
+    if(vSegT)        partesPos.push('vSeg '+fmt(vSegT));
+    if(vOutroT)      partesPos.push('vOutro '+fmt(vOutroT));
+    if(vSTT)         partesPos.push('vST '+fmt(vSTT));
+    if(vIPIT)        partesPos.push('vIPI '+fmt(vIPIT));
+    if(vIIT)         partesPos.push('vII '+fmt(vIIT));
+    if(vIPIDevolT)   partesPos.push('vIPIDevol '+fmt(vIPIDevolT));
+    if(vFCPSTT)      partesPos.push('vFCPST '+fmt(vFCPSTT));
+    const partesNeg = ['vDesc '+fmt(vDescT)];
+    if(vICMSDesonT)  partesNeg.push('vICMSDeson '+fmt(vICMSDesonT));
+    const formula = partesPos.join(' + ') + ' − ' + partesNeg.join(' − ') + ' = <strong>vNF '+fmt(vNFNum)+'</strong>';
     if(diff > 0.009){
-      const trocoCorreto = diff.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-      const somaPagFmt   = somaPag.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-      const vNFFmt       = vNFNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const trocoCorreto = fmt(diff);
+      const somaPagFmt   = fmt(somaPag);
+      const vNFFmt       = fmt(vNFNum);
       if(!vTrocoEl){
         alertas.push({tipo:'danger',icone:'❌',msg:
           '<strong>Rej. 866 — vTroco ausente:</strong> A soma dos pagamentos (R$ '+somaPagFmt+') é maior que o total da nota (R$ '+vNFFmt+'). ' +
+          '<br><span style="font-size:11px;opacity:.85">Cálculo do total: '+formula+'</span><br>' +
           'O campo <code>&lt;vTroco&gt;</code> é obrigatório dentro de <code>&lt;pag&gt;</code> com o valor do troco (R$ '+trocoCorreto+'). ' +
           'Use o <strong>Editor de XML</strong> para inserir e corrigir antes de reenviar.'
         });
       } else if(Math.abs(vTrocoNum - diff) > 0.009){
-        const vTrocoFmt = vTrocoNum.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+        const vTrocoFmt = fmt(vTrocoNum);
         alertas.push({tipo:'danger',icone:'❌',msg:
           '<strong>Rej. 866 — vTroco incorreto:</strong> A soma dos pagamentos (R$ '+somaPagFmt+') é maior que o total da nota (R$ '+vNFFmt+') em R$ '+trocoCorreto+', ' +
           'mas o <code>&lt;vTroco&gt;</code> informado é R$ '+vTrocoFmt+'. ' +
+          '<br><span style="font-size:11px;opacity:.85">Cálculo do total: '+formula+'</span><br>' +
           'Corrija o valor para R$ '+trocoCorreto+' no <strong>Editor de XML</strong> antes de reenviar.'
         });
       }
@@ -4120,6 +4599,129 @@ function xmlValidar(){
         });
       }
     }
+  }
+
+  // ── DIFAL (EC 87/2015) — ICMSUFDest: presença, alíquotas e soma dos itens ─
+  {
+    const idDestEl = [...doc.getElementsByTagName('*')].find(n=>n.localName==='idDest');
+    const idDest   = idDestEl?idDestEl.textContent.trim():'';
+    const indFinalEl = [...doc.getElementsByTagName('*')].find(n=>n.localName==='indFinal');
+    const indFinal = indFinalEl?indFinalEl.textContent.trim():'';
+    const indIEDestEl = [...doc.getElementsByTagName('*')].find(n=>n.localName==='indIEDest');
+    const indIEDest = indIEDestEl?indIEDestEl.textContent.trim():'';
+    // DIFAL aplica-se em operação interestadual (idDest=2) com consumidor final (indFinal=1)
+    // e destinatário não-contribuinte (indIEDest=9) ou contribuinte isento sem IE.
+    const operacaoExigeDifal = idDest==='2' && indFinal==='1' && (indIEDest==='9' || indIEDest==='2');
+    const detsArr = [...doc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+    // Coleta grupos ICMSUFDest dos itens
+    const itensComUFDest = [];
+    const itensSemUFDest = [];
+    let somaItensVUFDest=0, somaItensVUFRemet=0, somaItensVFCPUFDest=0;
+    const aliqsInter = new Set();
+    const partsInvalidos = [];
+    detsArr.forEach((det,idx)=>{
+      const prodEl = [...det.getElementsByTagName('*')].find(n=>n.localName==='prod');
+      const xProdItem = prodEl?([...prodEl.getElementsByTagName('*')].find(n=>n.localName==='xProd')?.textContent||`Item ${idx+1}`):`Item ${idx+1}`;
+      const ufDestEl = [...det.getElementsByTagName('*')].find(n=>n.localName==='ICMSUFDest');
+      if(!ufDestEl){ itensSemUFDest.push({n:idx+1, xProd:xProdItem}); return; }
+      itensComUFDest.push({n:idx+1, xProd:xProdItem, el:ufDestEl});
+      const gU = tag => { const e=[...ufDestEl.children].find(n=>n.localName===tag); return e?(parseFloat(e.textContent)||0):0; };
+      const gUStr = tag => { const e=[...ufDestEl.children].find(n=>n.localName===tag); return e?e.textContent.trim():''; };
+      somaItensVUFDest    += gU('vICMSUFDest');
+      somaItensVUFRemet   += gU('vICMSUFRemet');
+      somaItensVFCPUFDest += gU('vFCPUFDest');
+      const pInter = gUStr('pICMSInter');
+      if(pInter) aliqsInter.add(pInter);
+      const pPart = gUStr('pICMSInterPart');
+      // pICMSInterPart desde 2019 é 100. Tolera 100.00 / 100.0000.
+      if(pPart && Math.abs((parseFloat(pPart)||0) - 100) > 0.0001){
+        partsInvalidos.push({n:idx+1, xProd:xProdItem, valor:pPart});
+      }
+    });
+
+    // Alerta: operação exige DIFAL mas itens sem o grupo ICMSUFDest
+    if(operacaoExigeDifal && detsArr.length>0 && itensSemUFDest.length>0){
+      const lista = itensSemUFDest.slice(0,5).map(x=>`#${x.n}`).join(', ')+(itensSemUFDest.length>5?` e mais ${itensSemUFDest.length-5}`:'');
+      alertas.push({tipo:'danger',icone:'❌',msg:
+        '<strong>DIFAL ausente (EC 87/2015):</strong> operação interestadual (idDest=2) para consumidor final (indFinal=1) '+
+        (indIEDest==='9'?'não-contribuinte (indIEDest=9)':'contribuinte isento (indIEDest=2)')+
+        ' exige o grupo <code>&lt;ICMSUFDest&gt;</code> em cada item. Itens sem o grupo: '+lista+'.'
+      });
+    }
+
+    // Alerta: grupo ICMSUFDest presente mas operação NÃO é interestadual / não exige DIFAL
+    if(!operacaoExigeDifal && itensComUFDest.length>0){
+      alertas.push({tipo:'warn',icone:'⚠️',msg:
+        '<strong>ICMSUFDest informado fora da hipótese:</strong> '+itensComUFDest.length+' item(ns) possuem o grupo <code>&lt;ICMSUFDest&gt;</code>, '+
+        'mas a operação não atende aos requisitos (idDest=2, indFinal=1 e indIEDest=9 ou 2). Verifique se o grupo é mesmo aplicável — pode causar rejeição.'
+      });
+    }
+
+    // Alíquota interestadual válida: 4 (importado/Resolução SF 13), 7 (Norte/Nordeste/CO/ES) ou 12
+    aliqsInter.forEach(a=>{
+      const an = parseFloat(a);
+      if(!isNaN(an) && ![4,7,12].includes(an) && ![4.00,7.00,12.00].includes(an)){
+        alertas.push({tipo:'warn',icone:'⚠️',msg:
+          '<strong>pICMSInter atípica:</strong> alíquota interestadual informada é <code>'+a+'%</code>. As alíquotas usuais são 4% (Res. SF 13/12), 7% (origem Sul/Sudeste exc. ES → N/NE/CO/ES) ou 12% (demais).'
+        });
+      }
+    });
+
+    // pICMSInterPart fora de 100 (vigência atual — desde 2019)
+    if(partsInvalidos.length>0){
+      const lista = partsInvalidos.slice(0,5).map(x=>`#${x.n} (${x.valor}%)`).join(', ');
+      alertas.push({tipo:'warn',icone:'⚠️',msg:
+        '<strong>pICMSInterPart fora de 100%:</strong> desde 2019 a partilha do DIFAL é integralmente da UF de destino (100%). Itens: '+lista+'.'
+      });
+    }
+
+    // Cruzamento ICMSTot × soma dos itens (vICMSUFDest, vICMSUFRemet, vFCPUFDest)
+    const icmsTotEl2 = [...doc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+    if(icmsTotEl2){
+      const tG = tag => { const e=[...icmsTotEl2.children].find(n=>n.localName===tag); return e?(parseFloat(e.textContent)||0):0; };
+      const totD = tG('vICMSUFDest');
+      const totR = tG('vICMSUFRemet');
+      const totFCP = tG('vFCPUFDest');
+      const sD = Math.round(somaItensVUFDest*100)/100;
+      const sR = Math.round(somaItensVUFRemet*100)/100;
+      const sFCP = Math.round(somaItensVFCPUFDest*100)/100;
+      if(itensComUFDest.length>0){
+        if(Math.abs(totD - sD) > 0.02){
+          alertas.push({tipo:'danger',icone:'❌',msg:
+            '<strong>vICMSUFDest divergente:</strong> total em ICMSTot (R$ '+totD.toFixed(2)+') difere da soma dos itens (R$ '+sD.toFixed(2)+'). Diferença: R$ '+Math.abs(totD-sD).toFixed(2)+'.'
+          });
+        }
+        if(Math.abs(totR - sR) > 0.02){
+          alertas.push({tipo:'danger',icone:'❌',msg:
+            '<strong>vICMSUFRemet divergente:</strong> total em ICMSTot (R$ '+totR.toFixed(2)+') difere da soma dos itens (R$ '+sR.toFixed(2)+'). Diferença: R$ '+Math.abs(totR-sR).toFixed(2)+'.'
+          });
+        }
+        if(sFCP>0 && Math.abs(totFCP - sFCP) > 0.02){
+          alertas.push({tipo:'danger',icone:'❌',msg:
+            '<strong>vFCPUFDest divergente:</strong> total em ICMSTot (R$ '+totFCP.toFixed(2)+') difere da soma dos itens (R$ '+sFCP.toFixed(2)+'). Diferença: R$ '+Math.abs(totFCP-sFCP).toFixed(2)+'.'
+          });
+        }
+      }
+    }
+
+    // Coerência interna do item: vICMSUFDest ≈ vBCUFDest × (pICMSUFDest − pICMSInter) × pICMSInterPart/100
+    itensComUFDest.forEach(it=>{
+      const u = it.el;
+      const gU = tag => { const e=[...u.children].find(n=>n.localName===tag); return e?(parseFloat(e.textContent)||0):0; };
+      const vBC = gU('vBCUFDest');
+      const pDest = gU('pICMSUFDest');
+      const pInter = gU('pICMSInter');
+      const pPart = gU('pICMSInterPart')||100;
+      const vUFDest = gU('vICMSUFDest');
+      if(vBC>0 && pDest>0){
+        const esperado = Math.round((vBC * (pDest - pInter) / 100 * (pPart/100))*100)/100;
+        if(Math.abs(esperado - vUFDest) > 0.05){
+          alertas.push({tipo:'warn',icone:'⚠️',msg:
+            '<strong>vICMSUFDest do item #'+it.n+' inconsistente:</strong> esperado ≈ R$ '+esperado.toFixed(2)+' (vBCUFDest × (pICMSUFDest − pICMSInter) × pICMSInterPart/100), informado R$ '+vUFDest.toFixed(2)+'.'
+          });
+        }
+      }
+    });
   }
 
   // ── vProd vs soma dos itens ────────────────────────────────────────────
@@ -4561,6 +5163,28 @@ function xmledRecalcularTotais(){
   somaVProd = Math.round(somaVProd*100)/100;
   const icmsTot = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
   if(!icmsTot) return;
+  // Auto-soma valores acessórios dos itens para o ICMSTot (Rej. 605/607):
+  // se ALGUM item tiver valor não-zero em vFrete/vSeg/vDesc/vOutro, sobrescreve o total
+  // com a soma. Se todos os itens estiverem zerados/ausentes, preserva o valor digitado
+  // manualmente no formulário de totais.
+  const somarItens = tag => {
+    let temItem = false;
+    let soma = 0;
+    dets.forEach(det=>{
+      const prod = det.querySelector('prod');
+      if(!prod) return;
+      const el = [...prod.children].find(n=>n.localName===tag);
+      if(!el) return;
+      const v = parseFloat(el.textContent)||0;
+      if(v !== 0) temItem = true;
+      soma += v;
+    });
+    return { soma: Math.round(soma*100)/100, temItem };
+  };
+  ['vFrete','vSeg','vDesc','vOutro'].forEach(tag => {
+    const r = somarItens(tag);
+    if(r.temItem) xmledSetIcmsTotOrdenado(tag, r.soma.toFixed(2));
+  });
   const get = tag => {
     const el = [...icmsTot.children].find(n=>n.localName===tag);
     return el ? (parseFloat(el.textContent)||0) : 0;
@@ -4608,6 +5232,199 @@ function xmledRecalcularTotais(){
       pagEl.removeChild(vtEl);
     }
   }
+  // Propaga vNF para inputs, cobr/fat e cobr/dup (quando aplicável).
+  xmledCascadeVNFParaCobr();
+}
+
+// Propaga o vNF do ICMSTot (já recalculado) para os inputs do formulário,
+// para cobr/fat (vOrig/vLiq) e — se houver uma única duplicata — para cobr/dup/vDup.
+// Mantém o XML e o formulário consistentes ao adicionar/alterar vOutro, vSeg, vFrete, vDesc etc.
+function xmledCascadeVNFParaCobr(){
+  if(!xmledDoc) return;
+  const icmsTot = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+  if(!icmsTot) return;
+  const getTot = tag => {
+    const el = [...icmsTot.children].find(n=>n.localName===tag);
+    return el ? (parseFloat(el.textContent)||0) : 0;
+  };
+  const vNF   = getTot('vNF');
+  const vProd = getTot('vProd');
+  // 1) Inputs de totais — vNF/vProd sempre, demais (vFrete/vSeg/vDesc/vOutro) só
+  // se a tag existir no ICMSTot (para refletir auto-soma a partir dos itens).
+  const vnfInput  = document.getElementById('xmled-vnf');
+  const vprodInput= document.getElementById('xmled-vprod');
+  if(vnfInput)   vnfInput.value   = vNF.toFixed(2);
+  if(vprodInput) vprodInput.value = vProd.toFixed(2);
+  [['vFrete','xmled-vfrete'],['vSeg','xmled-vseg'],['vDesc','xmled-vdesc'],['vOutro','xmled-voutro']]
+    .forEach(([tag,id])=>{
+      const el = [...icmsTot.children].find(n=>n.localName===tag);
+      const inp = document.getElementById(id);
+      if(el && inp) inp.value = (parseFloat(el.textContent)||0).toFixed(2);
+    });
+  if(vNF<=0) return;
+  // 2) Cascade para <cobr>
+  const cobr = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='cobr');
+  if(!cobr) return;
+  const ns = cobr.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  const fat = [...cobr.children].find(n=>n.localName==='fat');
+  let vLiqRef = vNF; // referência usada pelas duplicatas (vLiq se houver fat, senão vNF)
+  if(fat){
+    const setFatTag = (tag, val) => {
+      let el = [...fat.children].find(n=>n.localName===tag);
+      if(!el){
+        el = xmledDoc.createElementNS(ns, tag);
+        const myIdx = FAT_ORDER.indexOf(tag);
+        const proximo = [...fat.children].find(c=>{
+          const ci = FAT_ORDER.indexOf(c.localName);
+          return ci >= 0 && ci > myIdx;
+        });
+        if(proximo) fat.insertBefore(el, proximo); else fat.appendChild(el);
+      }
+      el.textContent = val.toFixed(2);
+    };
+    const vDescFatEl = [...fat.children].find(n=>n.localName==='vDesc');
+    const vDescFat = vDescFatEl ? (parseFloat(vDescFatEl.textContent)||0) : 0;
+    vLiqRef = Math.round((vNF - vDescFat)*100)/100;
+    setFatTag('vOrig', vNF);
+    setFatTag('vLiq',  vLiqRef);
+    // Sincroniza inputs do formulário
+    const vOrigInput = document.getElementById('xmled-fat-vorig');
+    const vLiqInput  = document.getElementById('xmled-fat-vliq');
+    if(vOrigInput) vOrigInput.value = vNF.toFixed(2);
+    if(vLiqInput)  vLiqInput.value  = vLiqRef.toFixed(2);
+  }
+  // 3) Cascade para <dup> — somente se houver 1 única duplicata (rateio manual mantido nas demais)
+  const dups = [...cobr.children].filter(n=>n.localName==='dup');
+  if(dups.length === 1){
+    const dup = dups[0];
+    let vDupEl = [...dup.children].find(n=>n.localName==='vDup');
+    if(!vDupEl){
+      vDupEl = xmledDoc.createElementNS(ns,'vDup');
+      dup.appendChild(vDupEl);
+    }
+    vDupEl.textContent = vLiqRef.toFixed(2);
+    const dupInput = document.querySelector('.xmled-dup-field[data-tag="vDup"][data-idx="0"]');
+    if(dupInput) dupInput.value = vLiqRef.toFixed(2);
+  }
+  // 4) Atualiza badge de soma/divergência das duplicatas
+  if(typeof xmledDupAtualizarSoma === 'function') xmledDupAtualizarSoma();
+}
+
+// Soma os valores de ICMS / IPI / II / DIFAL declarados nos itens e sobrescreve o ICMSTot.
+// Útil quando a NF-e foi gerada com totais errados (ex: item CST 90 contado como tributado).
+// Mostra diálogo de confirmação com o diff antes de aplicar.
+function xmledSincronizarICMSDeItens(){
+  if(!xmledDoc){
+    xmledStatus('⚠️ Carregue um XML primeiro.');
+    return;
+  }
+  const dets = [...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
+  if(!dets.length){
+    xmledStatus('⚠️ Nenhum item encontrado.');
+    return;
+  }
+  const totais = {
+    vBC:0, vICMS:0, vICMSDeson:0, vBCST:0, vST:0, vFCP:0, vFCPST:0, vFCPSTRet:0,
+    vIPI:0, vIPIDevol:0, vII:0,
+    vICMSUFDest:0, vICMSUFRemet:0, vFCPUFDest:0,
+  };
+  // Mapeamento tag-do-item → tag-do-total (item usa vICMSST, total usa vST)
+  const MAP_ICMS = {
+    vBC:'vBC', vICMS:'vICMS', vICMSDeson:'vICMSDeson',
+    vBCST:'vBCST', vICMSST:'vST',
+    vFCP:'vFCP', vFCPST:'vFCPST', vFCPSTRet:'vFCPSTRet',
+  };
+  dets.forEach(det=>{
+    const imp = [...det.children].find(n=>n.localName==='imposto');
+    if(imp){
+      // ICMS: bloco interno (ICMS00/10/.../90/SN101/...) tem os valores
+      const icms = [...imp.children].find(n=>n.localName==='ICMS');
+      if(icms){
+        const bloco = [...icms.children][0];
+        if(bloco){
+          Object.entries(MAP_ICMS).forEach(([itemTag, totTag])=>{
+            const el = [...bloco.children].find(n=>n.localName===itemTag);
+            if(el) totais[totTag] += parseFloat(el.textContent)||0;
+          });
+        }
+      }
+      // IPI: bloco IPITrib tem vIPI; IPINT não tem (não tributado)
+      const ipi = [...imp.children].find(n=>n.localName==='IPI');
+      if(ipi){
+        const ipiTrib = [...ipi.children].find(n=>n.localName==='IPITrib');
+        if(ipiTrib){
+          const el = [...ipiTrib.children].find(n=>n.localName==='vIPI');
+          if(el) totais.vIPI += parseFloat(el.textContent)||0;
+        }
+      }
+      // II: vII direto em <II>
+      const ii = [...imp.children].find(n=>n.localName==='II');
+      if(ii){
+        const el = [...ii.children].find(n=>n.localName==='vII');
+        if(el) totais.vII += parseFloat(el.textContent)||0;
+      }
+      // DIFAL — ICMSUFDest direto em <imposto>
+      const difal = [...imp.children].find(n=>n.localName==='ICMSUFDest');
+      if(difal){
+        ['vICMSUFDest','vICMSUFRemet','vFCPUFDest'].forEach(tag=>{
+          const el = [...difal.children].find(n=>n.localName===tag);
+          if(el) totais[tag] += parseFloat(el.textContent)||0;
+        });
+      }
+    }
+    // IPI devolvido — <impostoDevol>/<IPI>/<vIPIDevol> direto em <det>
+    const impDevol = [...det.children].find(n=>n.localName==='impostoDevol');
+    if(impDevol){
+      const ipiDev = [...impDevol.children].find(n=>n.localName==='IPI');
+      if(ipiDev){
+        const el = [...ipiDev.children].find(n=>n.localName==='vIPIDevol');
+        if(el) totais.vIPIDevol += parseFloat(el.textContent)||0;
+      }
+    }
+  });
+  Object.keys(totais).forEach(k => totais[k] = Math.round(totais[k]*100)/100);
+
+  const icmsTot = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+  if(!icmsTot){
+    xmledStatus('⚠️ ICMSTot não encontrado.');
+    return;
+  }
+  const getAtual = tag => {
+    const el = [...icmsTot.children].find(n=>n.localName===tag);
+    return el ? (parseFloat(el.textContent)||0) : 0;
+  };
+  const diffs = [];
+  Object.keys(totais).forEach(tag => {
+    const atual = getAtual(tag);
+    const novo  = totais[tag];
+    if(Math.abs(atual - novo) > 0.009){
+      diffs.push({tag, atual, novo});
+    }
+  });
+  if(!diffs.length){
+    xmledStatus('✅ ICMS dos itens já está sincronizado com o total.');
+    return;
+  }
+  const fmt = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const lista = diffs.map(d => `  ${d.tag}: R$ ${fmt(d.atual)} → R$ ${fmt(d.novo)}`).join('\n');
+  if(!confirm(`Sincronizar ICMS dos itens irá alterar:\n\n${lista}\n\nO vNF também será recalculado (afeta cobr/fat, cobr/dup e pag/vPag). Continuar?`)){
+    return;
+  }
+  diffs.forEach(d => xmledSetIcmsTotOrdenado(d.tag, d.novo.toFixed(2)));
+  // Atualiza inputs do formulário pra refletir mudanças
+  const idMap = {vBC:'xmled-vbc',vICMS:'xmled-vicms',vST:'xmled-vst',vFCP:'xmled-vfcp',
+                  vICMSUFDest:'xmled-vicmsufdest',vICMSUFRemet:'xmled-vicmsufremet',vFCPUFDest:'xmled-vfcpufdest'};
+  diffs.forEach(d=>{
+    const id = idMap[d.tag];
+    if(id){
+      const inp = document.getElementById(id);
+      if(inp) inp.value = d.novo.toFixed(2);
+    }
+  });
+  xmledRecalcularTotais();  // recalcula vNF (vST mudou) e cascateia fat/dup/pag
+  xmledAvisarVPag();
+  xmledAtualizarRaw();
+  xmledStatus(`✅ ICMS sincronizado — ${diffs.length} campo(s) atualizado(s)`);
 }
 
 function xmledGetEl(tag){
@@ -4645,6 +5462,41 @@ function xmledSetValPath(path, val){
   if(el) el.textContent=val;
 }
 
+// Ordem dos filhos de <ICMSTot> conforme schema NFe 4.00 (tipos.xsd).
+// Usado para inserir tags que podem não existir no XML original (vFCP, vICMSUFDest, vICMSUFRemet, vFCPUFDest, etc).
+const ICMSTOT_ORDER = [
+  'vBC','vICMS','vICMSDeson','vFCPUFDest','vICMSUFDest','vICMSUFRemet',
+  'vFCP','vBCST','vST','vFCPST','vFCPSTRet','vProd','vFrete','vSeg','vDesc',
+  'vII','vIPI','vIPIDevol','vPIS','vCOFINS','vOutro','vNF','vTotTrib',
+  'vIBSCBSMono','vIBSCBSMonoRet','vIBSCBSMonoDif','vCRedCBSEfet','vCRedIBSUFEfet','vCRedIBSMunEfet'
+];
+function xmledSetIcmsTotOrdenado(tag, val){
+  if(!xmledDoc) return;
+  const icmsTot = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='ICMSTot');
+  if(!icmsTot) return;
+  const valTrim = (val==null?'':String(val)).trim();
+  let el = [...icmsTot.children].find(n=>n.localName===tag);
+  // Vazio ou zero → remove tag opcional (DIFAL/FCP não devem ficar como "0.00" sem necessidade)
+  const opcionais = ['vFCP','vICMSUFDest','vICMSUFRemet','vFCPUFDest'];
+  const numero = parseFloat(valTrim);
+  if(opcionais.includes(tag) && (!valTrim || (isFinite(numero) && numero===0))){
+    if(el) icmsTot.removeChild(el);
+    return;
+  }
+  if(!el){
+    const ns = icmsTot.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    el = xmledDoc.createElementNS(ns, tag);
+    const myIdx = ICMSTOT_ORDER.indexOf(tag);
+    // Insere antes do primeiro irmão que vem DEPOIS na ordem do schema
+    const proximo = [...icmsTot.children].find(c => {
+      const ci = ICMSTOT_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) icmsTot.insertBefore(el, proximo); else icmsTot.appendChild(el);
+  }
+  el.textContent = isFinite(numero) ? numero.toFixed(2) : valTrim;
+}
+
 function xmledCopiarDhEmi(){
   const v = document.getElementById('xmled-dhemi').value;
   document.getElementById('xmled-dhsaient').value = v;
@@ -4665,6 +5517,26 @@ function xmledPopularCampos(){
   const tpEmisVal = xmledGetVal('tpEmis');
   const tpEmisEl = document.getElementById('xmled-tpemis');
   if(tpEmisEl){ tpEmisEl.value = tpEmisVal; if(!tpEmisEl.value) tpEmisEl.value='1'; }
+  // tpAmb / indPres / idDest / indFinal — selects
+  const tpAmbEl = document.getElementById('xmled-tpamb');
+  if(tpAmbEl){ tpAmbEl.value = xmledGetVal('tpAmb') || '1'; }
+  const indPresEl = document.getElementById('xmled-indpres');
+  if(indPresEl){ indPresEl.value = xmledGetVal('indPres') || '0'; }
+  const idDestEl = document.getElementById('xmled-iddest');
+  if(idDestEl){ idDestEl.value = xmledGetVal('idDest') || '1'; }
+  const indFinalEl = document.getElementById('xmled-indfinal');
+  if(indFinalEl){ indFinalEl.value = xmledGetVal('indFinal') || '0'; }
+  // Responsável Técnico (infRespTec)
+  v('xmled-resptec-cnpj').value     = xmledGetValPath('infRespTec CNPJ');
+  v('xmled-resptec-xcontato').value = xmledGetValPath('infRespTec xContato');
+  v('xmled-resptec-email').value    = xmledGetValPath('infRespTec email');
+  v('xmled-resptec-fone').value     = xmledGetValPath('infRespTec fone');
+  // Cobrança — fatura + duplicatas
+  v('xmled-fat-nfat').value  = xmledGetValPath('cobr fat nFat');
+  v('xmled-fat-vorig').value = xmledGetValPath('cobr fat vOrig');
+  v('xmled-fat-vdesc').value = xmledGetValPath('cobr fat vDesc');
+  v('xmled-fat-vliq').value  = xmledGetValPath('cobr fat vLiq');
+  xmledDupRender();
   // emit
   v('xmled-emit-xnome').value = xmledGetValPath('emit xNome');
   v('xmled-emit-xfant').value = xmledGetValPath('emit xFant');
@@ -4685,8 +5557,14 @@ function xmledPopularCampos(){
   v('xmled-vprod').value = xmledGetValPath('ICMSTot vProd');
   v('xmled-vdesc').value = xmledGetValPath('ICMSTot vDesc');
   v('xmled-vfrete').value= xmledGetValPath('ICMSTot vFrete');
+  v('xmled-vseg').value  = xmledGetValPath('ICMSTot vSeg');
+  v('xmled-voutro').value= xmledGetValPath('ICMSTot vOutro');
   v('xmled-vicms').value = xmledGetValPath('ICMSTot vICMS');
   v('xmled-vst').value   = xmledGetValPath('ICMSTot vST');
+  v('xmled-vfcp').value        = xmledGetValPath('ICMSTot vFCP');
+  v('xmled-vicmsufdest').value = xmledGetValPath('ICMSTot vICMSUFDest');
+  v('xmled-vicmsufremet').value= xmledGetValPath('ICMSTot vICMSUFRemet');
+  v('xmled-vfcpufdest').value  = xmledGetValPath('ICMSTot vFCPUFDest');
   // transp
   // modFrete — select
   const modFreteVal = xmledGetValPath('transp modFrete');
@@ -4697,6 +5575,17 @@ function xmledPopularCampos(){
   if(avisoFrete) avisoFrete.style.display = modFreteVal==='9'?'inline':'none';
   v('xmled-transp-xnome').value= xmledGetValPath('transp transporta xNome');
   v('xmled-transp-cnpj').value = xmledGetValPath('transp transporta CNPJ');
+  // Veículo de transporte
+  v('xmled-veic-placa').value = xmledGetValPath('transp veicTransp placa');
+  v('xmled-veic-uf').value    = xmledGetValPath('transp veicTransp UF');
+  v('xmled-veic-rntrc').value = xmledGetValPath('transp veicTransp RNTRC');
+  const veicStatusEl = document.getElementById('xmled-veictransp-status');
+  if(veicStatusEl){
+    const temVeic = !!xmledGetValPath('transp veicTransp placa') || !!xmledGetValPath('transp veicTransp UF') || !!xmledGetValPath('transp veicTransp RNTRC');
+    veicStatusEl.innerHTML = temVeic ? '<span style="color:#34d399">● informado</span>' : '<span style="color:var(--text3)">(opcional)</span>';
+  }
+  // Volumes
+  xmledVolRender();
   // infAdic
   v('xmled-infcpl').value     = xmledGetVal('infCpl');
   v('xmled-infadfisco').value = xmledGetVal('infAdFisco');
@@ -4745,6 +5634,39 @@ function xmledPopularCampos(){
     const corBorda = aviso ? 'rgba(239,68,68,.4)' : 'var(--border)';
     const corBg    = aviso ? 'rgba(239,68,68,.05)' : 'var(--navy3)';
 
+    // Bloco DIFAL (ICMSUFDest) — EC 87/2015. Aparece colapsado por padrão.
+    // Se já houver o grupo no item, abre expandido com indicador verde.
+    const ufDestEl = imposto ? [...imposto.children].find(n=>n.localName==='ICMSUFDest') : null;
+    const getU = tag => { if(!ufDestEl) return ''; const e=[...ufDestEl.children].find(n=>n.localName===tag); return e?e.textContent:''; };
+    const fldU = (lbl,id,val,ph='',cls='xmled-difal-field')=>`<div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">${lbl}</label><input id="${id}" class="${cls}" data-det="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph}"></div>`;
+    const difalBlock = `
+      <details ${ufDestEl?'open':''} style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+        <summary style="cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);padding:4px 0;user-select:none">
+          ⚖️ DIFAL — ICMSUFDest (EC 87/2015)
+          ${ufDestEl?'<span style="margin-left:6px;font-size:10px;background:rgba(52,211,153,.15);color:#34d399;padding:1px 6px;border-radius:8px;border:1px solid rgba(52,211,153,.3)">● informado</span>':'<span style="margin-left:6px;font-size:10px;color:var(--text3)">(não informado — preencha para criar)</span>'}
+        </summary>
+        <div style="margin-top:8px;background:rgba(0,196,232,.04);border:1px solid rgba(0,196,232,.15);border-radius:8px;padding:10px">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.5">Operações interestaduais a consumidor final (idDest=2, indFinal=1, indIEDest=2 ou 9). Preencha <code>vBCUFDest</code> e as alíquotas — clique em <strong>Calcular</strong> para preencher vICMSUFDest/vICMSUFRemet.</div>
+          <!-- Ordem oficial do schema NFe 4.00 — grupo NA (ICMSUFDest) -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            ${fldU('1) vBCUFDest (BC ICMS UF Dest.)',`xmled-item-${i}-vbcufdest`,getU('vBCUFDest'),'0.00')}
+            ${fldU('2) vBCFCPUFDest (BC FCP UF Dest.)',`xmled-item-${i}-vbcfcpufdest`,getU('vBCFCPUFDest'),'opcional')}
+            ${fldU('3) pFCPUFDest (% FCP)',`xmled-item-${i}-pfcpufdest`,getU('pFCPUFDest'),'opcional')}
+            ${fldU('4) pICMSUFDest (% interna UF Dest.)',`xmled-item-${i}-picmsufdest`,getU('pICMSUFDest'),'ex: 18.0000')}
+            ${fldU('5) pICMSInter (% interestadual)',`xmled-item-${i}-picmsinter`,getU('pICMSInter'),'4 / 7 / 12')}
+            ${fldU('6) pICMSInterPart (% partilha)',`xmled-item-${i}-picmsinterpart`,getU('pICMSInterPart')||'100.0000','100.0000')}
+            ${fldU('7) vFCPUFDest (Valor FCP UF Dest.)',`xmled-item-${i}-vfcpufdest`,getU('vFCPUFDest'),'opcional')}
+            ${fldU('8) vICMSUFDest (DIFAL destino)',`xmled-item-${i}-vicmsufdest`,getU('vICMSUFDest'),'0.00')}
+            ${fldU('9) vICMSUFRemet (DIFAL remet.)',`xmled-item-${i}-vicmsufremet`,getU('vICMSUFRemet'),'0.00')}
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button type="button" onclick="xmledDifalCalcular(${i})" style="background:rgba(0,196,232,.12);border:1px solid rgba(0,196,232,.3);color:var(--cyan);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🧮 Calcular vICMSUFDest / vFCPUFDest</button>
+            <button type="button" onclick="xmledDifalLimpar(${i})" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">✖ Limpar (remover grupo)</button>
+            <span id="xmled-item-${i}-difal-status" style="font-size:11px;color:var(--text3);align-self:center"></span>
+          </div>
+        </div>
+      </details>`;
+
     cont.innerHTML+=`
       <div style="background:${corBg};border:1px solid ${corBorda};border-radius:10px;padding:14px">
         <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px">Item ${i+1} — ${title}${icmsTipo?` <span style="font-size:10px;font-weight:500;color:var(--text2);background:var(--navy2);padding:2px 6px;border-radius:6px;margin-left:6px">${icmsTipo}</span>`:''}</div>
@@ -4752,14 +5674,24 @@ function xmledPopularCampos(){
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
           ${fld('Descrição (xProd)',`xmled-item-${i}-xprod`,getP('xProd'))}
           ${fld('NCM',`xmled-item-${i}-ncm`,getP('NCM'))}
+          ${fld('CEST',`xmled-item-${i}-cest`,getP('CEST'),'7 dígitos (ST)')}
           ${fld('CFOP',`xmled-item-${i}-cfop`,cfop)}
           ${trib!==''||icmsInner?fld(tribLbl,`xmled-item-${i}-cst`,trib):''}
+          ${fld('cBenef',`xmled-item-${i}-cbenef`,getP('cBenef'),'benefício fiscal')}
           ${fld('Cód. EAN (cEAN)',`xmled-item-${i}-cean`,getP('cEAN'))}
+          ${fld('Un. Comercial (uCom)',`xmled-item-${i}-ucom`,getP('uCom'))}
           ${fld('Qtd (qCom)',`xmled-item-${i}-qcom`,getP('qCom'),'','xmledItemChange(this)')}
           ${fld('Vl. Unit (vUnCom)',`xmled-item-${i}-vuncom`,getP('vUnCom'),'','xmledItemChange(this)')}
           ${fld('Vl. Total (vProd)',`xmled-item-${i}-vprod`,getP('vProd'),'','xmledItemChange(this)')}
+          ${fld('Vl. Frete (vFrete)',`xmled-item-${i}-vfrete`,getP('vFrete'),'0.00')}
+          ${fld('Vl. Seguro (vSeg)',`xmled-item-${i}-vseg`,getP('vSeg'),'0.00')}
+          ${fld('Vl. Desconto (vDesc)',`xmled-item-${i}-vdesc`,getP('vDesc'),'0.00')}
+          ${fld('Outras Desp. (vOutro)',`xmled-item-${i}-voutro`,getP('vOutro'),'0.00')}
+          ${fld('Pedido (xPed)',`xmled-item-${i}-xped`,getP('xPed'),'opcional')}
+          ${fld('Item Pedido (nItemPed)',`xmled-item-${i}-nitemped`,getP('nItemPed'),'opcional')}
           ${getP('cClassTrib')?fld('<span style="color:#34d399">cClassTrib</span>',`xmled-item-${i}-cclasstrib`,getP('cClassTrib')):''}
         </div>
+        ${difalBlock}
       </div>`;
   });
 
@@ -4788,15 +5720,45 @@ function xmledPopularCampos(){
   const vTrocoVal = vTrocoEl?vTrocoEl.textContent:'';
 
   detPags.forEach((dp,i)=>{
-    const tPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='tPag');
-    const vPag = [...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
+    const getDP = tag => { const e=[...dp.children].find(n=>n.localName===tag); return e?e.textContent:''; };
     const TPAG_DESC={'01':'Dinheiro','02':'Cheque','03':'Cartão Crédito','04':'Cartão Débito','05':'Crédito Loja','10':'Vale Alimentação','11':'Vale Refeição','12':'Vale Presente','13':'Vale Combustível','14':'Duplicata','15':'Boleto','17':'PIX Dinâmico','20':'PIX Estático','90':'Sem Pagamento','91':'Pagamento Posterior','99':'Outros'};
-    const tVal = tPag?tPag.textContent:'';
+    const tVal = getDP('tPag');
+    const indPagVal = getDP('indPag');
+    const dPagVal   = getDP('dPag');
     const desc = TPAG_DESC[tVal]?` (${TPAG_DESC[tVal]})`:'';
+    // Bloco <card> (cartão) — opcional, comum para tPag 03/04
+    const cardEl = [...dp.children].find(n=>n.localName==='card');
+    const getCard = tag => { if(!cardEl) return ''; const e=[...cardEl.children].find(n=>n.localName===tag); return e?e.textContent:''; };
+    const cartaoSugerido = (tVal==='03'||tVal==='04'||tVal==='05'); // tipos cartão
+    const TBAND = {'01':'Visa','02':'Mastercard','03':'American Express','04':'Sorocred','05':'Diners Club','06':'Elo','07':'Hipercard','08':'Aura','09':'Cabal','99':'Outros'};
+    const optTBand = (v)=>Object.entries(TBAND).map(([k,n])=>`<option value="${k}" ${v===k?'selected':''}>${k} — ${n}</option>`).join('');
+    const cardBlock = `
+      <details ${cardEl?'open':''} style="margin-top:10px;border-top:1px dashed var(--border);padding-top:8px">
+        <summary style="cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);padding:4px 0;user-select:none">
+          💳 Detalhes do Cartão (card)
+          ${cardEl?'<span style="margin-left:6px;font-size:10px;background:rgba(52,211,153,.15);color:#34d399;padding:1px 6px;border-radius:8px;border:1px solid rgba(52,211,153,.3)">● informado</span>':cartaoSugerido?'<span style="margin-left:6px;font-size:10px;color:#fbbf24">⚠ recomendado para cartão</span>':'<span style="margin-left:6px;font-size:10px;color:var(--text3)">(opcional)</span>'}
+        </summary>
+        <div style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+          <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">tpIntegra</label>
+            <select id="xmled-pag-${i}-tpintegra" class="xmled-card-field" data-pag="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
+              <option value="">— não informado —</option>
+              <option value="1" ${getCard('tpIntegra')==='1'?'selected':''}>1 — Integrado (TEF)</option>
+              <option value="2" ${getCard('tpIntegra')==='2'?'selected':''}>2 — Não integrado (POS)</option>
+            </select>
+          </div>
+          <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">CNPJ Credenciadora</label><input id="xmled-pag-${i}-cardcnpj" class="xmled-card-field" data-pag="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${getCard('CNPJ')}" placeholder="opcional"></div>
+          <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Bandeira (tBand)</label>
+            <select id="xmled-pag-${i}-tband" class="xmled-card-field" data-pag="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
+              <option value="">— não informado —</option>${optTBand(getCard('tBand'))}
+            </select>
+          </div>
+          <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Cód. Autorização (cAut)</label><input id="xmled-pag-${i}-caut" class="xmled-card-field" data-pag="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${getCard('cAut')}" placeholder="opcional"></div>
+        </div>
+      </details>`;
     pagCont.innerHTML+=`
       <div style="background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:12px">
         <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:8px">💳 Pagamento ${i+1}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px">
           <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Tipo (tPag)${desc} <span title="01=Dinheiro | 02=Cheque | 03=Cartão Crédito | 04=Cartão Débito | 05=Crédito Loja | 10=Vale Alimentação | 11=Vale Refeição | 12=Vale Presente | 13=Vale Combustível | 14=Duplicata Mercantil | 15=Boleto Bancário | 17=PIX Dinâmico | 20=PIX Estático | 90=Sem Pagamento | 91=Pagamento Posterior | 99=Outros" style="color:var(--cyan);cursor:help;font-size:12px">ℹ</span></label>
             <select id="xmled-pag-${i}-tpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
               <option value="01" ${tVal==='01'?'selected':''}>01 — Dinheiro</option>
@@ -4817,34 +5779,53 @@ function xmledPopularCampos(){
               <option value="99" ${tVal==='99'?'selected':''}>99 — Outros</option>
             </select>
           </div>
-          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor (vPag)</label><input id="xmled-pag-${i}-vpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${vPag?vPag.textContent:''}"></div>
+          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Forma (indPag) <span title="0=À vista | 1=A prazo | 2=Outros" style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label>
+            <select id="xmled-pag-${i}-indpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit;cursor:pointer">
+              <option value="">— não informado —</option>
+              <option value="0" ${indPagVal==='0'?'selected':''}>0 — À vista</option>
+              <option value="1" ${indPagVal==='1'?'selected':''}>1 — A prazo</option>
+              <option value="2" ${indPagVal==='2'?'selected':''}>2 — Outros</option>
+            </select>
+          </div>
+          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Data (dPag)</label><input id="xmled-pag-${i}-dpag" type="date" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${dPagVal||''}"></div>
+          <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor (vPag)</label><input id="xmled-pag-${i}-vpag" class="xmled-pag-field" data-pag="${i}" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${getDP('vPag')}"></div>
         </div>
+        ${cardBlock}
       </div>`;
   });
 
-  // Campo vTroco — aparece após os detPags
+  // Campo vTroco — bloco sempre visível (usuário pode informar manualmente),
+  // mas o botão "Aplicar troco calculado" só aparece quando há divergência a aplicar.
   if(detPags.length > 0){
     const somaPag = Array.from(detPags).reduce((s,dp)=>{
       const vp=[...dp.getElementsByTagName('*')].find(n=>n.localName==='vPag');
       return s+(parseFloat(vp?vp.textContent:0)||0);
     },0);
-    const vNFAtual  = parseFloat(xmledGetVal('vNF'))||0;
-    const trocoCalc = somaPag>vNFAtual?(somaPag-vNFAtual).toFixed(2):'0.00';
+    const vNFAtual    = parseFloat(xmledGetVal('vNF'))||0;
+    const diffPagNF   = somaPag - vNFAtual;
+    const trocoCalc   = diffPagNF > 0.009 ? diffPagNF.toFixed(2) : '0.00';
     const vTrocoFmt   = vTrocoVal ? parseFloat(vTrocoVal).toFixed(2) : '';
-    const trocoErrado  = vTrocoVal && vTrocoFmt !== trocoCalc;
-    const trocoFalta   = somaPag>vNFAtual && !vTrocoVal;
-    const trocoAlerta  = trocoFalta || trocoErrado;
-    const corBorda  = trocoAlerta?'rgba(239,68,68,.4)':'var(--border)';
-    const corBg     = trocoAlerta?'rgba(239,68,68,.08)':'var(--navy3)';
-    const corLabel  = trocoAlerta?'#f87171':'var(--text2)';
-    const aviso     = trocoFalta?' — ⚠️ Rej. 866: campo obrigatório quando pagamento &gt; total':
-                      trocoErrado?' — ⚠️ Valor informado ('+vTrocoFmt+') difere do calculado ('+trocoCalc+')':
-                      '';
-    // Sinalizar inconsistência no cabeçalho da seção
+    const vTrocoAtual = parseFloat(vTrocoFmt||0)||0;
+    // Há algo a aplicar quando: existe troco a pagar (somaPag>vNF) E o valor atual diverge do calculado
+    const precisaAplicar = diffPagNF > 0.009 && Math.abs(vTrocoAtual - parseFloat(trocoCalc)) > 0.009;
+    const trocoFalta     = diffPagNF > 0.009 && !vTrocoVal; // pagamento > total e XML sem vTroco
+    const trocoErrado    = vTrocoVal && diffPagNF > 0.009 && Math.abs(vTrocoAtual - parseFloat(trocoCalc)) > 0.009;
+    const trocoAlerta    = trocoFalta || trocoErrado;
+
     const pagBadge = document.getElementById('xmled-pag-badge');
     if(pagBadge) pagBadge.style.display = trocoAlerta ? 'inline' : 'none';
 
-    const divTroco  = document.createElement('div');
+    const corBorda = trocoAlerta?'rgba(239,68,68,.4)':'var(--border)';
+    const corBg    = trocoAlerta?'rgba(239,68,68,.08)':'var(--navy3)';
+    const corLabel = trocoAlerta?'#f87171':'var(--text2)';
+    const aviso    = trocoFalta ?' — ⚠️ Rej. 866: obrigatório quando pagamento &gt; total':
+                     trocoErrado?' — ⚠️ Valor informado ('+vTrocoFmt+') difere do calculado ('+trocoCalc+')':
+                     '';
+    const botaoHtml = precisaAplicar
+      ? '<button onclick="xmledAplicarTroco(\''+trocoCalc+'\')" style="width:100%;padding:8px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#34d399;font-size:12px;cursor:pointer;font-family:inherit">Aplicar troco calculado (R$ '+trocoCalc+')</button>'
+      : '<div style="padding:8px;font-size:11px;color:var(--text3);text-align:center;font-style:italic">Informe manualmente se necessário</div>';
+
+    const divTroco = document.createElement('div');
     divTroco.id = 'xmled-troco-bloco';
     divTroco.style.cssText = 'background:'+corBg+';border:1px solid '+corBorda+';border-radius:10px;padding:12px';
     divTroco.innerHTML =
@@ -4854,19 +5835,31 @@ function xmledPopularCampos(){
           '<label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor do troco (vTroco)</label>'+
           '<input id="xmled-vtroco" class="xmled-field"'+
             ' style="width:100%;background:var(--bg);border:1px solid '+corBorda+';border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit"'+
-            ' value="'+(trocoErrado?trocoCalc:(vTrocoFmt||trocoCalc))+'" placeholder="0.00">'+
+            ' value="'+(vTrocoFmt||'0.00')+'" placeholder="0.00">'+
         '</div>'+
-        '<div>'+
-          '<button onclick="xmledAplicarTroco(\''+trocoCalc+'\')" style="width:100%;padding:8px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3);border-radius:8px;color:#34d399;font-size:12px;cursor:pointer;font-family:inherit">'+
-            'Aplicar troco calculado (R$ '+trocoCalc+')'+
-          '</button>'+
-        '</div>'+
+        '<div>'+botaoHtml+'</div>'+
       '</div>';
     pagCont.appendChild(divTroco);
   }
 
   xmledAtualizarRaw();
   xmledAplicarModelo();
+}
+
+// Remove a tag <vTroco> do XML quando ela existe sem necessidade (somaPag == vNF)
+function xmledRemoverTroco(){
+  if(!xmledDoc) return;
+  const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  if(!pagEl){ xmledStatus('❌ Tag <pag> não encontrada no XML'); return; }
+  const vTrocoEl = [...pagEl.getElementsByTagName('*')].find(n=>n.localName==='vTroco');
+  if(vTrocoEl){
+    pagEl.removeChild(vTrocoEl);
+    xmledStatus('✅ Tag <vTroco> removida do XML');
+  } else {
+    xmledStatus('ℹ️ <vTroco> já não estava no XML');
+  }
+  xmledPopularCampos();
+  xmledAtualizarRaw();
 }
 
 function xmledAplicarTroco(valForcado){
@@ -5066,6 +6059,668 @@ function xmledSalvarNFSe(){
   xmledSetNFSeVal('IssRetido',       v('xmled-nfse-issret'));
 }
 
+// ===================== DIFAL (ICMSUFDest) — edição por item =====================
+// Ordem dos filhos de <ICMSUFDest> conforme schema NFe 4.00 (leiauteNFe_v4.00.xsd, grupo NA)
+const ICMSUFDEST_ORDER = [
+  'vBCUFDest','vBCFCPUFDest','pFCPUFDest','pICMSUFDest','pICMSInter',
+  'pICMSInterPart','vFCPUFDest','vICMSUFDest','vICMSUFRemet'
+];
+// Ordem de filhos de <imposto> — ICMSUFDest é o último antes de IBSCBS (reforma)
+const IMPOSTO_ORDER = ['vTotTrib','ICMS','ISSQN','IPI','II','impostoDevol','PIS','PISST','COFINS','COFINSST','ICMSUFDest','IBSCBS'];
+
+function xmledDifalParseNum(id){
+  const el = document.getElementById(id);
+  if(!el) return NaN;
+  const v = (el.value||'').replace(',','.').trim();
+  if(v==='') return NaN;
+  const n = parseFloat(v);
+  return isNaN(n)?NaN:n;
+}
+
+function xmledDifalCalcular(i){
+  const status = document.getElementById('xmled-item-'+i+'-difal-status');
+  const vBC    = xmledDifalParseNum('xmled-item-'+i+'-vbcufdest');
+  const pDest  = xmledDifalParseNum('xmled-item-'+i+'-picmsufdest');
+  const pInter = xmledDifalParseNum('xmled-item-'+i+'-picmsinter');
+  let   pPart  = xmledDifalParseNum('xmled-item-'+i+'-picmsinterpart');
+  if(isNaN(pPart)) pPart = 100;
+  if(isNaN(vBC)||isNaN(pDest)||isNaN(pInter)){
+    if(status){ status.textContent='⚠ preencha vBCUFDest, pICMSUFDest e pICMSInter'; status.style.color='#fbbf24'; }
+    return;
+  }
+  // vICMSUFDest = vBCUFDest × (pICMSUFDest − pICMSInter) × pICMSInterPart/100
+  const valorDifal = vBC * (pDest - pInter) / 100;
+  const vUFDest  = Math.round(valorDifal * (pPart/100) * 100)/100;
+  const vUFRemet = Math.round(valorDifal * ((100-pPart)/100) * 100)/100;
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value = v.toFixed(2); };
+  set('xmled-item-'+i+'-vicmsufdest',  vUFDest);
+  set('xmled-item-'+i+'-vicmsufremet', vUFRemet);
+  // FCP — só calcula se vBCFCPUFDest e pFCPUFDest foram informados
+  const vBCFCP = xmledDifalParseNum('xmled-item-'+i+'-vbcfcpufdest');
+  const pFCP   = xmledDifalParseNum('xmled-item-'+i+'-pfcpufdest');
+  if(!isNaN(vBCFCP) && !isNaN(pFCP)){
+    set('xmled-item-'+i+'-vfcpufdest', Math.round(vBCFCP*pFCP/100*100)/100);
+  }
+  if(status){ status.textContent='✅ Calculado: vICMSUFDest='+vUFDest.toFixed(2)+' · vICMSUFRemet='+vUFRemet.toFixed(2); status.style.color='#34d399'; }
+  // Sincroniza no DOM XML e no textarea raw (alterações via .value não disparam o listener input)
+  xmledSalvarCampos();
+  xmledAtualizarRaw();
+}
+
+function xmledDifalLimpar(i){
+  ['vbcufdest','picmsufdest','picmsinter','picmsinterpart','vicmsufdest','vicmsufremet','vbcfcpufdest','pfcpufdest','vfcpufdest'].forEach(s=>{
+    const el = document.getElementById('xmled-item-'+i+'-'+s);
+    if(el) el.value='';
+  });
+  const status = document.getElementById('xmled-item-'+i+'-difal-status');
+  if(status){ status.textContent='✖ Grupo ICMSUFDest removido.'; status.style.color='#f87171'; }
+  xmledSalvarCampos();
+  xmledAtualizarRaw();
+}
+
+// Lê os campos da UI e atualiza/cria/remove <ICMSUFDest> no item.
+// Regra: se vBCUFDest > 0 OU vICMSUFDest > 0, mantém/cria o grupo. Caso contrário, remove.
+function xmledSalvarDifalItem(det, i){
+  if(!xmledDoc||!det) return;
+  const imp = det.querySelector('imposto');
+  if(!imp) return;
+  const ns = imp.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  const ler = s => {
+    const el = document.getElementById('xmled-item-'+i+'-'+s);
+    if(!el) return null; // campo ausente na UI → ignora
+    const v = (el.value||'').replace(',','.').trim();
+    return v;
+  };
+  const dados = {
+    vBCUFDest:      ler('vbcufdest'),
+    vBCFCPUFDest:   ler('vbcfcpufdest'),
+    pFCPUFDest:     ler('pfcpufdest'),
+    pICMSUFDest:    ler('picmsufdest'),
+    pICMSInter:     ler('picmsinter'),
+    pICMSInterPart: ler('picmsinterpart'),
+    vFCPUFDest:     ler('vfcpufdest'),
+    vICMSUFDest:    ler('vicmsufdest'),
+    vICMSUFRemet:   ler('vicmsufremet')
+  };
+  // Se TODOS os campos da UI são null, significa que o item não tem UI DIFAL renderizada — não mexe
+  if(Object.values(dados).every(v=>v===null)) return;
+  // Detecta se há algum valor informado (> 0 ou texto não vazio)
+  const algumValor = ['vBCUFDest','vICMSUFDest'].some(k=>{
+    const v = dados[k];
+    if(!v) return false;
+    const n = parseFloat(v);
+    return !isNaN(n) && n>0;
+  });
+  let ufDest = [...imp.children].find(n=>n.localName==='ICMSUFDest');
+  if(!algumValor){
+    // Remove o grupo se existir
+    if(ufDest) imp.removeChild(ufDest);
+    return;
+  }
+  // Cria o grupo se não existir, na ordem certa dentro de <imposto>
+  if(!ufDest){
+    ufDest = xmledDoc.createElementNS(ns,'ICMSUFDest');
+    const myIdx = IMPOSTO_ORDER.indexOf('ICMSUFDest');
+    const proximo = [...imp.children].find(c=>{
+      const ci = IMPOSTO_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) imp.insertBefore(ufDest, proximo); else imp.appendChild(ufDest);
+  }
+  // Atualiza filhos respeitando a ordem do schema; opcionais vazios → remove
+  const opcionais = new Set(['vBCFCPUFDest','pFCPUFDest','vFCPUFDest']);
+  ICMSUFDEST_ORDER.forEach(tag=>{
+    const raw = dados[tag];
+    const num = (raw===null||raw==='')?NaN:parseFloat(raw);
+    let el = [...ufDest.children].find(n=>n.localName===tag);
+    const semValor = isNaN(num);
+    if(opcionais.has(tag) && (semValor || num===0)){
+      if(el) ufDest.removeChild(el);
+      return;
+    }
+    // Tags obrigatórias do grupo: se vier vazia, grava 0 para não quebrar o schema
+    const valor = isNaN(num) ? 0 : num;
+    // Casas decimais: alíquotas (p*) usam 4, valores (v*) usam 2
+    const txt = tag.startsWith('p') ? valor.toFixed(4) : valor.toFixed(2);
+    if(!el){
+      el = xmledDoc.createElementNS(ns,tag);
+      const myIdx = ICMSUFDEST_ORDER.indexOf(tag);
+      const proximo = [...ufDest.children].find(c=>{
+        const ci = ICMSUFDEST_ORDER.indexOf(c.localName);
+        return ci >= 0 && ci > myIdx;
+      });
+      if(proximo) ufDest.insertBefore(el, proximo); else ufDest.appendChild(el);
+    }
+    el.textContent = txt;
+  });
+}
+
+// Ordem dos filhos diretos de <prod> conforme schema NFe 4.00 (Grupo I).
+// (Subgrupos como DI, detExport, etc. não estão aqui — são tratados em outras funções.)
+const PROD_ORDER = [
+  'cProd','cEAN','cBarra','xProd','NCM','NVE','CEST','indEscala','CNPJFab','cBenef','EXTIPI',
+  'CFOP','uCom','qCom','vUnCom','vProd','cEANTrib','cBarraTrib','uTrib','qTrib','vUnTrib',
+  'vFrete','vSeg','vDesc','vOutro','indTot','DI','detExport','xPed','nItemPed','nFCI',
+  'rastro','infProdNFF','infProdEmb','veicProd','med','arma','comb','nRECOPI'
+];
+
+// Cria/atualiza/remove uma tag opcional dentro de <prod>, na posição correta do schema.
+// tipo: 'texto' = grava como string; 'valor' = trata como número (toFixed(2)); vazio/0 → remove.
+function xmledSetProdOpcional(prod, tag, val, opts){
+  if(!prod || val==null) return;
+  const ns = prod.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  const tipo = (opts&&opts.tipo)||'texto';
+  const txt = (val||'').toString().trim().replace(',','.');
+  let el = [...prod.children].find(n=>n.localName===tag);
+  // Remover quando vazio (ou zero para valores monetários)
+  if(!txt || (tipo==='valor' && (parseFloat(txt)||0)===0)){
+    if(el) prod.removeChild(el);
+    return;
+  }
+  if(!el){
+    el = xmledDoc.createElementNS(ns,tag);
+    const myIdx = PROD_ORDER.indexOf(tag);
+    const proximo = [...prod.children].find(c=>{
+      const ci = PROD_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) prod.insertBefore(el, proximo); else prod.appendChild(el);
+  }
+  if(tipo==='valor'){
+    const n = parseFloat(txt)||0;
+    el.textContent = n.toFixed(2);
+  } else {
+    el.textContent = txt;
+  }
+}
+
+// ===================== TRANSPORTE — veicTransp / vol / lacres =====================
+// Ordem dos filhos de <transp> conforme schema NFe 4.00:
+// modFrete, transporta, retTransp, veicTransp | reboque | vagao | balsa, vol*
+const TRANSP_ORDER = ['modFrete','transporta','retTransp','veicTransp','reboque','vagao','balsa','vol'];
+const VEICTRANSP_ORDER = ['placa','UF','RNTRC'];
+const VOL_ORDER = ['qVol','esp','marca','nVol','pesoL','pesoB','lacres'];
+
+function xmledGetTranspEl(criar){
+  if(!xmledDoc) return null;
+  let transp = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='transp');
+  if(!transp && criar){
+    const infNFe = xmledDoc.querySelector('infNFe');
+    if(!infNFe) return null;
+    const ns = infNFe.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    transp = xmledDoc.createElementNS(ns,'transp');
+    // <transp> mora entre <total> e <cobr> dentro de <infNFe>
+    const ORDER_INFNFE = ['ide','emit','avulsa','dest','retirada','entrega','autXML','det','total','transp','cobr','pag','infIntermed','infAdic'];
+    const myIdx = ORDER_INFNFE.indexOf('transp');
+    const proximo = [...infNFe.children].find(c=>{
+      const ci = ORDER_INFNFE.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) infNFe.insertBefore(transp, proximo); else infNFe.appendChild(transp);
+  }
+  return transp;
+}
+
+// Cria/atualiza/remove <veicTransp> dentro de <transp>
+function xmledSalvarVeicTransp(placa, uf, rntrc){
+  if(!xmledDoc) return;
+  const pl = (placa||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const u  = (uf||'').trim().toUpperCase().slice(0,2);
+  const r  = (rntrc||'').trim();
+  const tudoVazio = !pl && !u && !r;
+  let transp = xmledGetTranspEl(false);
+  let veic = transp ? [...transp.children].find(n=>n.localName==='veicTransp') : null;
+  if(tudoVazio){
+    if(veic) transp.removeChild(veic);
+    return;
+  }
+  transp = xmledGetTranspEl(true);
+  if(!veic){
+    const ns = transp.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    veic = xmledDoc.createElementNS(ns,'veicTransp');
+    const myIdx = TRANSP_ORDER.indexOf('veicTransp');
+    const proximo = [...transp.children].find(c=>{
+      const ci = TRANSP_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) transp.insertBefore(veic, proximo); else transp.appendChild(veic);
+  }
+  const ns = veic.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  const setField = (tag, val)=>{
+    let el = [...veic.children].find(n=>n.localName===tag);
+    if(!val){
+      if(el) veic.removeChild(el);
+      return;
+    }
+    if(!el){
+      el = xmledDoc.createElementNS(ns,tag);
+      const myIdx = VEICTRANSP_ORDER.indexOf(tag);
+      const proximo = [...veic.children].find(c=>{
+        const ci = VEICTRANSP_ORDER.indexOf(c.localName);
+        return ci >= 0 && ci > myIdx;
+      });
+      if(proximo) veic.insertBefore(el, proximo); else veic.appendChild(el);
+    }
+    el.textContent = val;
+  };
+  setField('placa', pl);
+  setField('UF',    u);
+  setField('RNTRC', r);
+  const status = document.getElementById('xmled-veictransp-status');
+  if(status) status.innerHTML = '<span style="color:#34d399">● informado</span>';
+}
+
+// Renderiza linhas de volume na UI
+function xmledVolRender(){
+  const cont = document.getElementById('xmled-vol-container');
+  if(!cont) return;
+  const transp = xmledGetTranspEl(false);
+  cont.innerHTML = '';
+  const vols = transp ? [...transp.children].filter(n=>n.localName==='vol') : [];
+  vols.forEach((v,idx)=>{
+    const get = tag => { const e=[...v.children].find(n=>n.localName===tag); return e?e.textContent:''; };
+    const lacresEls = [...v.children].filter(n=>n.localName==='lacres');
+    const lacresStr = lacresEls.map(l=>{const e=[...l.children].find(c=>c.localName==='nLacre'); return e?e.textContent:'';}).filter(Boolean).join(', ');
+    cont.innerHTML += xmledVolRow(idx, get('qVol'), get('esp'), get('marca'), get('nVol'), get('pesoL'), get('pesoB'), lacresStr);
+  });
+  xmledVolAtualizarSoma();
+}
+
+function xmledVolRow(idx, qVol, esp, marca, nVol, pesoL, pesoB, lacres){
+  return `
+    <div class="xmled-vol-row" data-idx="${idx}" style="background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--cyan);font-weight:700">📦 Volume #${idx+1}</span>
+        <button type="button" onclick="xmledVolRemover(${idx})" title="Remover este volume" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:inherit">✖</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Qtd (qVol)</label><input class="xmled-vol-field" data-tag="qVol" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${qVol||''}"></div>
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Espécie (esp)</label><input class="xmled-vol-field" data-tag="esp" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${(esp||'').replace(/"/g,'&quot;')}" placeholder="caixa, pallet..."></div>
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Marca</label><input class="xmled-vol-field" data-tag="marca" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${(marca||'').replace(/"/g,'&quot;')}"></div>
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Numeração (nVol)</label><input class="xmled-vol-field" data-tag="nVol" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${(nVol||'').replace(/"/g,'&quot;')}"></div>
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Peso Líq. (pesoL)</label><input class="xmled-vol-field" data-tag="pesoL" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${pesoL||''}" placeholder="kg"></div>
+        <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Peso Bruto (pesoB)</label><input class="xmled-vol-field" data-tag="pesoB" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${pesoB||''}" placeholder="kg"></div>
+      </div>
+      <div style="margin-top:8px"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Lacres (nLacre — separe por vírgula)</label><input class="xmled-vol-field" data-tag="lacres" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${(lacres||'').replace(/"/g,'&quot;')}" placeholder="LAC123, LAC124"></div>
+    </div>`;
+}
+
+function xmledVolAdicionar(){
+  const transp = xmledGetTranspEl(true);
+  const ns = transp.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  const vol = xmledDoc.createElementNS(ns,'vol');
+  // Coloca <vol> ao final de <transp> (é o último na ordem)
+  transp.appendChild(vol);
+  xmledVolRender();
+  xmledAtualizarRaw();
+}
+
+function xmledVolRemover(idx){
+  const transp = xmledGetTranspEl(false);
+  if(!transp) return;
+  const vols = [...transp.children].filter(n=>n.localName==='vol');
+  if(vols[idx]) transp.removeChild(vols[idx]);
+  xmledVolRender();
+  xmledAtualizarRaw();
+}
+
+function xmledVolAtualizarSoma(){
+  const transp = xmledGetTranspEl(false);
+  const somaEl = document.getElementById('xmled-vol-soma');
+  if(!somaEl) return;
+  if(!transp){ somaEl.textContent=''; return; }
+  const vols = [...transp.children].filter(n=>n.localName==='vol');
+  if(vols.length===0){ somaEl.textContent=''; return; }
+  let qTot=0, pesoBTot=0;
+  vols.forEach(v=>{
+    const q = [...v.children].find(c=>c.localName==='qVol');
+    const pb= [...v.children].find(c=>c.localName==='pesoB');
+    qTot += parseFloat(q?q.textContent:0)||0;
+    pesoBTot += parseFloat(pb?pb.textContent:0)||0;
+  });
+  somaEl.textContent = '('+vols.length+' bloco(s), '+qTot+' volumes, peso bruto '+pesoBTot.toFixed(3)+' kg)';
+}
+
+// Normalização global: NF-e usa ponto como separador decimal.
+// Converte vírgula → ponto em campos monetários do editor (totais, itens, fatura,
+// duplicata e pagamento) no capture-phase, antes dos handlers `oninput` inline lerem.
+// Se houver ponto E vírgula (ex: "1.234,56" colado do Excel), trata '.' como milhar.
+(function(){
+  const MONEY_ID = /^xmled-(v[a-z]+|fat-v(orig|desc|liq)|item-\d+-(vprod|vuncom|qcom|vfrete|vseg|vdesc|voutro)|pag-\d+-vpag)$/i;
+  document.addEventListener('input', function(e){
+    const el = e.target;
+    if(!el || el.tagName !== 'INPUT') return;
+    const id = el.id || '';
+    const isDupVDup  = el.classList && el.classList.contains('xmled-dup-field') && el.dataset && el.dataset.tag === 'vDup';
+    const isVolPeso  = el.classList && el.classList.contains('xmled-vol-field') && el.dataset && (el.dataset.tag==='pesoL' || el.dataset.tag==='pesoB');
+    if(!isDupVDup && !isVolPeso && !MONEY_ID.test(id)) return;
+    const v = el.value || '';
+    if(v.indexOf(',') === -1) return;
+    const start = el.selectionStart;
+    let novo;
+    if(v.indexOf('.') !== -1){
+      // Tem ambos — assume formato BR: '.' é milhar, ',' é decimal
+      novo = v.replace(/\./g,'').replace(',', '.');
+    } else {
+      novo = v.replace(/,/g, '.');
+    }
+    if(novo === v) return;
+    el.value = novo;
+    const delta = novo.length - v.length;
+    try { el.setSelectionRange(start + delta, start + delta); } catch(_){}
+  }, true);
+})();
+
+// Listener para edição inline dos volumes
+document.addEventListener('input', function(e){
+  if(!e.target.classList.contains('xmled-vol-field')) return;
+  const idx = parseInt(e.target.dataset.idx,10);
+  const tag = e.target.dataset.tag;
+  const transp = xmledGetTranspEl(false);
+  if(!transp) return;
+  const vols = [...transp.children].filter(n=>n.localName==='vol');
+  const vol = vols[idx];
+  if(!vol) return;
+  const ns = vol.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  let val = (e.target.value||'').trim();
+  if(tag==='lacres'){
+    // Reescreve todos os <lacres> existentes a partir da lista (cada nLacre = 1 elemento <lacres>)
+    [...vol.children].filter(c=>c.localName==='lacres').forEach(l=>vol.removeChild(l));
+    const lista = val.split(',').map(s=>s.trim()).filter(Boolean);
+    lista.forEach(n=>{
+      const lac = xmledDoc.createElementNS(ns,'lacres');
+      const nL  = xmledDoc.createElementNS(ns,'nLacre');
+      nL.textContent = n;
+      lac.appendChild(nL);
+      vol.appendChild(lac);
+    });
+  } else {
+    let el = [...vol.children].find(c=>c.localName===tag);
+    if(!val){
+      if(el) vol.removeChild(el);
+    } else {
+      if(!el){
+        el = xmledDoc.createElementNS(ns,tag);
+        const myIdx = VOL_ORDER.indexOf(tag);
+        const proximo = [...vol.children].find(c=>{
+          const ci = VOL_ORDER.indexOf(c.localName);
+          return ci >= 0 && ci > myIdx;
+        });
+        if(proximo) vol.insertBefore(el, proximo); else vol.appendChild(el);
+      }
+      // pesoL/pesoB com 3 casas (decimalPeso do schema), demais como texto
+      if(tag==='pesoL'||tag==='pesoB'){
+        el.textContent = (parseFloat(val.replace(',','.'))||0).toFixed(3);
+      } else {
+        el.textContent = val;
+      }
+    }
+  }
+  xmledVolAtualizarSoma();
+  xmledAtualizarRaw();
+});
+
+// ===================== COBRANÇA (cobr/fat/dup) =====================
+// Ordem dos filhos de <cobr>: fat, dup* (schema NFe 4.00).
+// Ordem dos filhos de <fat>: nFat, vOrig, vDesc, vLiq.
+// Ordem dos filhos de <dup>: nDup, dVenc, vDup.
+// <cobr> mora dentro de <infNFe>, ANTES de <pag>.
+const COBR_INFNFE_ORDER = ['ide','emit','avulsa','dest','retirada','entrega','autXML','det','total','transp','cobr','pag','infIntermed','infAdic','exporta','compra','cana','infRespTec','infSolicNFF','agropecuario','IBSCBS'];
+const FAT_ORDER = ['nFat','vOrig','vDesc','vLiq'];
+const DUP_ORDER = ['nDup','dVenc','vDup'];
+
+function xmledGetCobrEl(criar){
+  if(!xmledDoc) return null;
+  const infNFe = xmledDoc.querySelector('infNFe');
+  if(!infNFe) return null;
+  let cobr = [...infNFe.children].find(n=>n.localName==='cobr');
+  if(!cobr && criar){
+    const ns = infNFe.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    cobr = xmledDoc.createElementNS(ns,'cobr');
+    const myIdx = COBR_INFNFE_ORDER.indexOf('cobr');
+    const proximo = [...infNFe.children].find(c=>{
+      const ci = COBR_INFNFE_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) infNFe.insertBefore(cobr, proximo); else infNFe.appendChild(cobr);
+  }
+  return cobr;
+}
+
+// Renderiza linhas de duplicata na UI a partir do XML atual
+function xmledDupRender(){
+  const cont = document.getElementById('xmled-dup-container');
+  const cobr = xmledGetCobrEl(false);
+  cont.innerHTML = '';
+  const dups = cobr ? [...cobr.children].filter(n=>n.localName==='dup') : [];
+  dups.forEach((d,idx)=>{
+    const get = tag => { const e=[...d.children].find(n=>n.localName===tag); return e?e.textContent:''; };
+    cont.innerHTML += xmledDupRow(idx, get('nDup'), get('dVenc'), get('vDup'));
+  });
+  xmledDupAtualizarSoma();
+}
+
+function xmledDupRow(idx, nDup, dVenc, vDup){
+  return `
+    <div class="xmled-dup-row" data-idx="${idx}" style="display:grid;grid-template-columns:80px 1fr 1fr 1fr 36px;gap:8px;align-items:end;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px">
+      <div style="font-size:11px;color:var(--cyan);font-weight:700;align-self:center">#${idx+1}</div>
+      <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">nDup</label><input class="xmled-dup-field" data-tag="nDup" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${(nDup||'').replace(/"/g,'&quot;')}" placeholder="001"></div>
+      <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Vencimento (dVenc)</label><input class="xmled-dup-field" type="date" data-tag="dVenc" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${dVenc||''}"></div>
+      <div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:2px">Valor (vDup)</label><input class="xmled-dup-field" data-tag="vDup" data-idx="${idx}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-size:12px;font-family:inherit" value="${vDup||''}" placeholder="0.00"></div>
+      <button type="button" onclick="xmledDupRemover(${idx})" title="Remover esta duplicata" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:6px;padding:6px;font-size:12px;cursor:pointer;font-family:inherit">✖</button>
+    </div>`;
+}
+
+function xmledDupAdicionar(){
+  const cobr = xmledGetCobrEl(true);
+  const ns = cobr.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  // Próximo nDup sugerido (zero-padding 3 dígitos)
+  const dups = [...cobr.children].filter(n=>n.localName==='dup');
+  const proxN = String(dups.length+1).padStart(3,'0');
+  const dup = xmledDoc.createElementNS(ns,'dup');
+  const nDupEl = xmledDoc.createElementNS(ns,'nDup'); nDupEl.textContent=proxN;
+  const dVencEl = xmledDoc.createElementNS(ns,'dVenc');
+  const vDupEl  = xmledDoc.createElementNS(ns,'vDup'); vDupEl.textContent='0.00';
+  dup.appendChild(nDupEl); dup.appendChild(dVencEl); dup.appendChild(vDupEl);
+  cobr.appendChild(dup);
+  xmledDupRender();
+  xmledAtualizarRaw();
+}
+
+function xmledDupRemover(idx){
+  const cobr = xmledGetCobrEl(false);
+  if(!cobr) return;
+  const dups = [...cobr.children].filter(n=>n.localName==='dup');
+  if(dups[idx]) cobr.removeChild(dups[idx]);
+  // Se removeu todas as duplicatas E não há <fat>, remove o <cobr> inteiro
+  const restantes = [...cobr.children];
+  if(restantes.length===0) cobr.parentNode.removeChild(cobr);
+  xmledDupRender();
+  xmledAtualizarRaw();
+}
+
+function xmledDupLimpar(){
+  const cobr = xmledGetCobrEl(false);
+  if(cobr) cobr.parentNode.removeChild(cobr);
+  // Limpa os inputs da fatura
+  ['nfat','vorig','vdesc','vliq'].forEach(s=>{
+    const el = document.getElementById('xmled-fat-'+s);
+    if(el) el.value='';
+  });
+  xmledDupRender();
+  xmledAtualizarRaw();
+  xmledStatus('✅ Bloco <cobr> removido do XML');
+}
+
+function xmledDupGerarPorVencimento(){
+  const nStr = prompt('Quantas parcelas? (intervalo de 30 dias entre vencimentos)','3');
+  if(nStr==null) return;
+  const n = parseInt(nStr,10);
+  if(!n || n<1 || n>120){ alert('Informe um número entre 1 e 120.'); return; }
+  const vNFNum = parseFloat(xmledGetVal('vNF'))||0;
+  if(vNFNum<=0){ alert('vNF inválido para divisão.'); return; }
+  // Remove duplicatas existentes
+  const cobr = xmledGetCobrEl(true);
+  [...cobr.children].filter(c=>c.localName==='dup').forEach(d=>cobr.removeChild(d));
+  // dhEmi como base; se inválido, usa hoje
+  const dhEmi = xmledGetVal('dhEmi');
+  const base  = dhEmi ? new Date(dhEmi) : new Date();
+  if(isNaN(base.getTime())) return;
+  const vParc = Math.floor((vNFNum/n)*100)/100;
+  const resto = Math.round((vNFNum - vParc*n)*100)/100;
+  const ns = cobr.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  for(let i=0;i<n;i++){
+    const venc = new Date(base);
+    venc.setDate(venc.getDate() + (i+1)*30);
+    const dataIso = venc.toISOString().split('T')[0];
+    const dup = xmledDoc.createElementNS(ns,'dup');
+    const nDupEl = xmledDoc.createElementNS(ns,'nDup'); nDupEl.textContent = String(i+1).padStart(3,'0');
+    const dVencEl = xmledDoc.createElementNS(ns,'dVenc'); dVencEl.textContent = dataIso;
+    const vDupEl  = xmledDoc.createElementNS(ns,'vDup');
+    vDupEl.textContent = (i===n-1 ? (vParc+resto).toFixed(2) : vParc.toFixed(2));
+    dup.appendChild(nDupEl); dup.appendChild(dVencEl); dup.appendChild(vDupEl);
+    cobr.appendChild(dup);
+  }
+  xmledDupRender();
+  xmledAtualizarRaw();
+  xmledStatus('✅ '+n+' duplicatas geradas a partir de dhEmi (intervalo 30 dias)');
+}
+
+function xmledDupAtualizarSoma(){
+  const cobr = xmledGetCobrEl(false);
+  const somaEl = document.getElementById('xmled-dup-soma');
+  const badge  = document.getElementById('xmled-cobr-badge');
+  if(!somaEl) return;
+  if(!cobr){ somaEl.textContent=''; if(badge) badge.style.display='none'; return; }
+  const dups = [...cobr.children].filter(n=>n.localName==='dup');
+  let soma = 0;
+  dups.forEach(d=>{
+    const e=[...d.children].find(c=>c.localName==='vDup');
+    soma += parseFloat(e?e.textContent:0)||0;
+  });
+  const vLiq = parseFloat((document.getElementById('xmled-fat-vliq')||{}).value)||0;
+  const vNFNum = parseFloat(xmledGetVal('vNF'))||0;
+  const referencia = vLiq>0?vLiq:vNFNum;
+  const dif = Math.abs(soma - referencia);
+  somaEl.textContent = '(soma: R$ '+soma.toFixed(2)+(referencia>0?' / referência: R$ '+referencia.toFixed(2):'')+')';
+  if(badge) badge.style.display = (dups.length>0 && referencia>0 && dif>0.02)?'inline':'none';
+}
+
+// Listener para edição das duplicatas (sincroniza com XML)
+document.addEventListener('input', function(e){
+  if(!e.target.classList.contains('xmled-dup-field')) return;
+  const idx = parseInt(e.target.dataset.idx,10);
+  const tag = e.target.dataset.tag;
+  const cobr = xmledGetCobrEl(false);
+  if(!cobr) return;
+  const dups = [...cobr.children].filter(n=>n.localName==='dup');
+  const dup = dups[idx];
+  if(!dup) return;
+  let el = [...dup.children].find(c=>c.localName===tag);
+  if(!el){
+    const ns = dup.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    el = xmledDoc.createElementNS(ns,tag);
+    const myIdx = DUP_ORDER.indexOf(tag);
+    const proximo = [...dup.children].find(c=>{
+      const ci = DUP_ORDER.indexOf(c.localName);
+      return ci >= 0 && ci > myIdx;
+    });
+    if(proximo) dup.insertBefore(el, proximo); else dup.appendChild(el);
+  }
+  let val = (e.target.value||'').trim();
+  if(tag==='vDup') val = (parseFloat(val.replace(',','.'))||0).toFixed(2);
+  el.textContent = val;
+  xmledDupAtualizarSoma();
+  xmledAtualizarRaw();
+});
+
+// Salva os campos da Fatura (cria/atualiza/remove <fat> conforme preenchimento)
+function xmledSalvarFat(nFat, vOrig, vDesc, vLiq){
+  if(!xmledDoc) return;
+  const valores = {nFat:(nFat||'').trim(), vOrig:(vOrig||'').trim(), vDesc:(vDesc||'').trim(), vLiq:(vLiq||'').trim()};
+  const tudoVazio = !valores.nFat && !valores.vOrig && !valores.vDesc && !valores.vLiq;
+  let cobr = xmledGetCobrEl(false);
+  let fat  = cobr ? [...cobr.children].find(n=>n.localName==='fat') : null;
+  if(tudoVazio){
+    if(fat){ cobr.removeChild(fat); }
+    // Se não sobrou nada em <cobr>, remove
+    if(cobr && cobr.children.length===0) cobr.parentNode.removeChild(cobr);
+    return;
+  }
+  cobr = xmledGetCobrEl(true);
+  const ns = cobr.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  if(!fat){
+    fat = xmledDoc.createElementNS(ns,'fat');
+    // <fat> é o primeiro filho de <cobr>
+    cobr.insertBefore(fat, cobr.firstChild);
+  }
+  const setField = (tag, val)=>{
+    const valTrim = (val||'').trim().replace(',','.');
+    let el = [...fat.children].find(n=>n.localName===tag);
+    if(!valTrim){
+      if(el) fat.removeChild(el);
+      return;
+    }
+    if(!el){
+      el = xmledDoc.createElementNS(ns,tag);
+      const myIdx = FAT_ORDER.indexOf(tag);
+      const proximo = [...fat.children].find(c=>{
+        const ci = FAT_ORDER.indexOf(c.localName);
+        return ci >= 0 && ci > myIdx;
+      });
+      if(proximo) fat.insertBefore(el, proximo); else fat.appendChild(el);
+    }
+    if(tag==='nFat') el.textContent = valTrim;
+    else el.textContent = (parseFloat(valTrim)||0).toFixed(2);
+  };
+  setField('nFat', valores.nFat);
+  setField('vOrig',valores.vOrig);
+  setField('vDesc',valores.vDesc);
+  setField('vLiq', valores.vLiq);
+}
+
+// Cria/atualiza/remove <infRespTec> (filho direto de <infNFe>, vem DEPOIS de <infAdic> conforme schema NFe 4.00)
+function xmledSalvarRespTec(cnpj, contato, email, fone){
+  if(!xmledDoc) return;
+  const ns = 'http://www.portalfiscal.inf.br/nfe';
+  const infNFe = xmledDoc.querySelector('infNFe');
+  if(!infNFe) return;
+  let resp = [...infNFe.children].find(n=>n.localName==='infRespTec');
+  const tudoVazio = !(cnpj||'').trim() && !(contato||'').trim() && !(email||'').trim() && !(fone||'').trim();
+  if(tudoVazio){
+    if(resp) infNFe.removeChild(resp);
+    return;
+  }
+  if(!resp){
+    resp = xmledDoc.createElementNS(ns,'infRespTec');
+    // infRespTec é o último filho de <infNFe> (após infAdic). Append direto é seguro.
+    infNFe.appendChild(resp);
+  }
+  const RESP_ORDER = ['CNPJ','xContato','email','fone','idCSRT','hashCSRT'];
+  const setField = (tag, val)=>{
+    const valTrim = (val||'').trim();
+    let el = [...resp.children].find(n=>n.localName===tag);
+    if(!valTrim){
+      if(el) resp.removeChild(el);
+      return;
+    }
+    if(!el){
+      el = xmledDoc.createElementNS(ns,tag);
+      const myIdx = RESP_ORDER.indexOf(tag);
+      const proximo = [...resp.children].find(c=>{
+        const ci = RESP_ORDER.indexOf(c.localName);
+        return ci >= 0 && ci > myIdx;
+      });
+      if(proximo) resp.insertBefore(el, proximo); else resp.appendChild(el);
+    }
+    el.textContent = valTrim;
+  };
+  setField('CNPJ',     (cnpj||'').replace(/\D/g,''));
+  setField('xContato', contato);
+  setField('email',    email);
+  setField('fone',     (fone||'').replace(/\D/g,''));
+}
+
 function xmledSalvarCampos(){
   if(!xmledDoc) return;
   const v = id=>{ const e=document.getElementById(id); return e?e.value:''; };
@@ -5075,6 +6730,17 @@ function xmledSalvarCampos(){
   xmledSetVal('dhSaiEnt',v('xmled-dhsaient'));
   xmledSetVal('natOp',   v('xmled-natop'));
   xmledSetVal('tpEmis',  v('xmled-tpemis'));
+  xmledSetVal('tpAmb',   v('xmled-tpamb'));
+  xmledSetVal('indPres', v('xmled-indpres'));
+  xmledSetVal('idDest',  v('xmled-iddest'));
+  xmledSetVal('indFinal',v('xmled-indfinal'));
+  // Responsável Técnico — cria/atualiza/remove conforme preenchimento
+  xmledSalvarRespTec(v('xmled-resptec-cnpj'), v('xmled-resptec-xcontato'), v('xmled-resptec-email'), v('xmled-resptec-fone'));
+  // Cobrança — fatura (duplicatas têm seu próprio listener)
+  xmledSalvarFat(v('xmled-fat-nfat'), v('xmled-fat-vorig'), v('xmled-fat-vdesc'), v('xmled-fat-vliq'));
+  xmledDupAtualizarSoma();
+  // Veículo de transporte (volumes têm seu próprio listener)
+  xmledSalvarVeicTransp(v('xmled-veic-placa'), v('xmled-veic-uf'), v('xmled-veic-rntrc'));
   xmledSetValPath('emit xNome', v('xmled-emit-xnome'));
   xmledSetValPath('emit xFant', v('xmled-emit-xfant'));
   xmledSetValPath('emit CNPJ',  v('xmled-emit-cnpj'));
@@ -5092,8 +6758,15 @@ function xmledSalvarCampos(){
   xmledSetValPath('ICMSTot vProd', v('xmled-vprod'));
   xmledSetValPath('ICMSTot vDesc', v('xmled-vdesc'));
   xmledSetValPath('ICMSTot vFrete',v('xmled-vfrete'));
+  xmledSetIcmsTotOrdenado('vSeg',  v('xmled-vseg')  || '0');
+  xmledSetIcmsTotOrdenado('vOutro',v('xmled-voutro')|| '0');
   xmledSetValPath('ICMSTot vICMS', v('xmled-vicms'));
   xmledSetValPath('ICMSTot vST',   v('xmled-vst'));
+  // Totais DIFAL/FCP — criam o elemento se não existir, respeitando a ordem do schema NFe 4.00
+  xmledSetIcmsTotOrdenado('vFCP',         v('xmled-vfcp'));
+  xmledSetIcmsTotOrdenado('vICMSUFDest',  v('xmled-vicmsufdest'));
+  xmledSetIcmsTotOrdenado('vICMSUFRemet', v('xmled-vicmsufremet'));
+  xmledSetIcmsTotOrdenado('vFCPUFDest',   v('xmled-vfcpufdest'));
   xmledSetValPath('transp modFrete',          v('xmled-modfrete'));
   xmledSetValPath('transp transporta xNome',  v('xmled-transp-xnome'));
   xmledSetValPath('transp transporta CNPJ',   v('xmled-transp-cnpj'));
@@ -5154,8 +6827,21 @@ function xmledSalvarCampos(){
       setP('qCom',   ve(`xmled-item-${i}-qcom`)||'');
       setP('vUnCom', ve(`xmled-item-${i}-vuncom`)||'');
       setP('vProd',  ve(`xmled-item-${i}-vprod`)||'');
+      const ucomVal = ve(`xmled-item-${i}-ucom`);
+      if(ucomVal!==null) setP('uCom', ucomVal);
+      // Campos opcionais do <prod>: cria/atualiza/remove conforme preenchimento e ordem do schema
+      xmledSetProdOpcional(prod, 'CEST',      ve(`xmled-item-${i}-cest`),     {tipo:'texto'});
+      xmledSetProdOpcional(prod, 'cBenef',    ve(`xmled-item-${i}-cbenef`),   {tipo:'texto'});
+      xmledSetProdOpcional(prod, 'vFrete',    ve(`xmled-item-${i}-vfrete`),   {tipo:'valor'});
+      xmledSetProdOpcional(prod, 'vSeg',      ve(`xmled-item-${i}-vseg`),     {tipo:'valor'});
+      xmledSetProdOpcional(prod, 'vDesc',     ve(`xmled-item-${i}-vdesc`),    {tipo:'valor'});
+      xmledSetProdOpcional(prod, 'vOutro',    ve(`xmled-item-${i}-voutro`),   {tipo:'valor'});
+      xmledSetProdOpcional(prod, 'xPed',      ve(`xmled-item-${i}-xped`),     {tipo:'texto'});
+      xmledSetProdOpcional(prod, 'nItemPed',  ve(`xmled-item-${i}-nitemped`), {tipo:'texto'});
       const ccEl=ve(`xmled-item-${i}-cclasstrib`);
       if(ccEl!==null) setP('cClassTrib', ccEl);
+      // Salva grupo ICMSUFDest (DIFAL) — cria/atualiza/remove conforme valores informados
+      xmledSalvarDifalItem(det, i);
       // Salva CSOSN/CST no bloco <imposto><ICMS><ICMS??> e ajusta o tipo quando muda
       const novoTrib = ve(`xmled-item-${i}-cst`);
       if(novoTrib!==null && novoTrib!==''){
@@ -5170,15 +6856,39 @@ function xmledSalvarCampos(){
           const MAP_CST= {'00':'ICMS00','10':'ICMS10','20':'ICMS20','30':'ICMS30','40':'ICMS40','41':'ICMS40','50':'ICMS40','51':'ICMS51','60':'ICMS60','70':'ICMS70','90':'ICMS90'};
           const nomeAlvo = ehSN ? (MAP_SN[novoTrib]||inner.localName) : (MAP_CST[novoTrib]||inner.localName);
           let alvo = inner;
-          // Se o nome do bloco precisa mudar (ex: 102→500: ICMSSN102→ICMSSN500), recria preservando orig
+          // Se o nome do bloco precisa mudar (ex: ICMS10 com CST=90 → ICMS90, ou ICMSSN102→ICMSSN500),
+          // recria preservando TODOS os filhos (vBC, pICMS, vICMS, modBC, etc.) — apenas atualiza o
+          // valor da tag CST/CSOSN. Schema NFe 4.00 dos blocos ICMS** e ICMSSN** compartilha quase
+          // todos os campos como opcionais, então preservar evita perda de dados. Se algum campo for
+          // inválido no novo CST, SEFAZ rejeita na validação (não é nosso papel descartar silenciosamente).
           if(nomeAlvo !== inner.localName){
-            const orig = [...inner.children].find(n=>n.localName==='orig');
-            const origVal = orig ? orig.textContent : '0';
-            alvo = xmledDoc.createElementNS(ns,nomeAlvo);
-            const origNew = xmledDoc.createElementNS(ns,'orig'); origNew.textContent = origVal;
-            alvo.appendChild(origNew);
-            const tribNew = xmledDoc.createElementNS(ns, ehSN?'CSOSN':'CST'); tribNew.textContent = novoTrib;
-            alvo.appendChild(tribNew);
+            const tribTag = ehSN ? 'CSOSN' : 'CST';
+            alvo = xmledDoc.createElementNS(ns, nomeAlvo);
+            let temTribTag = false;
+            [...inner.children].forEach(child => {
+              if(child.localName === tribTag){
+                // Atualiza valor do CST/CSOSN durante a cópia
+                const nv = xmledDoc.createElementNS(ns, tribTag);
+                nv.textContent = novoTrib;
+                alvo.appendChild(nv);
+                temTribTag = true;
+              } else {
+                alvo.appendChild(child.cloneNode(true));
+              }
+            });
+            // Garante <orig> e CST/CSOSN — se algum estava ausente, cria
+            if(!temTribTag){
+              const tribNew = xmledDoc.createElementNS(ns, tribTag);
+              tribNew.textContent = novoTrib;
+              const origEl = [...alvo.children].find(n=>n.localName==='orig');
+              if(origEl && origEl.nextSibling) alvo.insertBefore(tribNew, origEl.nextSibling);
+              else alvo.appendChild(tribNew);
+            }
+            if(!alvo.querySelector('orig') && ![...alvo.children].find(n=>n.localName==='orig')){
+              const origNew = xmledDoc.createElementNS(ns,'orig');
+              origNew.textContent = '0';
+              alvo.insertBefore(origNew, alvo.firstChild);
+            }
             icmsRoot.replaceChild(alvo, inner);
           } else {
             // Mesmo tipo de bloco — só atualiza o valor da tag CSOSN/CST
@@ -5209,16 +6919,86 @@ function xmledSalvarCampos(){
   // Pagamentos
   const detPags = xmledDoc.querySelectorAll('detPag');
   detPags.forEach((dp,i)=>{
-    const setDP=(tag,val)=>{
-      let el=[...dp.getElementsByTagName('*')].find(n=>n.localName===tag);
-      if(el) el.textContent=val;
-    };
     const ve=id=>{ const e=document.getElementById(id); return e?e.value:null; };
+    const ns = dp.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+    // Ordem dos filhos de <detPag> conforme schema NFe 4.00
+    const DETPAG_ORDER = ['indPag','tPag','xPag','vPag','dPag','CNPJPag','UFPag','card'];
+    const setDP = (tag, val, opcional)=>{
+      const valTrim = (val==null?'':String(val)).trim();
+      let el = [...dp.children].find(n=>n.localName===tag);
+      if(opcional && !valTrim){
+        if(el) dp.removeChild(el);
+        return;
+      }
+      if(!el){
+        el = xmledDoc.createElementNS(ns,tag);
+        const myIdx = DETPAG_ORDER.indexOf(tag);
+        const proximo = [...dp.children].find(c=>{
+          const ci = DETPAG_ORDER.indexOf(c.localName);
+          return ci >= 0 && ci > myIdx;
+        });
+        if(proximo) dp.insertBefore(el, proximo); else dp.appendChild(el);
+      }
+      el.textContent = valTrim;
+    };
     if(ve(`xmled-pag-${i}-tpag`)!==null){
-      setDP('tPag', ve(`xmled-pag-${i}-tpag`)||'');
-      setDP('vPag', ve(`xmled-pag-${i}-vpag`)||'');
+      setDP('tPag', ve(`xmled-pag-${i}-tpag`)||'', false);
+      setDP('vPag', ve(`xmled-pag-${i}-vpag`)||'', false);
+      setDP('indPag', ve(`xmled-pag-${i}-indpag`), true);
+      setDP('dPag',   ve(`xmled-pag-${i}-dpag`),   true);
+      // Bloco <card> — cria/atualiza/remove conforme preenchimento
+      xmledSalvarCard(dp, i);
     }
   });
+}
+
+// Cria/atualiza/remove <card> dentro de <detPag>, conforme schema NFe 4.00
+function xmledSalvarCard(dp, i){
+  if(!xmledDoc||!dp) return;
+  const ve=id=>{ const e=document.getElementById(id); return e?e.value:null; };
+  const dados = {
+    tpIntegra: (ve(`xmled-pag-${i}-tpintegra`)||'').trim(),
+    CNPJ:      (ve(`xmled-pag-${i}-cardcnpj`)||'').trim().replace(/\D/g,''),
+    tBand:     (ve(`xmled-pag-${i}-tband`)||'').trim(),
+    cAut:      (ve(`xmled-pag-${i}-caut`)||'').trim()
+  };
+  // Se nenhum campo do card está renderizado (não tem nem o input), não mexe
+  if(ve(`xmled-pag-${i}-tpintegra`)===null) return;
+  const algumPreenchido = Object.values(dados).some(v=>v);
+  const ns = dp.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+  let card = [...dp.children].find(n=>n.localName==='card');
+  if(!algumPreenchido){
+    if(card) dp.removeChild(card);
+    return;
+  }
+  if(!card){
+    card = xmledDoc.createElementNS(ns,'card');
+    // <card> é o último filho de <detPag>
+    dp.appendChild(card);
+  }
+  const CARD_ORDER = ['tpIntegra','CNPJ','tBand','cAut'];
+  const setCardField = (tag, val)=>{
+    let el = [...card.children].find(n=>n.localName===tag);
+    if(!val){
+      if(el) card.removeChild(el);
+      return;
+    }
+    if(!el){
+      el = xmledDoc.createElementNS(ns,tag);
+      const myIdx = CARD_ORDER.indexOf(tag);
+      const proximo = [...card.children].find(c=>{
+        const ci = CARD_ORDER.indexOf(c.localName);
+        return ci >= 0 && ci > myIdx;
+      });
+      if(proximo) card.insertBefore(el, proximo); else card.appendChild(el);
+    }
+    el.textContent = val;
+  };
+  // tpIntegra é obrigatório dentro de <card> — se card existe mas tpIntegra vazio, default '2' (POS)
+  setCardField('tpIntegra', dados.tpIntegra || '2');
+  setCardField('CNPJ',      dados.CNPJ);
+  setCardField('tBand',     dados.tBand);
+  setCardField('cAut',      dados.cAut);
 }
 
 function xmledAtualizarRaw(){
@@ -5288,7 +7068,7 @@ document.addEventListener('input',function(e){
 });
 
 document.addEventListener('input',function(e){
-  if((e.target.classList.contains('xmled-field')||e.target.classList.contains('xmled-item-field')||e.target.classList.contains('xmled-pag-field')) && e.target.id!=='xmled-raw'){
+  if((e.target.classList.contains('xmled-field')||e.target.classList.contains('xmled-item-field')||e.target.classList.contains('xmled-pag-field')||e.target.classList.contains('xmled-difal-field')||e.target.classList.contains('xmled-card-field')) && e.target.id!=='xmled-raw'){
     // Se mudou valor de item, oferecer recalculo dos totais
     if(e.target.classList.contains('xmled-item-field') && (e.target.id.endsWith('-vprod')||e.target.id.endsWith('-qcom')||e.target.id.endsWith('-vuncom'))){
       clearTimeout(window._xmledRecalcTimer);
@@ -5296,6 +7076,17 @@ document.addEventListener('input',function(e){
       window._xmledRecalcTimer = setTimeout(()=>{
         const el = document.getElementById(_tid);
         if(el) xmledOfereceRecalc(el);
+      }, 600);
+    }
+    // Acessórios por item (vFrete/vSeg/vDesc/vOutro) — dispara recalc canônico
+    // que faz auto-soma item→ICMSTot e cascateia vNF/fat/dup/pag.
+    if(e.target.classList.contains('xmled-item-field') && (e.target.id.endsWith('-voutro')||e.target.id.endsWith('-vfrete')||e.target.id.endsWith('-vseg')||e.target.id.endsWith('-vdesc'))){
+      clearTimeout(window._xmledRecalcAcessTimer);
+      window._xmledRecalcAcessTimer = setTimeout(()=>{
+        xmledSalvarCampos();
+        xmledRecalcularTotais();
+        xmledAvisarVPag();
+        xmledAtualizarRaw();
       }, 600);
     }
     xmledSalvarCampos();
@@ -5350,12 +7141,16 @@ function xmledOfereceRecalc(campo){
       setP2('qCom', qEl.value);
     }
   }
-  xmledRecalcularTotais();
+  xmledRecalcularTotaisFromForm();
   xmledAvisarVPag();
   xmledAtualizarRaw();
   xmledStatus('✅ Totais atualizados');
 }
-function xmledRecalcularTotais(){
+// Recalc usando valores dos inputs do formulário (vDesc/vFrete editados pelo usuário).
+// Não confundir com xmledRecalcularTotais (linha ~4550), que lê tudo do XML e é usada
+// durante a carga do arquivo, quando os inputs ainda não foram populados.
+// Fórmula simplificada: vNF = vProd - vDesc + vFrete + vSeg + vOutro (ignora vST/vIPI/etc).
+function xmledRecalcularTotaisFromForm(){
   if(!xmledDoc) return;
   const dets = [...xmledDoc.getElementsByTagName('*')].filter(n=>n.localName==='det');
   let somaVProd = 0;
@@ -5368,12 +7163,14 @@ function xmledRecalcularTotais(){
     somaVProd += parseFloat(vProdEl?vProdEl.textContent:0)||0;
     somaVDesc += parseFloat(vDescEl?vDescEl.textContent:0)||0;
   });
-  // vDesc e vFrete vêm dos campos de totais (podem ter sido editados diretamente)
+  // vDesc, vFrete, vSeg e vOutro vêm dos campos de totais (podem ter sido editados diretamente)
   const vDescCampo = parseFloat(document.getElementById('xmled-vdesc').value)||0;
   const vFrete = parseFloat(document.getElementById('xmled-vfrete').value)||0;
+  const vSeg   = parseFloat(document.getElementById('xmled-vseg').value)||0;
+  const vOutro = parseFloat(document.getElementById('xmled-voutro').value)||0;
   // Usar o maior entre soma dos itens e campo manual (campo manual prevalece se diferente)
   const vDescFinal = vDescCampo > 0 ? vDescCampo : somaVDesc;
-  const vNF = (somaVProd - vDescFinal + vFrete).toFixed(2);
+  const vNF = (somaVProd - vDescFinal + vFrete + vSeg + vOutro).toFixed(2);
   const vProdFmt = somaVProd.toFixed(2);
   // Atualizar campos
   document.getElementById('xmled-vprod').value = vProdFmt;
@@ -5384,6 +7181,11 @@ function xmledRecalcularTotais(){
   xmledSetValPath('ICMSTot vNF', vNF);
   xmledSetValPath('ICMSTot vDesc', vDescFinal.toFixed(2));
   xmledSetValPath('ICMSTot vFrete', vFrete.toFixed(2));
+  xmledSetIcmsTotOrdenado('vSeg',   vSeg.toFixed(2));
+  xmledSetIcmsTotOrdenado('vOutro', vOutro.toFixed(2));
+  // Propaga novo vNF para cobr/fat/dup e para os inputs do formulário
+  xmledCascadeVNFParaCobr();
+  xmledAvisarVPag();
   xmledStatus(`✅ Totais recalculados — vProd: R$ ${vProdFmt} | vNF: R$ ${vNF}`);
 }
 
@@ -5408,6 +7210,13 @@ function xmledAvisarVPag(){
   vPagEl.textContent = vNFAtual.toFixed(2);
   const pagInput = document.getElementById('xmled-pag-0-vpag');
   if(pagInput) pagInput.value = vNFAtual.toFixed(2);
+  // Como vPag agora bate exatamente com vNF, não existe troco — remove <vTroco> se
+  // ele foi criado em um recalc anterior com vPag desatualizado (evita Rej. 624).
+  const pagEl = [...xmledDoc.getElementsByTagName('*')].find(n=>n.localName==='pag');
+  if(pagEl){
+    const vtEl = [...pagEl.children].find(n=>n.localName==='vTroco');
+    if(vtEl) pagEl.removeChild(vtEl);
+  }
   xmledStatus('✅ vPag atualizado automaticamente para R$ ' + vNFAtual.toFixed(2));
 }
 function xmledRecalcTotaisInput(){
