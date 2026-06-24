@@ -978,6 +978,8 @@ mark{background:rgba(0,196,232,.25);color:inherit;border-radius:2px;padding:0 2p
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ICMS (vICMS) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vicms" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor ST (vST) <span title="Calculado pela tributação dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vst" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor FCP (vFCP) <span title="Total de Fundo de Combate à Pobreza dos itens. Edição manual não reflete nos itens." style="color:#fbbf24;cursor:help;font-size:11px">⚠</span></label><input id="xmled-vfcp" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor IPI (vIPI)</label><input id="xmled-vipi" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
+            <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">Valor IPI Devolvido (vIPIDevol) <span title="Total do IPI devolvido na nota — usado em devolução de compra." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vipidevol" class="xmled-field" oninput="xmledRecalcTotaisInput()" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">DIFAL UF Destino (vICMSUFDest) <span title="EC 87/2015 — soma do ICMS-DIFAL devido à UF de destino em operação interestadual a consumidor final." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vicmsufdest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">DIFAL UF Remet. (vICMSUFRemet) <span title="EC 87/2015 — desde 2019 a partilha foi 100% para o destino, então este valor costuma ser 0,00." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vicmsufremet" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
             <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">FCP UF Destino (vFCPUFDest) <span title="Total do Fundo de Combate à Pobreza devido à UF de destino (quando aplicável)." style="color:var(--cyan);cursor:help;font-size:11px">ℹ</span></label><input id="xmled-vfcpufdest" class="xmled-field" style="width:100%;background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit"></div>
@@ -5477,7 +5479,7 @@ function xmledSetIcmsTotOrdenado(tag, val){
   const valTrim = (val==null?'':String(val)).trim();
   let el = [...icmsTot.children].find(n=>n.localName===tag);
   // Vazio ou zero → remove tag opcional (DIFAL/FCP não devem ficar como "0.00" sem necessidade)
-  const opcionais = ['vFCP','vICMSUFDest','vICMSUFRemet','vFCPUFDest'];
+  const opcionais = ['vFCP','vICMSUFDest','vICMSUFRemet','vFCPUFDest','vIPIDevol'];
   const numero = parseFloat(valTrim);
   if(opcionais.includes(tag) && (!valTrim || (isFinite(numero) && numero===0))){
     if(el) icmsTot.removeChild(el);
@@ -5561,6 +5563,8 @@ function xmledPopularCampos(){
   v('xmled-voutro').value= xmledGetValPath('ICMSTot vOutro');
   v('xmled-vicms').value = xmledGetValPath('ICMSTot vICMS');
   v('xmled-vst').value   = xmledGetValPath('ICMSTot vST');
+  v('xmled-vipi').value      = xmledGetValPath('ICMSTot vIPI');
+  v('xmled-vipidevol').value = xmledGetValPath('ICMSTot vIPIDevol');
   v('xmled-vfcp').value        = xmledGetValPath('ICMSTot vFCP');
   v('xmled-vicmsufdest').value = xmledGetValPath('ICMSTot vICMSUFDest');
   v('xmled-vicmsufremet').value= xmledGetValPath('ICMSTot vICMSUFRemet');
@@ -5634,6 +5638,24 @@ function xmledPopularCampos(){
     const corBorda = aviso ? 'rgba(239,68,68,.4)' : 'var(--border)';
     const corBg    = aviso ? 'rgba(239,68,68,.05)' : 'var(--navy3)';
 
+    // Bloco IPI — vIPI (tributação normal) e vIPIDevol (devolução de compra).
+    // Só exibe o campo se o grupo correspondente já existir no item (não fabrica CST/cEnq/pDevol).
+    const ipiGroupEl      = imposto ? [...imposto.children].find(n=>n.localName==='IPI') : null;
+    const ipiTribEl       = ipiGroupEl ? [...ipiGroupEl.children].find(n=>n.localName==='IPITrib') : null;
+    const vIPIItemVal     = ipiTribEl ? ([...ipiTribEl.children].find(n=>n.localName==='vIPI')||{}).textContent||'' : '';
+    const impDevolEl      = [...det.children].find(n=>n.localName==='impostoDevol');
+    const ipiDevolGroupEl = impDevolEl ? [...impDevolEl.children].find(n=>n.localName==='IPI') : null;
+    const vIPIDevolItemVal= ipiDevolGroupEl ? ([...ipiDevolGroupEl.children].find(n=>n.localName==='vIPIDevol')||{}).textContent||'' : '';
+    const fldIPI = (lbl,id,val,ph='')=>`<div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:4px">${lbl}</label><input id="${id}" class="xmled-item-field" data-det="${i}" style="width:100%;background:var(--navy2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;color:var(--text);font-size:12px;font-family:inherit" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph}"></div>`;
+    const ipiBlock = (ipiTribEl||ipiDevolGroupEl) ? `
+      <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+        <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px">🧾 IPI</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+          ${ipiTribEl?fldIPI('Valor IPI (vIPI)',`xmled-item-${i}-vipi`,vIPIItemVal,'0.00'):''}
+          ${ipiDevolGroupEl?fldIPI('Valor IPI Devolvido (vIPIDevol)',`xmled-item-${i}-vipidevol`,vIPIDevolItemVal,'0.00'):''}
+        </div>
+      </div>` : '';
+
     // Bloco DIFAL (ICMSUFDest) — EC 87/2015. Aparece colapsado por padrão.
     // Se já houver o grupo no item, abre expandido com indicador verde.
     const ufDestEl = imposto ? [...imposto.children].find(n=>n.localName==='ICMSUFDest') : null;
@@ -5691,6 +5713,7 @@ function xmledPopularCampos(){
           ${fld('Item Pedido (nItemPed)',`xmled-item-${i}-nitemped`,getP('nItemPed'),'opcional')}
           ${getP('cClassTrib')?fld('<span style="color:#34d399">cClassTrib</span>',`xmled-item-${i}-cclasstrib`,getP('cClassTrib')):''}
         </div>
+        ${ipiBlock}
         ${difalBlock}
       </div>`;
   });
@@ -6120,6 +6143,37 @@ function xmledDifalLimpar(i){
 
 // Lê os campos da UI e atualiza/cria/remove <ICMSUFDest> no item.
 // Regra: se vBCUFDest > 0 OU vICMSUFDest > 0, mantém/cria o grupo. Caso contrário, remove.
+// Atualiza vIPI (imposto/IPI/IPITrib) e vIPIDevol (impostoDevol/IPI) do item.
+// Só grava se o grupo correspondente já existir no XML — não fabrica CST/cEnq/pDevol,
+// que são obrigatórios nesses grupos e não podem ser inferidos com segurança.
+function xmledSalvarIPIItem(det, i){
+  if(!xmledDoc||!det) return;
+  const ve = id => { const e=document.getElementById(id); return e?e.value:null; };
+  const imp = det.querySelector('imposto');
+  const vIPIVal = ve(`xmled-item-${i}-vipi`);
+  if(vIPIVal!==null && imp){
+    const ipiGroup = [...imp.children].find(n=>n.localName==='IPI');
+    const ipiTrib  = ipiGroup ? [...ipiGroup.children].find(n=>n.localName==='IPITrib') : null;
+    if(ipiTrib){
+      const ns = ipiTrib.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+      let vIPIEl = [...ipiTrib.children].find(n=>n.localName==='vIPI');
+      if(!vIPIEl){ vIPIEl = xmledDoc.createElementNS(ns,'vIPI'); ipiTrib.appendChild(vIPIEl); }
+      vIPIEl.textContent = (parseFloat((vIPIVal||'0').replace(',','.'))||0).toFixed(2);
+    }
+  }
+  const vIPIDevolVal = ve(`xmled-item-${i}-vipidevol`);
+  if(vIPIDevolVal!==null){
+    const impDevol = [...det.children].find(n=>n.localName==='impostoDevol');
+    const ipiDevolGroup = impDevol ? [...impDevol.children].find(n=>n.localName==='IPI') : null;
+    if(ipiDevolGroup){
+      const ns = ipiDevolGroup.namespaceURI || 'http://www.portalfiscal.inf.br/nfe';
+      let vIPIDevolEl = [...ipiDevolGroup.children].find(n=>n.localName==='vIPIDevol');
+      if(!vIPIDevolEl){ vIPIDevolEl = xmledDoc.createElementNS(ns,'vIPIDevol'); ipiDevolGroup.appendChild(vIPIDevolEl); }
+      vIPIDevolEl.textContent = (parseFloat((vIPIDevolVal||'0').replace(',','.'))||0).toFixed(2);
+    }
+  }
+}
+
 function xmledSalvarDifalItem(det, i){
   if(!xmledDoc||!det) return;
   const imp = det.querySelector('imposto');
@@ -6762,6 +6816,9 @@ function xmledSalvarCampos(){
   xmledSetIcmsTotOrdenado('vOutro',v('xmled-voutro')|| '0');
   xmledSetValPath('ICMSTot vICMS', v('xmled-vicms'));
   xmledSetValPath('ICMSTot vST',   v('xmled-vst'));
+  // vIPI é obrigatório no schema (sempre grava, mesmo 0,00); vIPIDevol é opcional (remove se zero)
+  xmledSetIcmsTotOrdenado('vIPI',      v('xmled-vipi')      || '0');
+  xmledSetIcmsTotOrdenado('vIPIDevol', v('xmled-vipidevol') || '0');
   // Totais DIFAL/FCP — criam o elemento se não existir, respeitando a ordem do schema NFe 4.00
   xmledSetIcmsTotOrdenado('vFCP',         v('xmled-vfcp'));
   xmledSetIcmsTotOrdenado('vICMSUFDest',  v('xmled-vicmsufdest'));
@@ -6842,6 +6899,8 @@ function xmledSalvarCampos(){
       if(ccEl!==null) setP('cClassTrib', ccEl);
       // Salva grupo ICMSUFDest (DIFAL) — cria/atualiza/remove conforme valores informados
       xmledSalvarDifalItem(det, i);
+      // Salva vIPI / vIPIDevol do item, se os grupos já existirem no XML
+      xmledSalvarIPIItem(det, i);
       // Salva CSOSN/CST no bloco <imposto><ICMS><ICMS??> e ajusta o tipo quando muda
       const novoTrib = ve(`xmled-item-${i}-cst`);
       if(novoTrib!==null && novoTrib!==''){
